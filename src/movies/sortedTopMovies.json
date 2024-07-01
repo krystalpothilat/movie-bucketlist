@@ -1,4 +1,4 @@
-module.exports = [
+[
   {
     "rank": 5,
     "title": "12 Angry Men",
@@ -1847,4 +1847,4 @@ module.exports = [
     "imdb_link": "https://www.imdb.com/title/tt5311514",
     "seen": "No"
   }
-];
+]

@@ -1,13 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { Card } from 'react-bootstrap';
+// import React, { useEffect, useState } from 'react';
 import './MoviePopUp.css'
 const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClose, isAdmin }) => {
 
-  const [isClicked, setIsClicked] = useState('false');
+  const handleDelete = async () => {
+    try {
+        await fetch('http://localhost:5001/delete-movie', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title}),
+        });
 
-  const handleCardClick = () => {
-      setIsClicked(!isClicked);
-  }
+        onClose(); // Close popup or refresh the movie list
+    } catch (error) {
+        console.error('Error deleting movie:', error);
+    }
+};
 
   return (
     isAdmin ? (
@@ -22,6 +31,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClos
                 <p>Genre: {genre.join(', ')}</p>
                 <p>Rating: {rating}</p>
                 <a href={imdbLink} target="_blank" rel="noopener noreferrer">IMDb Link</a>
+                <button id = "delete" onClick={handleDelete}>Delete</button>
             </div>
         </div>
     ) : (

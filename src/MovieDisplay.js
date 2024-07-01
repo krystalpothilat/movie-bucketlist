@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Container, Row, Col, Carousel } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './MovieDisplay.css'
 
-const TopMovies = require('./movies/TopMovies');
-const sortedTopMovies = require('./movies/sortedTopMovies');
+const TopMovies = require('./movies/TopMovies.json');
+const sortedTopMovies = require('./movies/sortedTopMovies.json');
 
 
 const MovieDisplay = ({ viewType, sortBy, isAdmin }) => {

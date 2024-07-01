@@ -1,11 +1,7 @@
-// moviesort.js
-
 const fs = require('fs');
-const TopMovies = require('../movies/TopMovies');
 
-// Function to sort movies by title alphabetically
-function sortMoviesByTitle() {
-  const sortedMovies = TopMovies.slice().sort((a, b) => {
+function sortMoviesByTitle(movies) {
+  const sortedMovies = movies.slice().sort((a, b) => {
     const titleA = a.title.toLowerCase();
     const titleB = b.title.toLowerCase();
     if (titleA < titleB) return -1;
@@ -15,19 +11,34 @@ function sortMoviesByTitle() {
   return sortedMovies;
 }
 
-// Function to write sorted movies to a new file
-function writeSortedMoviesToFile(sortedMovies) {
-  const fileName = '../movies/sortedTopMovies.js'; // Adjust the file path and name
-  const fileContent = `module.exports = ${JSON.stringify(sortedMovies, null, 2)};\n`;
+function writeSortedMovies(sortedMovies) {
+  const fileName = '../movies/sortedTopMovies.json'; // Adjust the file path and name
+  const fileContent = JSON.stringify(sortedMovies, null, 2);
 
   fs.writeFile(fileName, fileContent, (err) => {
-    if (err) throw err;
-    console.log(`Sorted movies have been written to ${fileName}`);
+    if (err) {
+      console.error('Error writing file:', err);
+    } else {
+      console.log(`Sorted movies have been written to ${fileName}`);
+    }
   });
 }
 
-// Call the sorting function
-const sortedMovies = sortMoviesByTitle();
+const fileName = '../movies/TopMovies.json'; // Adjust the file path and name
+fs.readFile(fileName, 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading file:', err);
+    return;
+  }
+  try {
+    const movies = JSON.parse(data);
 
-// Call the function to write sorted movies to a new file
-writeSortedMoviesToFile(sortedMovies);
+    // Call the sorting function
+    const sortedMovies = sortMoviesByTitle(movies);
+
+    // Call the function to write sorted movies to a new file
+    writeSortedMovies(sortedMovies);
+  } catch (err) {
+    console.error('Error parsing JSON:', err);
+  }
+});

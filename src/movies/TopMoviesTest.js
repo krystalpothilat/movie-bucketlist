@@ -1,4 +1,4 @@
-const TopMovies = [
+[
   {
     "rank": 1,
     "title": "The Shawshank Redemption",
@@ -1848,5 +1848,3 @@ const TopMovies = [
     "seen": "No"
   }
 ];
-
-module.exports = TopMovies;
