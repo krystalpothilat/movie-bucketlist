@@ -38,7 +38,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <h1>Movie Bucket List test</h1>
+      <h1>Movie Bucket List</h1>
       <div className="mb-3">
         <select
           id="viewTypeSelect"
