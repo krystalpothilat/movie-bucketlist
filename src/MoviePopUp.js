@@ -18,7 +18,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClos
         <div className="pop-up-content">
             <h2>{title}</h2>
             <p>{description}</p>
-            <p>Genre: {genre}</p>
+            <p>Genre: {genre.join(', ')}</p>
             <p>Rating: {rating}</p>
             <a href={imdbLink} target="_blank" rel="noopener noreferrer">IMDb Link</a>
         </div>
