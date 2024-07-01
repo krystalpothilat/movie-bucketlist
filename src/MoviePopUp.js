@@ -1,5 +1,5 @@
 // import React, { useEffect, useState } from 'react';
-import './MoviePopUp.css'
+import './styles/MoviePopUp.css'
 const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClose, isAdmin }) => {
 
   const handleDelete = async () => {

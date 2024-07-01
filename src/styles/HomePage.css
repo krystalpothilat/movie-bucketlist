@@ -1,0 +1,14 @@
+.filters{
+    display: flex;
+    flex-direction: row;
+}
+
+.form-select{
+    width: 100px;
+}
+
+.filter-img {
+    height: 50px;
+    width: 50px;
+
+}

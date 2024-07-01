@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
-import './MovieCard.css'
+import './styles/MovieCard.css'
 
 const MovieCard = ({ title, image, description, genre, rating, imdbLink, onClick }) => {
 

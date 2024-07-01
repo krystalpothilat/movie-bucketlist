@@ -2,6 +2,9 @@ import React, { useState, useContext } from 'react';
 import MovieDisplay from './MovieDisplay';
 import { AuthContext } from './AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "./styles/HomePage.css";
+import grid from "./grid.png";
+import carousel from "./carousel.png";
 
 const HomePage = () => {
   const [viewType, setViewType] = useState('grid');
@@ -9,9 +12,9 @@ const HomePage = () => {
   const [genreTypes, setGenreTypes] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const handleViewTypeChange = (e) => {
-    setViewType(e.target.value);
-  };
+  const toggleViewType = () => {
+    setViewType(prevType => prevType === 'grid' ? 'carousel' : 'grid');
+  }
 
   const handleSortTypeChange = (e) => {
     setSortType(e.target.value);
@@ -37,23 +40,18 @@ const HomePage = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const genreReset = () => {
+    setGenreTypes([]);
+  }
   const { isAdmin } = useContext(AuthContext);
 
   return (
     <div>
       <h1>Movie Bucket List</h1>
       {isAdmin && <p>Welcome, Admin!</p>}
-
-      <div className="mb-3">
-        <select
-          id="viewTypeSelect"
-          className="form-select"
-          value={viewType}
-          onChange={handleViewTypeChange}
-        >
-          <option value="grid">Grid</option>
-          <option value="carousel">Carousel</option>
-        </select>
+      <div className="filters">
+        <img className = "filter-img" src = {grid} alt = "" onClick={toggleViewType}></img>
+        <img className = "filter-img" src = {carousel} alt = "" onClick={toggleViewType}></img>
 
         <select
           id="sortBySelect"
@@ -61,8 +59,10 @@ const HomePage = () => {
           value={sortBy}
           onChange={handleSortTypeChange}
         >
-          <option value="rank">Rank</option>
-          <option value="alphabetical">Alphabetical</option>
+          <optgroup label="Sort By">
+    <option value="rank">Rank</option>
+    <option value="alphabetical">Alphabetical</option>
+  </optgroup>
         </select>
 
 
@@ -75,6 +75,7 @@ const HomePage = () => {
             Genre
           </button>
           <div className={`dropdown-menu${dropdownOpen ? ' show' : ''}`}>
+            <button onClick={genreReset}> Reset</button>
             {genres.map((genre) => (
               <div key={genre.value} className="form-check">
                 <input

@@ -3,7 +3,7 @@ import { Container, Row, Col, Carousel } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './MovieDisplay.css'
+import './styles/MovieDisplay.css'
 
 const TopMovies = require('./movies/TopMovies.json');
 const sortedTopMovies = require('./movies/sortedTopMovies.json');
