@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Switch, BrowserRouter } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 
-function AdminPage() {
+const AdminPage = () => {
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    login();
+    navigate('/');
+  };
+
   return (
     <div>
-      admin
-
+      <h1>Admin Login</h1>
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
-}
+};
 
 export default AdminPage;

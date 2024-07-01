@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import MovieDisplay from './MovieDisplay';
+import { AuthContext } from './AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const HomePage = () => {
@@ -36,9 +37,13 @@ const HomePage = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const { isAdmin } = useContext(AuthContext);
+
   return (
     <div>
       <h1>Movie Bucket List</h1>
+      {isAdmin && <p>Welcome, Admin!</p>}
+
       <div className="mb-3">
         <select
           id="viewTypeSelect"
