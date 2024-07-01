@@ -9,7 +9,7 @@ const TopMovies = require('./movies/TopMovies');
 const sortedTopMovies = require('./movies/sortedTopMovies');
 
 
-const MovieDisplay = ({ viewType, sortBy }) => {
+const MovieDisplay = ({ viewType, sortBy, isAdmin }) => {
     const moviesToShow = sortBy === 'rank' ? TopMovies : sortedTopMovies;
     const [selectedMovie, setSelectedMovie] = useState(null);
 
@@ -117,6 +117,7 @@ const MovieDisplay = ({ viewType, sortBy }) => {
                 rating={selectedMovie.rating}
                 imdbLink={selectedMovie.imdb_link}
                 onClose={handleClosePopUp}
+                isAdmin={isAdmin}
             />
         )}
     </div>

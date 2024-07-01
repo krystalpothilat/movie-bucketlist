@@ -93,7 +93,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      <MovieDisplay viewType={viewType} sortBy={sortBy}/>
+      <MovieDisplay viewType={viewType} sortBy={sortBy} isAdmin = {isAdmin}/>
     </div>
   );
 };
