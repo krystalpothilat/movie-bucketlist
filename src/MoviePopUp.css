@@ -1,0 +1,35 @@
+.pop-up{
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    width: 80%;
+    height: 80%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 5px solid purple;
+    padding: 50px;
+    background-color: plum;
+    z-index: 5;
+}
+
+.pop-up-image{
+    width: auto;
+    height: 100%;
+}
+
+.pop-up-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: yellow;
+}
+
+button{
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 50px;
+    width: 50px;
+}

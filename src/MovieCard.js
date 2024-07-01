@@ -1,10 +1,18 @@
-// src/MovieCard.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
+import './MovieCard.css'
 
-const MovieCard = ({ title, image, description }) => {
+const MovieCard = ({ title, image, description, genre, rating, imdbLink, onClick }) => {
+
+  const [isClicked, setIsClicked] = useState('false');
+
+  const handleCardClick = () => {
+      setIsClicked(!isClicked);
+      onClick();
+  }
+
   return (
-    <Card style={{ width: '18rem' }}>
+    <Card className={`movie-card ${isClicked ? 'clicked' : ''}`} onClick={handleCardClick} style={{ width: '18rem' }}>
       <Card.Img variant="top" src={image} alt={title} />
       <Card.Body>
         <Card.Title>{title}</Card.Title>

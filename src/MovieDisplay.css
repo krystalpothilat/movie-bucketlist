@@ -6,6 +6,11 @@
     background-color: skyblue;
 }
 
+.grid-container{
+    display: flex;
+    justify-content: center;
+}
+
 .carousel{
     width: 100%;
 }

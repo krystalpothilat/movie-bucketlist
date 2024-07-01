@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Carousel } from 'react-bootstrap';
 import MovieCard from './MovieCard';
+import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './MovieDisplay.css'
 
@@ -10,11 +11,21 @@ const sortedTopMovies = require('./movies/sortedTopMovies');
 
 const MovieDisplay = ({ viewType, sortBy }) => {
     const moviesToShow = sortBy === 'rank' ? TopMovies : sortedTopMovies;
+    const [selectedMovie, setSelectedMovie] = useState(null);
+
+    const handleCardClick = (movie) => {
+      setSelectedMovie(movie);
+    };
+  
+    const handleClosePopUp = () => {
+      setSelectedMovie(null);
+    };
+
     return (
     <div className = "movie-display">
         {viewType === 'grid' ? (
-            <Container>
-            <Row>
+            <Container className = "grid-container">
+            <Row className = "grid-row">
             {moviesToShow.map((movie, index) => (
                 <Col key={index} sm={12} md={6} lg={4}>
                 <MovieCard
@@ -25,6 +36,7 @@ const MovieDisplay = ({ viewType, sortBy }) => {
                     rating={movie.rating}
                     year={movie.year}
                     imdbLink={movie.imdb_link}
+                    onClick={() => handleCardClick(movie)}
                 />
                 </Col>
             ))}
@@ -73,6 +85,7 @@ const MovieDisplay = ({ viewType, sortBy }) => {
                     rating={movie.rating}
                     year={movie.year}
                     imdbLink={movie.imdb_link}
+                    onClick={() => handleCardClick(movie)}
                   />
                 </div>
                 {index < moviesToShow.length - 1 && (
@@ -92,6 +105,19 @@ const MovieDisplay = ({ viewType, sortBy }) => {
             </Carousel.Item>
           ))}
         </Carousel>
+        )}
+
+        
+        {selectedMovie && (
+            <MoviePopUp
+                title={selectedMovie.title}
+                description={selectedMovie.description}
+                image={selectedMovie.image}
+                genre={selectedMovie.genre}
+                rating={selectedMovie.rating}
+                imdbLink={selectedMovie.imdb_link}
+                onClose={handleClosePopUp}
+            />
         )}
     </div>
 
