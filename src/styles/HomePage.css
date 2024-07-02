@@ -4,11 +4,26 @@
 }
 
 .form-select{
-    width: 100px;
+    width: 90px;
+    height: 40px;
 }
 
 .filter-img {
     height: 50px;
     width: 50px;
 
+}
+
+.selected-genres-display{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.genre-tags{
+    border: 2px solid gray;
+    background-color: lightgray;
+    padding: 2px;
+    margin-left: 5px;
+    margin-right: 5px;
 }

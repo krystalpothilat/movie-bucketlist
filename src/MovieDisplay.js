@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Carousel } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import MoviePopUp from './MoviePopUp';
@@ -12,6 +12,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     const [currentMovies, setCurrentMovies] = useState(AllMovies);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [loading, setLoading] = useState(false);
+    const popupRef = useRef(null);
 
     useEffect(() => {
         if (genres.length > 0) {
@@ -23,6 +24,24 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
         setCurrentMovies(sortBy === 'rank' ? AllMovies : sortMovies("all", AllMovies));
         }
     }, [genres, sortBy]);
+
+    useEffect(() => {
+        // Close dropdown when clicking outside
+        function handleClickOutside(event) {
+            if (popupRef.current && !popupRef.current.contains(event.target)) {
+                setSelectedMovie(null);
+            }
+        }
+    
+        // Add event listener to detect clicks outside the dropdown
+        document.addEventListener('mousedown', handleClickOutside);
+        
+        return () => {
+            // Clean up the event listener on component unmount
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+        }, []);
+    
 
     const fetchMoviesByGenres = (genres) => {
         setLoading(true);
@@ -152,7 +171,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
         </Carousel>
         )}
 
-        
+        <div ref={popupRef}> 
         {selectedMovie && (
             <MoviePopUp
                 title={selectedMovie.title}
@@ -165,6 +184,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
                 isAdmin={isAdmin}
             />
         )}
+        </div>
     </div>
 
 

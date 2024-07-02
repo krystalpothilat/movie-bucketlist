@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import MovieDisplay from './MovieDisplay';
 import { AuthContext } from './AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,6 +11,8 @@ const HomePage = () => {
   const [sortBy, setSortType] = useState('rank');
   const [genreTypes, setGenreTypes] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
 
   const toggleViewType = () => {
     setViewType(prevType => prevType === 'grid' ? 'carousel' : 'grid');
@@ -64,6 +66,23 @@ const HomePage = () => {
     console.log(genreTypes);
   }, [genreTypes]);
 
+  useEffect(() => {
+    // Close dropdown when clicking outside
+    function handleClickOutside(event) {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setDropdownOpen(false);
+        }
+    }
+
+    // Add event listener to detect clicks outside the dropdown
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+        // Clean up the event listener on component unmount
+        document.removeEventListener('mousedown', handleClickOutside);
+    };
+    }, []);
+
   const { isAdmin } = useContext(AuthContext);
 
   return (
@@ -87,7 +106,7 @@ const HomePage = () => {
         </select>
 
 
-        <div className="dropdown">
+        <div className="dropdown" ref={dropdownRef}>
           <button
             className="btn btn-secondary dropdown-toggle"
             type="button"
@@ -113,6 +132,14 @@ const HomePage = () => {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className = "selected-genres-display">
+            {genreTypes.length > 0 && (
+                genreTypes.map((genre, index) => (
+                    <p key={index} className="genre-tags">{genre}</p>
+                ))
+            )}
         </div>
       </div>
       <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} isAdmin = {isAdmin}/>

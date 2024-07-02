@@ -26,10 +26,10 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClos
             <button className="close-button" onClick={onClose}>X</button>
 
             <div className="pop-up-content">
-                <h2>{title}</h2>
-                <p>{description}</p>
-                <p>Genre: {genre.join(', ')}</p>
-                <p>Rating: {rating}</p>
+                <h2 className = "pop-up-title">{title}</h2>
+                <p className = "pop-up-info" id = "pop-up-desc">{description}</p>
+                <p className = "pop-up-info" id = "pop-up-genre">Genre: {genre.join(', ')}</p>
+                <p className = "pop-up-info" id = "pop-up-rating">Rating: {rating}</p>
                 <a href={imdbLink} target="_blank" rel="noopener noreferrer">IMDb Link</a>
                 <button id = "delete" onClick={handleDelete}>Delete</button>
             </div>
@@ -41,10 +41,10 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClos
         <button className="close-button" onClick={onClose}>X</button>
 
         <div className="pop-up-content">
-            <h2>{title}</h2>
-            <p>{description}</p>
-            <p>Genre: {genre.join(', ')}</p>
-            <p>Rating: {rating}</p>
+            <h2 className = "pop-up-title">{title}</h2>
+            <p className = "pop-up-info" id = "pop-up-desc">{description}</p>
+            <p className = "pop-up-info" id = "pop-up-genre">Genre: {genre.join(', ')}</p>
+            <p className = "pop-up-info" id = "pop-up-rating">Rating: {rating}</p>
             <a href={imdbLink} target="_blank" rel="noopener noreferrer">IMDb Link</a>
         </div>
     </div>

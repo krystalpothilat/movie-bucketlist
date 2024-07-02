@@ -24,11 +24,12 @@
     justify-content: center;
     align-items: center;
     background-color: yellow;
+    padding: 10%;
 }
 
 .close-button{
     position: fixed;
-    left: 0;
+    right: 0;
     top: 0;
     height: 50px;
     width: 50px;
