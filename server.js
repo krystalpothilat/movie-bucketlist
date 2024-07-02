@@ -8,7 +8,7 @@ const port = 5001;
 app.use(cors());
 app.use(express.json());
 
-const mainFilePath = path.join(__dirname, 'src', 'movies', 'TopMovies.json');
+const mainFilePath = path.join(__dirname, 'src', 'movies', 'AllMovies.json');
 
 app.post('/delete-movie', (req, res) => {
     console.log("reached");
@@ -102,9 +102,50 @@ app.post('/getMoviesByGenres', (req, res) => {
           res.json(allMovies);
     });
 
-    
-
 });
+
+function sortMoviesByTitle(movies) {
+    const sortedMovies = movies.slice().sort((a, b) => {
+      const titleA = a.title.toLowerCase();
+      const titleB = b.title.toLowerCase();
+      if (titleA < titleB) return -1;
+      if (titleA > titleB) return 1;
+      return 0;
+    });
+    return sortedMovies;
+  }
+
+app.post('/sortMovies', (req, res) => {
+    const { type, movies } = req.body;
+    if (!movies || !Array.isArray(movies)) {
+        return res.status(400).json({ error: 'Invalid or missing movies array in request body' });
+    }
+    let sortedMovies;
+    try {
+        sortedMovies = sortMoviesByTitle(movies);
+        let fileName;
+        if (type === 'current') {
+            fileName = path.resolve(__dirname,'./src/movies/sortedCurrentMovies.json');
+            console.log("sorting genre");
+        } else if (type === 'all') {
+            fileName = path.resolve(__dirname,'./src/movies/sortedAllMovies.json');
+            console.log("sorting all");
+        } else {
+            throw new Error('Invalid type specified');
+        }        
+        const fileContent = JSON.stringify(sortedMovies, null, 2);
+
+        fs.writeFileSync(fileName, fileContent, (err) => {
+            if (err) throw err;
+            console.log(`Movies have been written to ${fileName}`);
+        });
+        } catch (err) {
+        console.error(`Error sorting movies:`, err);
+        }
+
+        res.json(sortedMovies);
+});
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

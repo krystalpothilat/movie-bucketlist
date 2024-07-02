@@ -50,9 +50,6 @@ const HomePage = () => {
     { value: 'Thriller', label: 'Thriller' },
     { value: 'War', label: 'War' },
     { value: 'Western', label: 'Western' },
-
-
-
   ];
 
   const toggleDropdown = () => {
@@ -84,9 +81,9 @@ const HomePage = () => {
           onChange={handleSortTypeChange}
         >
           <optgroup label="Sort By">
-    <option value="rank">Rank</option>
-    <option value="alphabetical">Alphabetical</option>
-  </optgroup>
+            <option value="rank">Rank</option>
+            <option value="alphabetical">Alphabetical</option>
+        </optgroup>
         </select>
 
 

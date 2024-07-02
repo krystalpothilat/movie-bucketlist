@@ -5,23 +5,27 @@ import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/MovieDisplay.css'
 
-const TopMovies = require('./movies/TopMovies.json');
-const sortedTopMovies = require('./movies/sortedTopMovies.json');
-// const CurrentMovies = require('./movies/CurrentMovies.json');
+const AllMovies = require('./movies/AllMovies.json');
+const CurrentMovies = require('./movies/CurrentMovies.json');
 
 const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
-    const [currentMovies, setCurrentMovies] = useState([]);
+    const [currentMovies, setCurrentMovies] = useState(AllMovies);
     const [selectedMovie, setSelectedMovie] = useState(null);
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         if (genres.length > 0) {
             fetchMoviesByGenres(genres);
-        }else {
-            setCurrentMovies(sortBy === 'rank' ? TopMovies : sortedTopMovies);
-          }
+            if(sortBy!== 'rank'){
+                sortMovies("current", CurrentMovies);
+            }
+        } else {
+        setCurrentMovies(sortBy === 'rank' ? AllMovies : sortMovies("all", AllMovies));
+        }
     }, [genres, sortBy]);
 
     const fetchMoviesByGenres = (genres) => {
-        console.log("fetching");
+        setLoading(true);
         fetch('http://localhost:5001/getMoviesByGenres', {
             method: 'POST', // or 'GET' depending on your server implementation
             headers: {
@@ -33,12 +37,38 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
         .then(response => response.json())
         .then(data => {
           setCurrentMovies(data); 
+          setLoading(false);
         })
         .catch(error => {
           console.error('Error fetching movies:', error);
+          setLoading(false);
         });
     }
+    const sortMovies = (type, moviesToSort) => {
+        setLoading(true);
+        if (type !== 'current' && type !== 'all') {
+            console.error('Invalid type specified:', type);
+            return;
+        }
 
+        fetch('http://localhost:5001/sortMovies', {
+            method: 'POST', // or 'GET' depending on your server implementation
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ type, movies: moviesToSort })
+        })
+
+        .then(response => response.json())
+        .then(data => {
+          setCurrentMovies(data); 
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error sorting movies:', error);
+          setLoading(false);
+        });
+    }
     const handleCardClick = (movie) => {
       setSelectedMovie(movie);
     };
@@ -46,6 +76,10 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     const handleClosePopUp = () => {
       setSelectedMovie(null);
     };
+
+    if (loading) {
+        return <p>Loading...</p>; // Display a loading indicator while fetching or sorting
+    }
 
     return (
     <div className = "movie-display">
