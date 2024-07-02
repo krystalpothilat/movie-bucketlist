@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import MovieDisplay from './MovieDisplay';
+import MoviePopUp from './MoviePopUp';
 import { AuthContext } from './AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./styles/HomePage.css";
@@ -12,7 +13,8 @@ const HomePage = () => {
   const [genreTypes, setGenreTypes] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
+  const popupRef = useRef(null);
+  const [addMovieToggle, setAddMovieToggle] = useState(false);
 
   const toggleViewType = () => {
     setViewType(prevType => prevType === 'grid' ? 'carousel' : 'grid');
@@ -36,6 +38,13 @@ const HomePage = () => {
     setGenreTypes(genreTypes.filter((g) => g !== genre));
   };
 
+  const addMovieButtonClicked = () => {
+    setAddMovieToggle(!addMovieToggle);
+  };
+
+  const handleClosePopUp = () => {
+    setAddMovieToggle(false);
+  };
   const genres = [
     { value: 'Action', label: 'Action' },
     { value: 'Adventure', label: 'Adventure' },
@@ -87,7 +96,24 @@ const HomePage = () => {
     };
     }, []);
 
-  const { isAdmin } = useContext(AuthContext);
+    useEffect(() => {
+        // Close dropdown when clicking outside
+        function handleClickOutside(event) {
+            if (popupRef.current && !popupRef.current.contains(event.target)) {
+                setAddMovieToggle(false);
+            }
+        }
+    
+        // Add event listener to detect clicks outside the dropdown
+        document.addEventListener('mousedown', handleClickOutside);
+        
+        return () => {
+            // Clean up the event listener on component unmount
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const { isAdmin } = useContext(AuthContext);
 
   return (
     <div>
@@ -152,6 +178,13 @@ const HomePage = () => {
                             </div>
                         ))
                     )}
+                </div>
+                {isAdmin && <button onClick={addMovieButtonClicked}> Add Movie</button>}
+
+                <div ref={popupRef}> 
+                    {addMovieToggle && 
+                        <MoviePopUp onClick={handleClosePopUp} addMovie={true}/>
+                    }
                 </div>
             </div>
       </div>

@@ -1,6 +1,6 @@
 // import React, { useEffect, useState } from 'react';
 import './styles/MoviePopUp.css'
-const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClose, isAdmin }) => {
+const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClose, isAdmin, addMovie }) => {
 
   const handleDelete = async () => {
     try {
@@ -32,6 +32,13 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClos
                 <p className = "pop-up-info" id = "pop-up-rating">Rating: {rating}</p>
                 <a href={imdbLink} target="_blank" rel="noopener noreferrer">IMDb Link</a>
                 <button id = "delete" onClick={handleDelete}>Delete</button>
+            </div>
+        </div>
+    ) : addMovie ? (
+        <div className = "pop-up">
+            <button className="close-button" onClick={onClose}>X</button>
+            <div className="pop-up-content">
+                <input></input>
             </div>
         </div>
     ) : (

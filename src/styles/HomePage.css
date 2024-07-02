@@ -68,3 +68,21 @@ body, #root {
     font-weight: bolder;
     font-size: 30px;
 }
+
+.test{
+    background-color: blueviolet;
+}
+.pop-up{
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    width: 80%;
+    height: 80%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 5px solid purple;
+    padding: 50px;
+    background-color: plum;
+    z-index: 5;
+}

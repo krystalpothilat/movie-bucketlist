@@ -23,7 +23,7 @@ const AdminPage = () => {
     <div>
     <h1>Admin Login</h1>
     <div className = "login">
-    <label>
+        <label>
           Username: <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
         </label>
         <label>

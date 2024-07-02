@@ -54,7 +54,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
             // Clean up the event listener on component unmount
             document.removeEventListener('mousedown', handleClickOutside);
         };
-        }, []);
+    }, []);
     
 
     const fetchMoviesByGenres = (genres) => {
