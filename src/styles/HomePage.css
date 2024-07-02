@@ -1,3 +1,9 @@
+/* body {
+    background-color: #1a1a1a;
+} */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway&=swap');
+
 .filters{
     display: flex;
     flex-direction: row;
@@ -6,12 +12,17 @@
 .form-select{
     width: 90px;
     height: 40px;
+    /* font-size: 12px; */
+}
+
+.btn.btn-secondary.dropdown-toggle{
+    width: 90px;
+    height: 40px;
 }
 
 .filter-img {
-    height: 50px;
-    width: 50px;
-
+    height: 40px;
+    width: 40px;
 }
 
 .selected-genres-display{
@@ -21,9 +32,36 @@
 }
 
 .genre-tags{
+    display: flex;
+    flex-direction: row;
+    height: 40px;
     border: 2px solid gray;
     background-color: lightgray;
     padding: 2px;
     margin-left: 5px;
     margin-right: 5px;
+}
+
+.close-genre{
+    border: 0px;
+    background: lightgray;
+}
+.titles{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.title{
+    color: #ffd700;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 100px;
+    margin: 0px;
+    padding: 0px;
+}
+
+#admin-welcome{
+    font-family: 'Raleway', sans-serif;
+    font-weight: bolder;
+    font-size: 30px;
 }

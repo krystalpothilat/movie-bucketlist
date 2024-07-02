@@ -32,6 +32,10 @@ const HomePage = () => {
     console.log(genreTypes);
   }
 
+  const handleGenreTypeTagChange = (genre) => {
+    setGenreTypes(genreTypes.filter((g) => g !== genre));
+  };
+
   const genres = [
     { value: 'Action', label: 'Action' },
     { value: 'Adventure', label: 'Adventure' },
@@ -87,60 +91,69 @@ const HomePage = () => {
 
   return (
     <div>
-      <h1>Movie Bucket List</h1>
-      {isAdmin && <p>Welcome, Admin!</p>}
-      <div className="filters">
-        <img className = "filter-img" src = {grid} alt = "" onClick={toggleViewType}></img>
-        <img className = "filter-img" src = {carousel} alt = "" onClick={toggleViewType}></img>
-
-        <select
-          id="sortBySelect"
-          className="form-select"
-          value={sortBy}
-          onChange={handleSortTypeChange}
-        >
-          <optgroup label="Sort By">
-            <option value="rank">Rank</option>
-            <option value="alphabetical">Alphabetical</option>
-        </optgroup>
-        </select>
+        <div className = "header">
+            <div className = "titles">
+                <h1 className = "title">Movie Bucket List</h1>
+                {isAdmin && <p id = "admin-welcome">Welcome, Admin!</p>}
+            </div>
 
 
-        <div className="dropdown" ref={dropdownRef}>
-          <button
-            className="btn btn-secondary dropdown-toggle"
-            type="button"
-            onClick={toggleDropdown}
-          >
-            Genre
-          </button>
-          <div className={`dropdown-menu${dropdownOpen ? ' show' : ''}`}>
-            <button onClick={genreReset}> Reset</button>
-            {genres.map((genre) => (
-              <div key={genre.value} className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value={genre.value}
-                  id={`genre-${genre.value}`}
-                  checked={genreTypes.includes(genre.value)}
-                  onChange={handleGenreTypeChange}
-                />
-                <label className="form-check-label" htmlFor={`genre-${genre.value}`}>
-                  {genre.label}
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
+            <div className="filters">
+                <img className = "filter-img" src = {grid} alt = "" onClick={toggleViewType}></img>
+                <img className = "filter-img" src = {carousel} alt = "" onClick={toggleViewType}></img>
 
-        <div className = "selected-genres-display">
-            {genreTypes.length > 0 && (
-                genreTypes.map((genre, index) => (
-                    <p key={index} className="genre-tags">{genre}</p>
-                ))
-            )}
-        </div>
+                <select
+                id="sortBySelect"
+                className="form-select"
+                value={sortBy}
+                onChange={handleSortTypeChange}
+                >
+                <optgroup label="Sort By">
+                    <option value="rank">Rank</option>
+                    <option value="alphabetical">Alphabetical</option>
+                </optgroup>
+                </select>
+
+
+                <div className="dropdown" ref={dropdownRef}>
+                <button
+                    className="btn btn-secondary dropdown-toggle"
+                    type="button"
+                    onClick={toggleDropdown}
+                >
+                    Genre
+                </button>
+                <div className={`dropdown-menu${dropdownOpen ? ' show' : ''}`}>
+                    <button onClick={genreReset}> Reset</button>
+                    {genres.map((genre) => (
+                    <div key={genre.value} className="form-check">
+                        <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value={genre.value}
+                        id={`genre-${genre.value}`}
+                        checked={genreTypes.includes(genre.value)}
+                        onChange={handleGenreTypeChange}
+                        />
+                        <label className="form-check-label" htmlFor={`genre-${genre.value}`}>
+                        {genre.label}
+                        </label>
+                    </div>
+                    ))}
+                </div>
+                </div>
+
+                <div className = "selected-genres-display">
+                    {genreTypes.length > 0 && (
+                        genreTypes.map((genre, index) => (
+                            <div className="genre-tags">
+                                <button className = "close-genre" onClick={() => handleGenreTypeTagChange(genre)}> x </button>
+                                <p key={index} className = "genre-tag-name">{genre}</p>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
       </div>
       <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} isAdmin = {isAdmin}/>
     </div>

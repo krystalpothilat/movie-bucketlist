@@ -3,7 +3,7 @@
     justify-content: center;
     padding: 20px;
     width: 100vw;
-    background-color: skyblue;
+    background-color: #1a1a1a;
 }
 
 .grid-container{
@@ -70,4 +70,8 @@
   .carousel-control-prev, .carousel-control-next {
     color: black !important; /* Set the color of the controls to black */
     z-index: 3;
+}
+
+.col-lg-4.col-md-6.col-sm-12{
+    margin-bottom: 20px;
 }
