@@ -12,7 +12,21 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     const [currentMovies, setCurrentMovies] = useState(AllMovies);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [loading, setLoading] = useState(false);
+
     const popupRef = useRef(null);
+    const carouselRef = useRef(null);
+
+    const handlePrevClick = () => {
+    if (carouselRef.current) {
+        carouselRef.current.prev();
+    }
+    };
+
+    const handleNextClick = () => {
+    if (carouselRef.current) {
+        carouselRef.current.next();
+    }
+    };
 
     useEffect(() => {
         if (genres.length > 0) {
@@ -103,6 +117,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     return (
     <div className = "movie-display">
         {viewType === 'grid' ? (
+            
             <Container className = "grid-container">
             <Row className = "grid-row">
             {currentMovies.map((movie, index) => (
@@ -115,6 +130,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
                     rating={movie.rating}
                     year={movie.year}
                     imdbLink={movie.imdb_link}
+                    seen={movie.seen}
                     onClick={() => handleCardClick(movie)}
                 />
                 </Col>
@@ -123,12 +139,12 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
         </Container>
         ) : (
 
-        <Carousel slide= {false} interval={null} controls={true} wrap={false}>
+        <Carousel slide= {false} interval={null} controls={true} wrap={false} ref={carouselRef}>
           {currentMovies.map((movie, index) => (
             <Carousel.Item key={index}>
               <div className="carousel-item-container">
                 {index > 0 && (
-                  <div className="carousel-item-prev">
+                  <div className="carousel-item-prev" onClick={handlePrevClick}>
                     <MovieCard
                       title={currentMovies[index - 1].title}
                       description={currentMovies[index - 1].description}
@@ -137,6 +153,8 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
                       rating={currentMovies[index - 1].rating}
                       year={currentMovies[index - 1].year}
                       imdbLink={currentMovies[index - 1].imdb_link}
+                      seen={currentMovies[index - 1].seen}
+                      onClick={() => handlePrevClick()}
                     />
                   </div>
                 )}
@@ -149,11 +167,12 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
                     rating={movie.rating}
                     year={movie.year}
                     imdbLink={movie.imdb_link}
+                    seen={movie.seen}
                     onClick={() => handleCardClick(movie)}
                   />
                 </div>
                 {index < currentMovies.length - 1 && (
-                  <div className="carousel-item-next">
+                  <div className="carousel-item-next" onClick={handleNextClick}>
                     <MovieCard
                       title={currentMovies[index + 1].title}
                       description={currentMovies[index + 1].description}
@@ -162,6 +181,8 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
                       rating={currentMovies[index + 1].rating}
                       year={currentMovies[index + 1].year}
                       imdbLink={currentMovies[index + 1].imdb_link}
+                      seen={currentMovies[index + 1].seen}
+                      onClick={handleNextClick}
                     />
                   </div>
                 )}

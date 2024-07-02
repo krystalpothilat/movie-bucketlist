@@ -1,6 +1,9 @@
-/* body {
-    background-color: #1a1a1a;
-} */
+body, #root {
+    /* background-color: #1a1a1a; */
+    height: 100%;
+    /* overflow-y: hidden; */
+
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway&=swap');
 

@@ -11,4 +11,20 @@
     align-items: center;
 }
 
+
+.movie-card.card {
+    border: 10px solid yellow;
+    /* transition: border-color 0.3s ease; */
+}
+  
+.movie-card.seen {
+    border: 3px solid transparent; 
+    border-image-source: url('../gold.jpg'); 
+    border-image-slice: 30; /* Adjust as needed to control the size of the image */
+    border-image-repeat: round; /* Adjust to control how the image repeats */
+    transition: border-color 0.3s ease; /* Optional transition effect */
+}
+  
+  
+
   
