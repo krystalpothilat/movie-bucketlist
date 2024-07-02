@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import MovieDisplay from './MovieDisplay';
 import { AuthContext } from './AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -27,13 +27,32 @@ const HomePage = () => {
     } else {
       setGenreTypes([...genreTypes, genre]);
     }
+    console.log(genreTypes);
   }
 
   const genres = [
+    { value: 'Action', label: 'Action' },
+    { value: 'Adventure', label: 'Adventure' },
+    { value: 'Animation', label: 'Animation' },
+    { value: 'Biography', label: 'Biography' },
     { value: 'Comedy', label: 'Comedy' },
+    { value: 'Crime', label: 'Crime' },
     { value: 'Drama', label: 'Drama' },
+    { value: 'Family', label: 'Family' },
+    { value: 'Fantasy', label: 'Fantasy' },
+    { value: 'Film-Noir', label: 'Film-Noi' },
+    { value: 'History', label: 'History' },
+    { value: 'Horror', label: 'Horror' },
+    { value: 'Musical', label: 'Musical' },
+    { value: 'Mystery', label: 'Mystery' },
+    { value: 'Romance', label: 'Romance' },
+    { value: 'Sci-Fi', label: 'Sci-Fi' },
     { value: 'Thriller', label: 'Thriller' },
-    { value: 'Murder', label: 'Murder' },
+    { value: 'War', label: 'War' },
+    { value: 'Western', label: 'Western' },
+
+
+
   ];
 
   const toggleDropdown = () => {
@@ -43,6 +62,11 @@ const HomePage = () => {
   const genreReset = () => {
     setGenreTypes([]);
   }
+
+  useEffect(() => {
+    console.log(genreTypes);
+  }, [genreTypes]);
+
   const { isAdmin } = useContext(AuthContext);
 
   return (
@@ -94,7 +118,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      <MovieDisplay viewType={viewType} sortBy={sortBy} isAdmin = {isAdmin}/>
+      <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} isAdmin = {isAdmin}/>
     </div>
   );
 };

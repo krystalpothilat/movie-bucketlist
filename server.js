@@ -70,6 +70,42 @@ app.post('/delete-movie', (req, res) => {
     });
 });
 
+app.post('/getMoviesByGenres', (req, res) => {
+    const { genres } = req.body;
+    console.log(genres);
+    const movieIds= new Set();
+    let allMovies=[];
+
+    genres.forEach((genre) => {
+        const genreFileName= path.join(__dirname, 'src', 'movies', `${genre}Movies.json`);
+
+        try {
+            const genreData = fs.readFileSync(path.resolve(__dirname, genreFileName), 'utf8');
+            const moviesInGenre = JSON.parse(genreData);
+            moviesInGenre.forEach((movie) => {
+                if (!movieIds.has(movie.id)) {
+                    movieIds.add(movie.id);
+                    allMovies.push(movie);
+                }
+            });
+            const fileName = path.resolve(__dirname,'./src/movies/CurrentMovies.json');
+            const fileContent = JSON.stringify(allMovies, null, 2);
+
+            fs.writeFileSync(fileName, fileContent, (err) => {
+                if (err) throw err;
+                console.log(`Movies have been written to ${fileName}`);
+            });
+          } catch (err) {
+            console.error(`Error reading or parsing ${genre} movies:`, err);
+          }
+
+          res.json(allMovies);
+    });
+
+    
+
+});
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
