@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Carousel } from 'react-bootstrap';
+import { Container, Row, Col, Carousel, FormControl } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,6 +12,9 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     const [currentMovies, setCurrentMovies] = useState(AllMovies);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchBool, setSearchBool] = useState(false);
+
 
     const popupRef = useRef(null);
     const carouselRef = useRef(null);
@@ -110,12 +113,31 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
       setSelectedMovie(null);
     };
 
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        setSearchBool(query.length > 0);
+    };
+
+    const filteredMovies = currentMovies.filter(movie =>
+        movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+
     if (loading) {
         return <p>Loading...</p>; // Display a loading indicator while fetching or sorting
     }
 
     return (
     <div className = "movie-display">
+        <FormControl
+                type="text"
+                placeholder="Search for a movie..."
+                className="search-bar"
+                value={searchQuery}
+                onChange={handleSearchChange}
+            />
+
         {viewType === 'grid' ? (
             
             <Container className = "grid-container">

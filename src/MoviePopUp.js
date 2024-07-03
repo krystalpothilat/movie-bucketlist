@@ -32,6 +32,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClos
                 <p className = "pop-up-info" id = "pop-up-rating">Rating: {rating}</p>
                 <a href={imdbLink} target="_blank" rel="noopener noreferrer">IMDb Link</a>
                 <button id = "delete" onClick={handleDelete}>Delete</button>
+                <button id = "seen" onClick={handleDelete}>Seen</button>
             </div>
         </div>
     ) : addMovie ? (
