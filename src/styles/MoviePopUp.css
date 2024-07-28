@@ -7,10 +7,16 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 5px solid purple;
+    border: 5px solid #ffd700;
+    background-color: rgb(233, 227, 227);
+    border-radius: 30px;
     padding: 50px;
-    background-color: plum;
+    box-sizing: border-box;
     z-index: 5;
+}
+
+.pop-up-container{
+    border: 10px solid;
 }
 
 #add-movie-popup{
@@ -22,19 +28,51 @@
     width: 100%;
     height: 100%;
     border: 0;
+    padding: 0px;
+    margin: 0px;
+    background-color: transparent;
 }
+
 .pop-up-image{
     width: auto;
     height: 100%;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
 
 .pop-up-content{
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: yellow;
-    padding: 10%;
+    background-color: white;
+    padding:8%;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.pop-up-title{
+    font-weight: bold;
+    font-size: 3vw;
+    margin: 20px;
+    margin-bottom: 50px;
+    /* white-space: nowrap; */
+}
+.pop-up-info{
+    width: 100%;
+}
+
+.label {
+    font-weight: bold; /* Bold the label text */
+}
+
+#imdb-link{
+    font-weight: bold;
+    text-decoration: none;
+    color: #dbc33b;
+    cursor: pointer;
+    width: 100%;
 }
 
 .close-button{
@@ -42,17 +80,56 @@
     right: 0;
     top: 0;
     height: 50px;
-    width: 50px;
+    width: 50px; 
+    border: 0px;
+    background-color: transparent;
+    font-weight: bold;
 }
 
-button #delete{
+.delete-button{
     left: 0;
     top: 0;
     height: 50px;
-    width: 50px;
+    width: 60px;
+    background-color: rgb(243, 102, 102);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    border: 2px solid rgb(203, 3, 3);
+    color: rgb(115, 5, 5);
+    font-weight: bold;
 }
 
 .new-movie-input-container{
     display: flex;
     flex-direction: row;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.new-movie-input-container input {
+    width: 95%;
+}
+
+
+.seen-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 40%;
+    margin: 15px;
+}
+
+.seenButton{
+    width: 50px;
+    margin: 0px 5px;
+    font-weight: normal;
+    border-radius: 8px;
+}
+
+.chosen{
+    border: 2px solid green;
+    font-weight: bold;
 }

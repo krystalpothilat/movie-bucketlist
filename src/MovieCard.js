@@ -15,8 +15,7 @@ const MovieCard = ({ title, image, description, genre, rating, imdbLink, seen, o
     <Card className={`movie-card ${isClicked ? 'clicked' : ''} ${seen===true ? 'seen' : ''}`} onClick={handleCardClick} style={{ width: '18rem' }}>
       <Card.Img variant="top" src={image} alt={title} />
       <Card.Body>
-        <Card.Title>{title}</Card.Title>
-        {/* <Card.Text>{description}</Card.Text> */}
+        <Card.Title className="movie-title">{title}</Card.Title>
       </Card.Body>
     </Card>
   );

@@ -9,8 +9,6 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
     const [currentMovies, setCurrentMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchBool, setSearchBool] = useState(false);
 
 
     const popupRef = useRef(null);
@@ -85,26 +83,9 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
       getMovies(genres, sortBy);
     };
 
-    const handleSearchChange = (event) => {
-        const query = event.target.value;
-        setSearchQuery(query);
-        setSearchBool(query.length > 0);
-    };
-
-    const filteredMovies = currentMovies.filter(movie =>
-        movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
 
     return (
     <div className = "movie-display">
-        {/* <FormControl
-                type="text"
-                placeholder="Search for a movie..."
-                className="search-bar"
-                value={searchQuery}
-                onChange={handleSearchChange}
-            /> */}
 
         {viewType === 'grid' ? (
             
@@ -182,7 +163,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
         </Carousel>
         )}
 
-        <div ref={popupRef}> 
+        <div id = "pop-up-container" ref={popupRef}> 
         {selectedMovie && (
             <MoviePopUp
                 title={selectedMovie.title}
@@ -191,6 +172,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
                 genre={selectedMovie.genre}
                 rating={selectedMovie.rating}
                 imdbLink={selectedMovie.imdb_link}
+                seen={selectedMovie.seen}
                 onClose={handleClosePopUp}
                 isAdmin={isAdmin}
             />

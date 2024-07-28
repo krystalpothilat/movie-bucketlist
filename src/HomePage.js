@@ -124,13 +124,16 @@ const HomePage = () => {
             <div className = "titles">
                 <h1 className = "title">Movie Bucket List</h1>
                 {isAdmin && <p id = "admin-welcome">Welcome, Admin!</p>}
-                <FormControl
-                    type="text"
-                    placeholder="Search for a movie..."
-                    className="search-bar"
-                    value={searchTitle}
-                    onChange={(e) => setSearchTitle(e.target.value)}
-                />
+                <div className="search-bar-container">
+                    <FormControl
+                        type="text"
+                        placeholder="Search for a movie..."
+                        className="search-bar"
+                        value={searchTitle}
+                        onChange={(e) => setSearchTitle(e.target.value)}
+                    />
+                    <button id="clear-search" onClick = {() => setSearchTitle('')}> × </button>
+                </div>
 
             </div>
 
@@ -193,7 +196,7 @@ const HomePage = () => {
                     )}
                 </div>
 
-                {isAdmin && <button onClick={addMovieButtonClicked}> Add Movie</button>}
+                {isAdmin && <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>}
 
                 <div ref={popupRef}> 
                     {addMovieToggle && 
@@ -202,7 +205,7 @@ const HomePage = () => {
                 </div>
             </div>
       </div>
-      <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} isAdmin = {isAdmin}/>
+      <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} isAdmin = {isAdmin} />
     </div>
   );
 };

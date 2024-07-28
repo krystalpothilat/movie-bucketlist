@@ -96,11 +96,7 @@ app.post('/update-seen', async (req, res) => {
 
         const result = await Movie.updateOne({ title: title }, { $set: { seen: updatedSeen } });
 
-        if (result.modifedCount === 1) {
-            res.status(200).send('Movie updated successfully');
-        } else {
-            res.status(304).send('No changes made');
-        }
+        res.status(200).send('Movie updated successfully');
     } catch (err) {
         res.status(500).send('Error updating moviee');
       }
@@ -110,6 +106,7 @@ app.post('/update-seen', async (req, res) => {
 app.post('/add-movie', async (req, res) => {
     try {
         const movieData = req.body;
+        console.log(movieData);
         const movie = new Movie(movieData); // Create a new Movie instance
         await movie.save(); // Save to database
         res.status(201).send('Movie added successfully');

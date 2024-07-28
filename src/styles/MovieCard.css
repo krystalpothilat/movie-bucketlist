@@ -3,6 +3,20 @@
     display: flex;  
     justify-content: center;
     align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.movie-title.card-title.h5 {
+    margin: 0;
+    padding: 0;
+    font-size: 1.2rem; 
+    transition: font-size 0.3s ease; 
+    line-height: 1.2; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: normal;
 }
 
 .col-lg-4.col-md-6.col-sm-12{
@@ -11,21 +25,25 @@
     align-items: center;
 }
 
-
 .movie-card.card {
     width: 100%;
-    border: 10px solid green;
     border-radius: 10px;
+    overflow: hidden;
+    border: 10px solid transparent;
     /* transition: border-color 0.3s ease; */
 }
-  
+
+img.card-img-top{
+    border-radius: 0px;
+}
+
 .movie-card.seen {
     border: 10px solid transparent; 
-    border-radius: 10px;
     border-image-source: url('../imgs/gold.jpg'); 
-    border-image-slice: 30; /* Adjust as needed to control the size of the image */
-    border-image-repeat: round; /* Adjust to control how the image repeats */
-    transition: border-color 0.3s ease; /* Optional transition effect */
+    border-image-slice: 30; 
+    border-image-repeat: stretch; 
+    overflow: hidden;
+    transition: border-color 0.3s ease; 
 }
   
   
