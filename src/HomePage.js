@@ -136,9 +136,10 @@ const HomePage = () => {
 
 
 
-            <div className="filters">
-                <img className = "filter-img" id = "grid" src = {grid} alt = "" onClick={toggleViewType}></img>
-                <img className = "filter-img" id = "carousel" src = {carousel} alt = "" onClick={toggleViewType}></img>
+            <div className="filters-container">
+                <div className="filters-container" id="imgs-buttons-filters">
+                <img className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`} id = "grid" src = {grid} alt = "" onClick={toggleViewType}></img>
+                <img className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`} id = "carousel" src = {carousel} alt = "" onClick={toggleViewType}></img>
 
                 <select
                 id="sortBySelect"
@@ -180,7 +181,7 @@ const HomePage = () => {
                     ))}
                 </div>
                 </div>
-
+                </div>
                 <div className = "selected-genres-display">
                     {genreTypes.length > 0 && (
                         genreTypes.map((genre, index) => (

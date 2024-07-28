@@ -7,15 +7,21 @@ body, #root {
 
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway&=swap');
 
-.filters{
+.filters-container{
     display: flex;
     flex-direction: row;
+}
+
+#imgs-buttons-filters{
+    width: 25vw;
+    justify-content: space-around;
 }
 
 .form-select{
     width: 90px;
     height: 40px;
     /* font-size: 12px; */
+    border-color: black;
 }
 
 .btn.btn-secondary.dropdown-toggle{
@@ -36,18 +42,32 @@ body, #root {
 
 .genre-tags{
     display: flex;
-    flex-direction: row;
     height: 40px;
     border: 2px solid gray;
     background-color: lightgray;
-    padding: 2px;
+    padding: 5px;
     margin-left: 5px;
     margin-right: 5px;
+    border-radius: 4px; 
 }
 
-.close-genre{
-    border: 0px;
+.genre-tag-name{
+    height: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    padding-left: 3px;
+}
+
+.close-genre {
+    border: none; 
     background: lightgray;
+    padding: 0;
+    cursor: pointer; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    font-weight: bold;
 }
 .titles{
     display: flex;
@@ -72,6 +92,7 @@ body, #root {
 .test{
     background-color: blueviolet;
 }
+
 .pop-up{
     display: flex;
     flex-direction: row;
@@ -86,3 +107,16 @@ body, #root {
     background-color: plum;
     z-index: 5;
 }
+
+.filter-img {
+    cursor: pointer;
+  }
+  
+  .filter-img.selected {
+    border: 2px solid blue; /* Change color and size as needed */
+  }
+
+  .btn.btn-secondary.dropdown-toggle{
+    background-color: white;
+    color: black;
+  }

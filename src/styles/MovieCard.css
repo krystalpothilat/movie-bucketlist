@@ -14,12 +14,13 @@
 
 .movie-card.card {
     border: 10px solid green;
-    border-radius: 15px;
+    border-radius: 10px;
     /* transition: border-color 0.3s ease; */
 }
   
 .movie-card.seen {
     border: 10px solid transparent; 
+    border-radius: 10px;
     border-image-source: url('../imgs/gold.jpg'); 
     border-image-slice: 30; /* Adjust as needed to control the size of the image */
     border-image-repeat: round; /* Adjust to control how the image repeats */
