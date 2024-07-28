@@ -53,7 +53,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
             if (response.ok) {
                 console.log("updated");
                 seen = !seen;
-                // onClose(); // close the popup and refresh the movie list
+                onClose(); // close the popup and refresh the movie list
             } else {
                 const errorText = await response.text();
                 console.error('Error updating seen for movie:', errorText);

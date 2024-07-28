@@ -30,7 +30,7 @@
     border-radius: 10px;
     overflow: hidden;
     border: 10px solid transparent;
-    /* transition: border-color 0.3s ease; */
+    transition: border-color 0.3s ease;
 }
 
 img.card-img-top{

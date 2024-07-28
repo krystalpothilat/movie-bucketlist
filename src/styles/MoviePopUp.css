@@ -133,3 +133,7 @@
     border: 2px solid green;
     font-weight: bold;
 }
+
+.add-movie-confirm-button{
+    border-radius: 5px;
+}
