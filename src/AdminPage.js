@@ -3,21 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import "./styles/AdminPage.css";
 const AdminPage = () => {
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
+    const { isAuthenticated, login } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [loginStatus, setLoginStatus] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [loginStatus, setLoginStatus] = useState('');
 
-  const handleLogin = () => {
-    if (username === 'admin' && password === 'password') {
-        login(); // Assuming login function sets authentication status in AuthContext
-        navigate('/'); // Redirect to homepage after successful login
-      } else {
-        setLoginStatus('Invalid login'); // Display error message for invalid login
-      }
-  };
+    const handleLogin = () => {
+        if (username && password) {
+            login(username, password); // Pass credentials to login function
+            if (isAuthenticated) {
+                navigate('/'); // Redirect to homepage after successful login
+            } else {
+                setLoginStatus('Invalid login'); // Display error message for invalid login
+            }
+        } else {
+            setLoginStatus('Please enter username and password');
+        }
+    };
 
   return (
     <div>

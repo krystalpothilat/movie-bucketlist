@@ -131,3 +131,10 @@ body, #root {
     background-color: transparent;
     border: 0px;
 }
+
+#admin-logout{
+    position: fixed;
+    top: 0;
+    right: 0;
+    font-weight: bold;
+}

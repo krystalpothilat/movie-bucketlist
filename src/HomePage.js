@@ -116,11 +116,17 @@ const HomePage = () => {
         };
     }, []);
 
-    const { isAdmin } = useContext(AuthContext);
+    const { isAdmin, logout } = useContext(AuthContext);
+    
+    const handleLogOut = () => {
+        logout();
+        window.location.href = '/';
+    }
 
   return (
     <div>
         <div className = "header">
+        {isAdmin && <button id = "admin-logout" onClick={handleLogOut} > Log Out</button>}
             <div className = "titles">
                 <h1 className = "title">Movie Bucket List</h1>
                 {isAdmin && <p id = "admin-welcome">Welcome, Admin!</p>}
