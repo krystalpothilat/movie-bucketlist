@@ -5,7 +5,7 @@ import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/MovieDisplay.css'
 
-const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
+const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
     const [currentMovies, setCurrentMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -29,8 +29,10 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     };
 
     useEffect(() => {
-        getMovies(genres, sortBy);
-    }, [genres, sortBy]);
+        console.log('use effect, getting movies');
+        console.log('search title is ', searchTitle);
+        getMovies(genres, sortBy, searchTitle);
+    }, [genres, sortBy, searchTitle]);
 
     useEffect(() => {
         // Close dropdown when clicking outside
@@ -50,14 +52,14 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     }, []);
     
 
-    const getMovies = (genres, sortBy) => {
+    const getMovies = (genres, sortBy, searchTitle) => {
         setLoading(true);
         fetch('http://localhost:5001/get-movies', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ genres, sortBy })
+            body: JSON.stringify({ genres, sortBy, searchTitle })
         })
 
         .then(response => response.json())

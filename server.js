@@ -24,23 +24,34 @@ db.once('open', () => {
 
 
 app.post('/get-movies', async (req, res) => {
-    const { genres, sortBy } = req.body;
+    const { genres, sortBy, searchTitle } = req.body;
     console.log('genres are :', genres);
+    console.log('search title is :', searchTitle);
     try{
         let query = {}
         if(genres && genres.length > 0){ //query for db if looking for specific genre
             query.genre = { $in: genres };
         }
+        
+        //if searchTitle is provided, then query will be title and not genres
+        if (searchTitle && searchTitle.trim()) {
+            query.title = { $regex: new RegExp(searchTitle.trim(), 'i') };
+        }
 
         let sortOrder = {};
-        if(sortBy){
-            if(sortBy==='rank'){
-                sortOrder.rank = 1 //by rank
-                sortOrder.title = 1;
+        if (searchTitle) {
+            sortOrder.title = 1;
+        } else if (sortBy) {
+            if (sortBy === 'rank') {
+                sortOrder.rank = 1; 
+                sortOrder.title = 1; 
             } else {
-                sortOrder.title = 1; //alphabetical
+                sortOrder.title = 1; 
             }
         }
+
+        console.log('Constructed query:', JSON.stringify(query));
+
 
         const movies = await Movie.find(query).sort(sortOrder);
         let sortedMovies = movies;

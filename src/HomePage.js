@@ -1,4 +1,5 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, } from 'react';
+import {FormControl } from 'react-bootstrap';
 import MovieDisplay from './MovieDisplay';
 import MoviePopUp from './MoviePopUp';
 import { AuthContext } from './AuthContext';
@@ -15,6 +16,7 @@ const HomePage = () => {
   const dropdownRef = useRef(null);
   const popupRef = useRef(null);
   const [addMovieToggle, setAddMovieToggle] = useState(false);
+  const [searchTitle , setSearchTitle] = useState('');
 
   const toggleViewType = () => {
     setViewType(prevType => prevType === 'grid' ? 'carousel' : 'grid');
@@ -122,7 +124,16 @@ const HomePage = () => {
             <div className = "titles">
                 <h1 className = "title">Movie Bucket List</h1>
                 {isAdmin && <p id = "admin-welcome">Welcome, Admin!</p>}
+                <FormControl
+                    type="text"
+                    placeholder="Search for a movie..."
+                    className="search-bar"
+                    value={searchTitle}
+                    onChange={(e) => setSearchTitle(e.target.value)}
+                />
+
             </div>
+
 
 
             <div className="filters">
@@ -180,6 +191,7 @@ const HomePage = () => {
                         ))
                     )}
                 </div>
+
                 {isAdmin && <button onClick={addMovieButtonClicked}> Add Movie</button>}
 
                 <div ref={popupRef}> 
@@ -189,7 +201,7 @@ const HomePage = () => {
                 </div>
             </div>
       </div>
-      <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} isAdmin = {isAdmin}/>
+      <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} isAdmin = {isAdmin}/>
     </div>
   );
 };
