@@ -4,8 +4,8 @@ import MoviePopUp from './MoviePopUp';
 import { AuthContext } from './AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./styles/HomePage.css";
-import grid from "./grid.png";
-import carousel from "./carousel.png";
+import grid from "./imgs/grid.png";
+import carousel from "./imgs/carousel.png";
 
 const HomePage = () => {
   const [viewType, setViewType] = useState('grid');
@@ -79,21 +79,21 @@ const HomePage = () => {
     console.log(genreTypes);
   }, [genreTypes]);
 
-  useEffect(() => {
-    // Close dropdown when clicking outside
-    function handleClickOutside(event) {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setDropdownOpen(false);
+    useEffect(() => {
+        // Close dropdown when clicking outside
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownOpen(false);
+            }
         }
-    }
 
-    // Add event listener to detect clicks outside the dropdown
-    document.addEventListener('mousedown', handleClickOutside);
-    
-    return () => {
-        // Clean up the event listener on component unmount
-        document.removeEventListener('mousedown', handleClickOutside);
-    };
+        // Add event listener to detect clicks outside the dropdown
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            // Clean up the event listener on component unmount
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     useEffect(() => {

@@ -2,21 +2,48 @@
 import './styles/MoviePopUp.css'
 const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClose, isAdmin, addMovie }) => {
 
-  const handleDelete = async () => {
-    try {
-        await fetch('http://localhost:5001/delete-movie', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ title}),
-        });
+    const deleteMovie = async () => {
+        try {
+            const response = await fetch('http://localhost:5001/delete-movie', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title}),
+            });
+            if (response.ok) {
+                console.log("deleted");
+                onClose(); // close the popup and refresh the movie list
+            } else {
+                const errorText = await response.text();
+                console.error('Error deleting movie:', errorText);
+            }
+        } catch (error) {
+            console.error('Error deleting movie:', error);
+        }
+    };
 
-        onClose(); // Close popup or refresh the movie list
-    } catch (error) {
-        console.error('Error deleting movie:', error);
-    }
-};
+    const updateSeen = async () => {
+        try {
+            const response = await fetch('http://localhost:5001/update-seen', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title }),
+            });
+            if (response.ok) {
+                console.log("updated");
+                onClose(); // close the popup and refresh the movie list
+            } else {
+                const errorText = await response.text();
+                console.error('Error updating seen for movie:', errorText);
+            }
+        } catch (error) {
+            console.error('Error updating seen for movie:', error);
+        }
+    };
+
 
   return (
     isAdmin ? (
@@ -31,8 +58,8 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, onClos
                 <p className = "pop-up-info" id = "pop-up-genre">Genre: {genre.join(', ')}</p>
                 <p className = "pop-up-info" id = "pop-up-rating">Rating: {rating}</p>
                 <a href={imdbLink} target="_blank" rel="noopener noreferrer">IMDb Link</a>
-                <button id = "delete" onClick={handleDelete}>Delete</button>
-                <button id = "seen" onClick={handleDelete}>Seen</button>
+                <button id = "delete" onClick={deleteMovie}>Delete</button>
+                <button id = "seen" onClick={updateSeen}>Seen</button>
             </div>
         </div>
     ) : addMovie ? (

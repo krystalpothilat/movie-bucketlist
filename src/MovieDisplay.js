@@ -5,11 +5,8 @@ import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/MovieDisplay.css'
 
-const AllMovies = require('./movies/AllMovies.json');
-const CurrentMovies = require('./movies/CurrentMovies.json');
-
 const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
-    const [currentMovies, setCurrentMovies] = useState(AllMovies);
+    const [currentMovies, setCurrentMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -32,14 +29,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     };
 
     useEffect(() => {
-        if (genres.length > 0) {
-            fetchMoviesByGenres(genres);
-            if(sortBy!== 'rank'){
-                sortMovies("current", CurrentMovies);
-            }
-        } else {
-        setCurrentMovies(sortBy === 'rank' ? AllMovies : sortMovies("all", AllMovies));
-        }
+        getMovies(genres, sortBy);
     }, [genres, sortBy]);
 
     useEffect(() => {
@@ -60,19 +50,21 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     }, []);
     
 
-    const fetchMoviesByGenres = (genres) => {
+    const getMovies = (genres, sortBy) => {
         setLoading(true);
-        fetch('http://localhost:5001/getMoviesByGenres', {
-            method: 'POST', // or 'GET' depending on your server implementation
+        fetch('http://localhost:5001/get-movies', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ genres })
+            body: JSON.stringify({ genres, sortBy })
         })
 
         .then(response => response.json())
         .then(data => {
           setCurrentMovies(data); 
+          console.log('got movies');
+          console.log(data);
           setLoading(false);
         })
         .catch(error => {
@@ -80,37 +72,15 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
           setLoading(false);
         });
     }
-    const sortMovies = (type, moviesToSort) => {
-        setLoading(true);
-        if (type !== 'current' && type !== 'all') {
-            console.error('Invalid type specified:', type);
-            return;
-        }
+    
 
-        fetch('http://localhost:5001/sortMovies', {
-            method: 'POST', // or 'GET' depending on your server implementation
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ type, movies: moviesToSort })
-        })
-
-        .then(response => response.json())
-        .then(data => {
-          setCurrentMovies(data); 
-          setLoading(false);
-        })
-        .catch(error => {
-          console.error('Error sorting movies:', error);
-          setLoading(false);
-        });
-    }
     const handleCardClick = (movie) => {
       setSelectedMovie(movie);
     };
   
     const handleClosePopUp = () => {
       setSelectedMovie(null);
+      getMovies(genres, sortBy);
     };
 
     const handleSearchChange = (event) => {
@@ -124,19 +94,15 @@ const MovieDisplay = ({ viewType, sortBy, genres, isAdmin }) => {
     );
 
 
-    if (loading) {
-        return <p>Loading...</p>; // Display a loading indicator while fetching or sorting
-    }
-
     return (
     <div className = "movie-display">
-        <FormControl
+        {/* <FormControl
                 type="text"
                 placeholder="Search for a movie..."
                 className="search-bar"
                 value={searchQuery}
                 onChange={handleSearchChange}
-            />
+            /> */}
 
         {viewType === 'grid' ? (
             

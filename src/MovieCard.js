@@ -12,7 +12,7 @@ const MovieCard = ({ title, image, description, genre, rating, imdbLink, seen, o
   }
 
   return (
-    <Card className={`movie-card ${isClicked ? 'clicked' : ''} ${seen==='no' ? 'seen' : ''}`} onClick={handleCardClick} style={{ width: '18rem' }}>
+    <Card className={`movie-card ${isClicked ? 'clicked' : ''} ${seen===true ? 'seen' : ''}`} onClick={handleCardClick} style={{ width: '18rem' }}>
       <Card.Img variant="top" src={image} alt={title} />
       <Card.Body>
         <Card.Title>{title}</Card.Title>

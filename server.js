@@ -4,147 +4,91 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 const port = 5001;
+const mongoose = require('mongoose');
+require('dotenv').config();
+const {getMovies} = require('./MovieRoutes.js');
+const Movie = require('./src/models/Movie.js');
 
 app.use(cors());
 app.use(express.json());
 
-const mainFilePath = path.join(__dirname, 'src', 'movies', 'AllMovies.json');
+// MongoDB Connection
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, dbName: 'Movie-Bucketlist'});
 
-app.post('/delete-movie', (req, res) => {
-    console.log("reached");
-    const { title } = req.body;
-    let genres = [];
+const db = mongoose.connection;
 
-    console.log(title);
-    fs.readFile(mainFilePath, 'utf8', (err, data) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Error reading file');
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+  console.log('Connected to MongoDB');
+});
+
+
+app.post('/get-movies', async (req, res) => {
+    const { genres, sortBy } = req.body;
+    console.log('genres are :', genres);
+    try{
+        let query = {}
+        if(genres && genres.length > 0){ //query for db if looking for specific genre
+            query.genre = { $in: genres };
         }
 
-        let movies = JSON.parse(data);
-        const movieToDelete = movies.find(movie => movie.title === title);
-        if (!movieToDelete) {
+        let sortOrder = {};
+        if(sortBy){
+            if(sortBy==='rank'){
+                sortOrder.rank = 1 //by rank
+            } else {
+                sortOrder.title = 1; //alphabetical
+            }
+        }
+
+        const movies = await Movie.find(query).sort(sortOrder);
+        res.json(movies);
+    } catch (err) {
+        res.status(500).send('Error fetching movies');
+      }
+
+});
+
+app.post('/delete-movie', async (req, res) => {
+    const { title } = req.body;
+    try{
+
+        const result = await Movie.deleteOne({title: title});
+        if (result.deletedCount === 1) {
+            res.status(200).send('Movie deleted successfully');
+        } 
+    } catch (err) {
+        res.status(500).send('Error fetching movies');
+      }
+
+});
+
+app.post('/update-seen', async (req, res) => {
+    const { title } = req.body;
+    try{
+
+        const movie = await Movie.findOne({ title: title });
+
+        if (!movie) {
             return res.status(404).send('Movie not found');
         }
-        genres = movieToDelete.genre;
-        movies = movies.filter(movie => movie.title !== title);
-        const updatedData = JSON.stringify(movies, null, 2);
 
-        fs.writeFile(mainFilePath, updatedData, 'utf8', err => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Error writing file');
-            }
+        const updatedSeen = !movie.seen;
 
-            // Delete from genre-specific files
-            let deleteCount = 0;
-            const totalGenres = genres.length;
+        const result = await Movie.updateOne({ title: title }, { $set: { seen: updatedSeen } });
 
-            genres.forEach(genre => {
-                const genreFilePath = path.join(__dirname, 'src', 'movies', `${genre}Movies.json`);
-                fs.readFile(genreFilePath, 'utf-8', (err, data) => {
-                    if (err) {
-                        console.error(err);
-                        return res.status(500).send('Error reading file');
-                    }
-            
-                    let genreMovies = JSON.parse(data);
-                    genreMovies = genreMovies.filter(movie => movie.title !== title);
-                    const updatedGenreData = JSON.stringify(genreMovies, null, 2);
-            
-                    fs.writeFile(genreFilePath, updatedGenreData, 'utf8', err => {
-                        if (err) {
-                            console.error(err);
-                            return res.status(500).send('Error writing file');
-                        }
-
-                        deleteCount++;
-                        if (deleteCount === totalGenres) {
-                            res.send('Movie deleted successfully');
-                        }
-                    });
-                });
-            });
-        });
-    });
-});
-
-app.post('/getMoviesByGenres', (req, res) => {
-    const { genres } = req.body;
-    console.log(genres);
-    const movieIds= new Set();
-    let allMovies=[];
-
-    genres.forEach((genre) => {
-        const genreFileName= path.join(__dirname, 'src', 'movies', `${genre}Movies.json`);
-
-        try {
-            const genreData = fs.readFileSync(path.resolve(__dirname, genreFileName), 'utf8');
-            const moviesInGenre = JSON.parse(genreData);
-            moviesInGenre.forEach((movie) => {
-                if (!movieIds.has(movie.id)) {
-                    movieIds.add(movie.id);
-                    allMovies.push(movie);
-                }
-            });
-            const fileName = path.resolve(__dirname,'./src/movies/CurrentMovies.json');
-            const fileContent = JSON.stringify(allMovies, null, 2);
-
-            fs.writeFileSync(fileName, fileContent, (err) => {
-                if (err) throw err;
-                console.log(`Movies have been written to ${fileName}`);
-            });
-          } catch (err) {
-            console.error(`Error reading or parsing ${genre} movies:`, err);
-          }
-
-          res.json(allMovies);
-    });
-
-});
-
-function sortMoviesByTitle(movies) {
-    const sortedMovies = movies.slice().sort((a, b) => {
-      const titleA = a.title.toLowerCase();
-      const titleB = b.title.toLowerCase();
-      if (titleA < titleB) return -1;
-      if (titleA > titleB) return 1;
-      return 0;
-    });
-    return sortedMovies;
-  }
-
-app.post('/sortMovies', (req, res) => {
-    const { type, movies } = req.body;
-    if (!movies || !Array.isArray(movies)) {
-        return res.status(400).json({ error: 'Invalid or missing movies array in request body' });
-    }
-    let sortedMovies;
-    try {
-        sortedMovies = sortMoviesByTitle(movies);
-        let fileName;
-        if (type === 'current') {
-            fileName = path.resolve(__dirname,'./src/movies/sortedCurrentMovies.json');
-            console.log("sorting genre");
-        } else if (type === 'all') {
-            fileName = path.resolve(__dirname,'./src/movies/sortedAllMovies.json');
-            console.log("sorting all");
+        if (result.modifedCount === 1) {
+            res.status(200).send('Movie updated successfully');
         } else {
-            throw new Error('Invalid type specified');
-        }        
-        const fileContent = JSON.stringify(sortedMovies, null, 2);
-
-        fs.writeFileSync(fileName, fileContent, (err) => {
-            if (err) throw err;
-            console.log(`Movies have been written to ${fileName}`);
-        });
-        } catch (err) {
-        console.error(`Error sorting movies:`, err);
+            res.status(304).send('No changes made');
         }
+    } catch (err) {
+        res.status(500).send('Error updating moviee');
+      }
 
-        res.json(sortedMovies);
 });
+
+
 
 
 app.listen(port, () => {
