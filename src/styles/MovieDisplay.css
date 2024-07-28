@@ -11,6 +11,16 @@
 .grid-container{
     display: flex;
     justify-content: center;
+    flex-wrap: wrap; /* Ensure cards wrap */
+    gap: 20px; 
+}
+
+.grid-row {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Center items horizontally */
+    margin: 0 auto; /* Center the row in the container */
 }
 
 .carousel{
