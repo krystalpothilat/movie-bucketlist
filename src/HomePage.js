@@ -117,7 +117,7 @@ const HomePage = () => {
     }, []);
 
     const { isAdmin, logout } = useContext(AuthContext);
-    
+
     const handleLogOut = () => {
         logout();
         window.location.href = '/';
@@ -129,7 +129,7 @@ const HomePage = () => {
         {isAdmin && <button id = "admin-logout" onClick={handleLogOut} > Log Out</button>}
             <div className = "titles">
                 <h1 className = "title">Movie Bucket List</h1>
-                {isAdmin && <p id = "admin-welcome">Welcome, Admin!</p>}
+                {/* {isAdmin && <p id = "admin-welcome">Welcome, Admin!</p>} */}
                 <div className="search-bar-container">
                     <FormControl
                         type="text"

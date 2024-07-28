@@ -39,9 +39,9 @@ img.card-img-top{
 
 .movie-card.seen {
     border: 10px solid transparent; 
-    border-image-source: url('../imgs/gold.jpg'); 
-    border-image-slice: 30; 
-    border-image-repeat: stretch; 
+    border-image-source: url('../imgs/gold3.jpg'); 
+    border-image-slice: 50; 
+    border-image-repeat: round; 
     overflow: hidden;
     transition: border-color 0.3s ease; 
 }
