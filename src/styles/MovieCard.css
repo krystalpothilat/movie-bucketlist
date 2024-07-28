@@ -31,6 +31,7 @@
     overflow: hidden;
     border: 10px solid transparent;
     transition: border-color 0.3s ease;
+    cursor: pointer;
 }
 
 img.card-img-top{

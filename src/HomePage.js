@@ -212,6 +212,11 @@ const HomePage = () => {
             </div>
       </div>
       <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} isAdmin = {isAdmin} />
+    
+      <footer className="footer">
+        <p>&copy; {new Date().getFullYear()} Movie Bucket List. All rights reserved.</p>
+        <p> Created by <a href="https://www.linkedin.com/in/krystalpothilat" target="_blank" rel="noopener noreferrer" id="linked-in-tag" >Krystal Pothilat</a> </p>
+      </footer>
     </div>
   );
 };

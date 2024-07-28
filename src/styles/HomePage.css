@@ -22,6 +22,7 @@ body, #root {
     height: 40px;
     /* font-size: 12px; */
     border-color: black;
+    cursor: pointer;
 }
 
 .btn.btn-secondary.dropdown-toggle{
@@ -137,4 +138,19 @@ body, #root {
     top: 0;
     right: 0;
     font-weight: bold;
+}
+
+.footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #1a1a1a;
+    color: white;
+    line-height: 0.75;
+}
+#linked-in-tag{
+    color: white;
+    /* text-decoration: none; */
+    cursor: pointer;
 }
