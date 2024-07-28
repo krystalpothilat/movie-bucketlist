@@ -36,13 +36,21 @@ app.post('/get-movies', async (req, res) => {
         if(sortBy){
             if(sortBy==='rank'){
                 sortOrder.rank = 1 //by rank
+                sortOrder.title = 1;
             } else {
                 sortOrder.title = 1; //alphabetical
             }
         }
 
         const movies = await Movie.find(query).sort(sortOrder);
-        res.json(movies);
+        let sortedMovies = movies;
+        if (sortBy === 'rank') {
+            const rankedMovies = movies.filter(movie => movie.rank != null);
+            const unrankedMovies = movies.filter(movie => movie.rank == null);
+            sortedMovies = [...rankedMovies, ...unrankedMovies];
+        }
+
+        res.json(sortedMovies);
     } catch (err) {
         res.status(500).send('Error fetching movies');
       }
@@ -85,6 +93,18 @@ app.post('/update-seen', async (req, res) => {
     } catch (err) {
         res.status(500).send('Error updating moviee');
       }
+
+});
+
+app.post('/add-movie', async (req, res) => {
+    try {
+        const movieData = req.body;
+        const movie = new Movie(movieData); // Create a new Movie instance
+        await movie.save(); // Save to database
+        res.status(201).send('Movie added successfully');
+    } catch (error) {
+        res.status(500).send('Error adding movie: ' + error.message);
+    }
 
 });
 

@@ -45,6 +45,7 @@ const HomePage = () => {
   const handleClosePopUp = () => {
     setAddMovieToggle(false);
   };
+
   const genres = [
     { value: 'Action', label: 'Action' },
     { value: 'Adventure', label: 'Adventure' },
@@ -125,8 +126,8 @@ const HomePage = () => {
 
 
             <div className="filters">
-                <img className = "filter-img" src = {grid} alt = "" onClick={toggleViewType}></img>
-                <img className = "filter-img" src = {carousel} alt = "" onClick={toggleViewType}></img>
+                <img className = "filter-img" id = "grid" src = {grid} alt = "" onClick={toggleViewType}></img>
+                <img className = "filter-img" id = "carousel" src = {carousel} alt = "" onClick={toggleViewType}></img>
 
                 <select
                 id="sortBySelect"
@@ -183,7 +184,7 @@ const HomePage = () => {
 
                 <div ref={popupRef}> 
                     {addMovieToggle && 
-                        <MoviePopUp onClick={handleClosePopUp} addMovie={true}/>
+                        <MoviePopUp  onClose={handleClosePopUp} addMovieBool={true}/>
                     }
                 </div>
             </div>
