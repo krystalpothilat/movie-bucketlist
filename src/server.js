@@ -1,15 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
 const app = express();
-const port = 5001;
+const PORT = process.env.PORT ||;
 const mongoose = require('mongoose');
 require('dotenv').config();
 const Movie = require('./models/Movie.js');
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, dbName: 'Movie-Bucketlist'});
@@ -115,9 +115,11 @@ app.post('/add-movie', async (req, res) => {
 
 });
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  });
 
 
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
 });
