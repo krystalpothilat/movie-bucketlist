@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './styles/MoviePopUp.css'
 const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, onClose, isAdmin, addMovieBool }) => {
 
@@ -87,7 +87,12 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
 
     const searchMovie = async (newTitle) => {
         try {
-            fetch(`http://www.omdbapi.com/?apikey=f8451f1&t=${encodeURIComponent(newTitle)}`)
+            const apiKey = process.env.REACT_APP_OMDB_API_KEY;
+            if (!apiKey) {
+                console.error('OMDB API key is missing');
+                return;
+            }
+            fetch(`http://www.omdbapi.com/?apikey=${apiKey}&t=${encodeURIComponent(newTitle)}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.Response === "True") {

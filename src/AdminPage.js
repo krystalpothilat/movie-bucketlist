@@ -12,11 +12,11 @@ const AdminPage = () => {
 
     const handleLogin = () => {
         if (username && password) {
-            login(username, password); // Pass credentials to login function
+            login(username, password);
             if (isAuthenticated) {
-                navigate('/'); // Redirect to homepage after successful login
+                navigate('/'); 
             } else {
-                setLoginStatus('Invalid login'); // Display error message for invalid login
+                setLoginStatus('Invalid login'); 
             }
         } else {
             setLoginStatus('Please enter username and password');

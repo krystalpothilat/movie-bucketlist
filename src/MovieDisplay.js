@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Carousel, FormControl } from 'react-bootstrap';
+import { Container, Row, Col, Carousel} from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -8,7 +8,6 @@ import './styles/MovieDisplay.css'
 const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
     const [currentMovies, setCurrentMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
-    const [loading, setLoading] = useState(false);
 
 
     const popupRef = useRef(null);
@@ -51,7 +50,6 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
     
 
     const getMovies = (genres, sortBy, searchTitle) => {
-        setLoading(true);
         fetch('http://localhost:5001/get-movies', {
             method: 'POST',
             headers: {
@@ -65,11 +63,9 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
           setCurrentMovies(data); 
           console.log('got movies');
           console.log(data);
-          setLoading(false);
         })
         .catch(error => {
           console.error('Error fetching movies:', error);
-          setLoading(false);
         });
     }
     
