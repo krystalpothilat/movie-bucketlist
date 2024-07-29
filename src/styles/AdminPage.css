@@ -1,5 +1,27 @@
+.admin-page{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+}
+
+label{
+    width: 100%;
+    font-weight: bold;
+}
+
 .login{
     display: flex;
     flex-direction: column;
     width: 200px;
+
+}
+
+#login-button{
+    margin: 10px 0px;
 }

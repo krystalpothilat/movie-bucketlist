@@ -6,8 +6,7 @@ const app = express();
 const port = 5001;
 const mongoose = require('mongoose');
 require('dotenv').config();
-const {getMovies} = require('./MovieRoutes.js');
-const Movie = require('./src/models/Movie.js');
+const Movie = require('./models/Movie.js');
 
 app.use(cors());
 app.use(express.json());
