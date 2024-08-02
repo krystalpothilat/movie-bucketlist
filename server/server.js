@@ -11,8 +11,8 @@ const Movie = require('./models/Movie.js');
 
 app.use(cors({
     origin: 'https://movie-bucketlist.vercel.app' ,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Access-Control-Allow-Headers','Content-Type', 'Authorization'], 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
 }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/public')));
@@ -128,11 +128,11 @@ app.post('/add-movie', async (req, res) => {
 
 });
 
+app.use("/", (req, res) => {
+    res.send("Server is running");
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running!`);
 });
 
-app.use("/", (req, res) => {
-    res.send("Server is running");
-});
