@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 const PORT = 5001;
 const mongoose = require('mongoose');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+require('dotenv').config();
 const Movie = require('./models/Movie.js');
 
 app.use(cors());
