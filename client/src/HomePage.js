@@ -58,7 +58,7 @@ const HomePage = () => {
     { value: 'Drama', label: 'Drama' },
     { value: 'Family', label: 'Family' },
     { value: 'Fantasy', label: 'Fantasy' },
-    { value: 'Film-Noir', label: 'Film-Noi' },
+    { value: 'Film-Noir', label: 'Film-Noir' },
     { value: 'History', label: 'History' },
     { value: 'Horror', label: 'Horror' },
     { value: 'Musical', label: 'Musical' },
