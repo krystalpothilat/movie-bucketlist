@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const app = express();
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 const mongoose = require('mongoose');
 // require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('dotenv').config();
@@ -132,5 +132,5 @@ app.use("/", (req, res) => {
 
 
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`Server is running!`);
 });
