@@ -11,17 +11,12 @@ const Movie = require('./models/Movie.js');
 
 app.use(cors({
     origin: 'https://movie-bucketlist.vercel.app' ,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-    allowedHeaders: ['Content-Type', 'Authorization'], 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Access-Control-Allow-Headers','Content-Type', 'Authorization'], 
 }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/public')));
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://movie-bucketlist.vercel.app');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, dbName: 'Movie-Bucketlist'});
@@ -33,7 +28,6 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-// app.options('*', cors());
 
 app.get('/test', (req, res) => {
     res.send('Test endpoint working!');
