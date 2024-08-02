@@ -27,6 +27,8 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
+app.options('*', cors());
+
 app.get('/test', (req, res) => {
     res.send('Test endpoint working!');
 });
