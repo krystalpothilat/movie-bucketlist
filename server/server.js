@@ -10,10 +10,17 @@ require('dotenv').config();
 const Movie = require('./models/Movie.js');
 
 app.use(cors({
-    origin: 'https://movie-bucketlist.vercel.app' ,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-    allowedHeaders: ['Content-Type', 'Authorization'], 
+    origin: 'https://movie-bucketlist.vercel.app',
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+app.options('*', cors({
+    origin: 'https://movie-bucketlist.vercel.app',
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/public')));
 
@@ -28,11 +35,7 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
-  });
-  
+
 app.get('/test', (req, res) => {
     res.send('Test endpoint working!');
 });
