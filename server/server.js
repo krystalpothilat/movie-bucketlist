@@ -2,14 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = 5001;
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const Movie = require('./models/Movie.js');
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../client/public')));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, dbName: 'Movie-Bucketlist'});
@@ -21,6 +21,9 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
+app.get('/test', (req, res) => {
+    res.send('Test endpoint working!');
+});
 
 app.post('/get-movies', async (req, res) => {
     const { genres, sortBy, searchTitle } = req.body;
@@ -53,16 +56,18 @@ app.post('/get-movies', async (req, res) => {
 
 
         const movies = await Movie.find(query).sort(sortOrder);
+        console.log('Movies found:', movies.length);
+
         let sortedMovies = movies;
-        if (sortBy === 'rank') {
+        if (sortBy && sortBy === 'rank') {
             const rankedMovies = movies.filter(movie => movie.rank != null);
             const unrankedMovies = movies.filter(movie => movie.rank == null);
             sortedMovies = [...rankedMovies, ...unrankedMovies];
         }
-
+        console.log("sorting");
         res.json(sortedMovies);
     } catch (err) {
-        res.status(500).send('Error fetching movies');
+        res.status(500).send('Server error fetching movies');
       }
 
 });
@@ -115,9 +120,9 @@ app.post('/add-movie', async (req, res) => {
 
 });
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-  });
+app.use("/", (req, res) => {
+    res.send("Server is running");
+});
 
 
 app.listen(PORT, () => {
