@@ -17,6 +17,12 @@ app.use(cors({
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/public')));
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://movie-bucketlist.vercel.app');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, dbName: 'Movie-Bucketlist'});
 
@@ -27,7 +33,7 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-app.options('*', cors());
+// app.options('*', cors());
 
 app.get('/test', (req, res) => {
     res.send('Test endpoint working!');
@@ -128,11 +134,11 @@ app.post('/add-movie', async (req, res) => {
 
 });
 
-app.use("/", (req, res) => {
-    res.send("Server is running");
-});
-
 
 app.listen(PORT, () => {
     console.log(`Server is running!`);
+});
+
+app.use("/", (req, res) => {
+    res.send("Server is running");
 });
