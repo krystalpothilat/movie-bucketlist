@@ -13,13 +13,17 @@ app.use(cors({
     origin: 'https://movie-bucketlist.vercel.app',
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 200
 }));
 
 app.options('*', cors({
     origin: 'https://movie-bucketlist.vercel.app',
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 200
 }));
+
+app.options('*', cors());
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/public')));
@@ -143,6 +147,6 @@ app.use("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running!`);
+    console.log(`Server is running on port ${PORT}`);
 });
 
