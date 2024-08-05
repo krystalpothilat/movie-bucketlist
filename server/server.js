@@ -10,7 +10,7 @@ require('dotenv').config();
 const Movie = require('./models/Movie.js');
 
 app.use(cors({
-    origin: 'https://movie-bucketlist.vercel.app',
+    origin: 'https://movie-bucketlist.vercel.app/',
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true,
     optionsSuccessStatus: 204,
