@@ -8,19 +8,22 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const Movie = require('./models/Movie.js');
+const allowedOrigins = ['https://movie-bucketlist.vercel.app'];
 
 app.use(cors({
-    origin: 'https://movie-bucketlist.vercel.app',
+    origin: function (origin, callback) {
+        // Check if the origin is allowed
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            // Allow the request
+            callback(null, true);
+        } else {
+            // Block the request
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    optionsSuccessStatus: 200
-}));
-
-app.options('*', cors({
-    origin: 'https://movie-bucketlist.vercel.app',
-    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
 }));
 
 app.options('*', cors());
