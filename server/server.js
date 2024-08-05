@@ -1,5 +1,5 @@
-const express = require('express');
 const cors = require('cors');
+const express = require('express');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -10,7 +10,7 @@ require('dotenv').config();
 const Movie = require('./models/Movie.js');
 
 app.use(cors({
-    origin: 'https://movie-bucketlist.vercel.app/',
+    origin: 'https://movie-bucketlist.vercel.app',
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true,
     optionsSuccessStatus: 204,
