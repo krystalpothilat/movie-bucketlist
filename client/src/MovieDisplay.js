@@ -50,13 +50,17 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
     
 
     const getMovies = (genres, sortBy, searchTitle) => {
-        fetch('https://movie-bucketlist-server.vercel.app/get-movies', {
+        const query = new URLSearchParams({
+            genres: genres.join(','), 
+            sortBy,
+            searchTitle
+        }).toString();
+    
+        fetch(`https://movie-bucketlist-server.vercel.app/get-movies?${query}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': 'https://movie-bucketlist.vercel.app',
-            },
-            body: JSON.stringify({ genres, sortBy, searchTitle })
+                'Content-Type': 'application/json'
+            }
         })
 
         .then(response => {
@@ -73,7 +77,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
         .catch(error => {
           console.error('Error fetching movies:', error);
         });
-    }
+    };
 
     //tester
     // const getMovies = () => {
