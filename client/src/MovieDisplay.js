@@ -49,28 +49,49 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
     }, []);
     
 
-    const getMovies = (genres, sortBy, searchTitle) => {
-        fetch('https://movie-bucketlist-server.vercel.app/get-movies', {
-            method: 'POST',
+    // const getMovies = (genres, sortBy, searchTitle) => {
+    //     fetch('https://movie-bucketlist-server.vercel.app/get-movies', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({ genres, sortBy, searchTitle })
+    //     })
+
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok');
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //       setCurrentMovies(data); 
+    //       console.log('got movies');
+    //       console.log(data);
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching movies:', error);
+    //     });
+    // }
+
+    const getMovies = () => {
+        fetch('https://movie-bucketlist-server.vercel.app/test', {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ genres, sortBy, searchTitle })
+            }
         })
-
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return response.json();
+            return response.text();
         })
         .then(data => {
-          setCurrentMovies(data); 
-          console.log('got movies');
-          console.log(data);
+            console.log('CORS test successful:', data);
         })
         .catch(error => {
-          console.error('Error fetching movies:', error);
+            console.error('CORS test error:', error);
         });
     }
     
