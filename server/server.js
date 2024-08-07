@@ -41,6 +41,9 @@ app.get('/test', (req, res) => {
 });
 
 app.post('/get-movies', async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://movie-bucketlist.vercel.app');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     const { genres, sortBy, searchTitle } = req.body;
     console.log('genres are :', genres);
     console.log('search title is :', searchTitle);
