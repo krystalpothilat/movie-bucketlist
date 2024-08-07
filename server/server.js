@@ -43,13 +43,14 @@ app.get('/test', (req, res) => {
 
 app.get('/get-movies', async (req, res) => {
     
-    const { genres, sortBy, searchTitle } = req.body;
-    console.log('genres are :', genres);
+    const { genres, sortBy, searchTitle } = req.query;
+    const genresArray = genres ? genres.split(',') : [];
+    console.log('genres are :', genresArray);
     console.log('search title is :', searchTitle);
     try{
         let query = {}
-        if(genres && genres.length > 0){ //query for db if looking for specific genre
-            query.genre = { $in: genres };
+        if( genresArray.length > 0){ //query for db if looking for specific genre
+            query.genre = { $in: genresArray };
         }
         
         //if searchTitle is provided, then query will be title and not genres
