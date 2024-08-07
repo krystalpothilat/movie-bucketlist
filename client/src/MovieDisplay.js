@@ -86,7 +86,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
             searchTitle
         }).toString();
     
-        fetch(`https://movie-bucketlist-server.vercel.app/get-movies?${query}`, {
+        fetch(`https://movie-bucketlist-server.vercel.app/test?${query}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -100,7 +100,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
             return response.text();
         })
         .then(data => {
-            console.log('CORS get-movies test successful:', data);
+            console.log('CORS test successful:', data);
         })
         .catch(error => {
             console.error('CORS test error:', error);
