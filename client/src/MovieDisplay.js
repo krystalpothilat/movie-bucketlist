@@ -58,7 +58,12 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
             body: JSON.stringify({ genres, sortBy, searchTitle })
         })
 
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
           setCurrentMovies(data); 
           console.log('got movies');

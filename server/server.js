@@ -11,7 +11,8 @@ const Movie = require('./models/Movie.js');
 
 app.use(cors({
     origin: 'https://movie-bucketlist.vercel.app',
-    methods: 'GET,POST,DELETE',
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
     credentials: true,
     optionsSuccessStatus: 204,
 }));
