@@ -41,7 +41,7 @@ app.get('/test', (req, res) => {
     res.send('Test endpoint working!');
 });
 
-app.post('/get-movies', async (req, res) => {
+app.get('/get-movies', async (req, res) => {
     
     const { genres, sortBy, searchTitle } = req.body;
     console.log('genres are :', genres);
