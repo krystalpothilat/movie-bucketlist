@@ -38,6 +38,10 @@ db.once('open', () => {
 
 
 app.get('/test', (req, res) => {
+    const { genres, sortBy, searchTitle } = req.query;
+    const genresArray = genres ? genres.split(',') : [];
+    console.log('genres are :', genresArray);
+    console.log('search title is :', searchTitle);
     res.send('Test endpoint working!');
 });
 
