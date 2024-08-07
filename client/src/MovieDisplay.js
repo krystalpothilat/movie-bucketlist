@@ -51,7 +51,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
 
     const getMovies = (genres, sortBy, searchTitle) => {
         fetch('https://movie-bucketlist-server.vercel.app/get-movies', {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': 'https://movie-bucketlist.vercel.app',
