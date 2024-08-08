@@ -50,6 +50,7 @@ body, #root {
     margin-left: 5px;
     margin-right: 5px;
     border-radius: 4px; 
+    visibility: visibile;
 }
 
 .genre-tag-name{
@@ -153,4 +154,18 @@ body, #root {
     color: white;
     /* text-decoration: none; */
     cursor: pointer;
+}
+
+/* smaller screens*/
+
+@media (max-width: 1000px) { 
+
+    .title{
+        font-size: 60px;
+    }
+
+    .genre-tags{
+        visibility: hidden;
+        display: none;
+    }
 }
