@@ -86,7 +86,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
             searchTitle
         }).toString();
     
-        fetch(`https://movie-bucketlist-server.vercel.app/test?${query}`, {
+        fetch(`https://movie-bucketlist-server.vercel.app/get-movies?${query}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
