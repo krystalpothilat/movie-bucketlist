@@ -112,8 +112,8 @@ app.get('/get-movies', async (req, res) => {
             sortedMovies = [...rankedMovies, ...unrankedMovies];
         }
         console.log("sorting");
-        res.send('Testing get-movies endpoint: working!');
-        // res.json(sortedMovies);
+        // res.send('Testing get-movies endpoint: working!');
+        res.json(sortedMovies);
     } catch (err) {
         res.status(500).send('Server error fetching movies');
       }
