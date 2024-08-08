@@ -137,3 +137,21 @@
 .add-movie-confirm-button{
     border-radius: 5px;
 }
+
+/* smaller screens*/
+@media (max-width: 1000px) { 
+
+    .pop-up-title{
+        font-size: 5vw;
+    }
+    .pop-up-image{
+        visibility: none;
+        display: none;
+    }
+
+    .pop-up-content{
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+    }
+    
+}
