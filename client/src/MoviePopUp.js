@@ -92,7 +92,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
                 console.error('OMDB API key is missing');
                 return;
             }
-            fetch(`http://www.omdbapi.com/?apikey=${apiKey}&t=${encodeURIComponent(newTitle)}`)
+            fetch(`https://www.omdbapi.com/?apikey=${apiKey}&t=${encodeURIComponent(newTitle)}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.Response === "True") {

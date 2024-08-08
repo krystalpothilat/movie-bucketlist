@@ -79,56 +79,6 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
         });
     };
 
-    // const getMovies = (genres, sortBy, searchTitle) => {
-    //     const query = new URLSearchParams({
-    //         genres: genres.join(','), 
-    //         sortBy,
-    //         searchTitle
-    //     }).toString();
-    
-    //     fetch(`https://movie-bucketlist-server.vercel.app/get-movies?${query}`, {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     })
-
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.text();
-    //     })
-    //     .then(data => {
-    //         console.log('CORS test successful:', data);
-    //     })
-    //     .catch(error => {
-    //         console.error('CORS test error:', error);
-    //     });
-    // };
-
-    //tester
-    // const getMovies = () => {
-    //     fetch('https://movie-bucketlist-server.vercel.app/test', {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.text();
-    //     })
-    //     .then(data => {
-    //         console.log('CORS test successful:', data);
-    //     })
-    //     .catch(error => {
-    //         console.error('CORS test error:', error);
-    //     });
-    // }
-    
 
     const handleCardClick = (movie) => {
       setSelectedMovie(movie);
@@ -136,7 +86,6 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
   
     const handleClosePopUp = () => {
       setSelectedMovie(null);
-      getMovies(genres, sortBy);
     };
 
 
