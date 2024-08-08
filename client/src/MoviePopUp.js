@@ -8,7 +8,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
         description: '',
         genre: [],
         rating: '',
-        imdbLink: '',
+        imdb_link: '',
         imdbid: '',
         year: '',
         image: '',
@@ -102,7 +102,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
                         description: data.Plot,
                         genre: data.Genre.split(', '),
                         rating: data.imdbRating,
-                        imdbLink: `https://www.imdb.com/title/${data.imdbID}/`,
+                        imdb_link: `https://www.imdb.com/title/${data.imdbID}/`,
                         image: data.Poster,
                         year: data.Year,
                         imdbid: data.imdbID,
@@ -159,7 +159,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
                     <p className="pop-up-info" id="pop-up-desc">{newMovieData.description}</p>
                     <p className="pop-up-info" id="pop-up-genre"> <span className="label">Genre:</span> {newMovieData.genre.join(', ')}</p>
                     <p className="pop-up-info" id="pop-up-rating"> <span className="label">Rating:</span> {newMovieData.rating}</p>
-                    <a href={newMovieData.imdbLink} target="_blank" rel="noopener noreferrer" id="imdb-link" >IMDb Link</a>
+                    <a href={newMovieData.imdb_link} target="_blank" rel="noopener noreferrer" id="imdb-link" >IMDb Link</a>
                     <button className="add-movie-confirm-button" onClick={() => addMovie()}> Add Movie</button>
 
                 </div>
