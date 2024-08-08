@@ -37,39 +37,6 @@ db.once('open', () => {
 });
 
 
-app.get('/test', (req, res) => {
-    const { genres, sortBy, searchTitle } = req.query;
-    const genresArray = genres ? genres.split(',') : [];
-    console.log('genres are :', genresArray);
-    console.log('search title is :', searchTitle);
-    try{
-        let query = {}
-        if( genresArray.length > 0){ //query for db if looking for specific genre
-            query.genre = { $in: genresArray };
-        }
-        
-        //if searchTitle is provided, then query will be title and not genres
-        if (searchTitle && searchTitle.trim()) {
-            query.title = { $regex: new RegExp(searchTitle.trim(), 'i') };
-        }
-
-        let sortOrder = {};
-        if (searchTitle) {
-            sortOrder.title = 1;
-        } else if (sortBy) {
-            if (sortBy === 'rank') {
-                sortOrder.rank = 1; 
-                sortOrder.title = 1; 
-            } else {
-                sortOrder.title = 1; 
-            }
-        }
-        res.send('Test endpoint working!');
-    }catch (err) {
-        res.status(500).send('Server error fetching movies');
-    }
-});
-
 app.get('/get-movies', async (req, res) => {
     
     const { genres, sortBy, searchTitle } = req.query;
