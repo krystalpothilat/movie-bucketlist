@@ -122,7 +122,6 @@ const HomePage = () => {
         logout();
         window.location.href = '/';
     }
-
   return (
     <div>
         <div className = "header">

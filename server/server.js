@@ -10,7 +10,7 @@ require('dotenv').config();
 const Movie = require('./models/Movie.js');
 
 app.use(cors({
-    origin: 'https://movie-bucketlist.vercel.app',
+    origin: '*',
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
@@ -41,8 +41,6 @@ app.get('/get-movies', async (req, res) => {
     
     const { genres, sortBy, searchTitle } = req.query;
     const genresArray = genres ? genres.split(',') : [];
-    console.log('genres are :', genresArray);
-    console.log('search title is :', searchTitle);
     try{
         let query = {}
         if( genresArray.length > 0){ //query for db if looking for specific genre
@@ -65,12 +63,9 @@ app.get('/get-movies', async (req, res) => {
                 sortOrder.title = 1; 
             }
         }
-
         console.log('Constructed query:', JSON.stringify(query));
 
-
         const movies = await Movie.find(query).sort(sortOrder);
-        console.log('Movies found:', movies.length);
 
         let sortedMovies = movies;
         if (sortBy && sortBy === 'rank') {
@@ -78,7 +73,6 @@ app.get('/get-movies', async (req, res) => {
             const unrankedMovies = movies.filter(movie => movie.rank == null);
             sortedMovies = [...rankedMovies, ...unrankedMovies];
         }
-        console.log("sorting");
         // res.send('Testing get-movies endpoint: working!');
         res.json(sortedMovies);
     } catch (err) {

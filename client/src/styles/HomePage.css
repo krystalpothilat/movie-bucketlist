@@ -157,7 +157,6 @@ body, #root {
 }
 
 /* smaller screens*/
-
 @media (max-width: 1000px) { 
 
     .title{

@@ -22,7 +22,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
 
     const deleteMovie = async () => {
         try {
-            const response = await fetch('https://movie-bucketlist-server.vercel.app/delete-movie', {
+            const response = await fetch(`${process.env.BACKEND_API_LOCAL}/delete-movie`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
 
     const updateSeen = async () => {
         try {
-            const response = await fetch('https://movie-bucketlist-server.vercel.app/update-seen', {
+            const response = await fetch(`${process.env.BACKEND_API_LOCAL}/update-seen`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
 
     const addMovie = async () => {
         try {
-            const response = await fetch('https://movie-bucketlist-server.vercel.app/add-movie', {
+            const response = await fetch(`${process.env.BACKEND_API_LOCAL}/add-movie`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -121,6 +121,13 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
         }
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default behavior (e.g., form submission)
+            document.getElementById('submit-button').click(); // Trigger the button's onClick event
+        }
+    };
+
   return (
     isAdmin ? (
         <div className="pop-up" id="admin-pop-up">
@@ -149,8 +156,8 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
         <div className = "pop-up" id="add-movie-popup">
             <button className="close-button" onClick={onClose}> × </button>
             <div className="new-movie-input-container">
-                <input type="text" placeholder="Enter movie name" value={addMovieTitle} onChange={handleInputChange} />
-                <button onClick={() => searchMovie(addMovieTitle)}> Submit </button>
+                <input type="text" placeholder="Enter movie name" value={addMovieTitle} onChange={handleInputChange} onKeyDown={handleKeyDown} />
+                <button onClick={() => searchMovie(addMovieTitle)} id="submit-button"> Submit </button>
             </div>
             <div className = "pop-up" id = "add-movie-popup-insert">
                 <img src={newMovieData.image} alt={title} className="pop-up-image" />
