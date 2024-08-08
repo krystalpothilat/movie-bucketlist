@@ -12,11 +12,14 @@ const HomePage = () => {
   const [viewType, setViewType] = useState('grid');
   const [sortBy, setSortType] = useState('rank');
   const [genreTypes, setGenreTypes] = useState([]);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [genreDropdownOpen, setGenreDropdownOpen] = useState(false);
+  const [seenDropdownOpen, setSeenDropdownOpen] = useState(false);
+  const genreDropdownRef = useRef(null);
+  const seenDropdownRef = useRef(null);
   const popupRef = useRef(null);
   const [addMovieToggle, setAddMovieToggle] = useState(false);
   const [searchTitle , setSearchTitle] = useState('');
+  const [seenToggle, setSeenToggle] = useState(null);
 
   const toggleViewType = () => {
     setViewType(prevType => prevType === 'grid' ? 'carousel' : 'grid');
@@ -47,6 +50,14 @@ const HomePage = () => {
   const handleClosePopUp = () => {
     setAddMovieToggle(false);
   };
+  const handleSeenToggleChange = (event) => {
+    setSeenToggle(event.target.value);
+  };
+
+    const options = [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' }
+    ];
 
   const genres = [
     { value: 'Action', label: 'Action' },
@@ -70,8 +81,12 @@ const HomePage = () => {
     { value: 'Western', label: 'Western' },
   ];
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
+  const toggleGenreDropdown = () => {
+    setGenreDropdownOpen(!genreDropdownOpen);
+  };
+
+  const toggleSeenDropdown = () => {
+    setSeenDropdownOpen(!seenDropdownOpen);
   };
 
   const genreReset = () => {
@@ -83,18 +98,19 @@ const HomePage = () => {
   }, [genreTypes]);
 
     useEffect(() => {
-        // Close dropdown when clicking outside
+        // close dropdown when clicking outside
         function handleClickOutside(event) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setDropdownOpen(false);
+            if (genreDropdownRef.current && !genreDropdownRef.current.contains(event.target)) {
+                setGenreDropdownOpen(false);
+            }
+            if (seenDropdownRef.current && !seenDropdownRef.current.contains(event.target)) {
+                setSeenDropdownOpen(false);
             }
         }
 
-        // Add event listener to detect clicks outside the dropdown
         document.addEventListener('mousedown', handleClickOutside);
 
         return () => {
-            // Clean up the event listener on component unmount
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
@@ -162,60 +178,91 @@ const HomePage = () => {
                 </select>
 
 
-                <div className="dropdown" ref={dropdownRef}>
-                <button
-                    className="btn btn-secondary dropdown-toggle"
-                    type="button"
-                    onClick={toggleDropdown}
-                >
-                    Genre
-                </button>
-                <div className={`dropdown-menu${dropdownOpen ? ' show' : ''}`}>
-                    <button onClick={genreReset}> Reset</button>
-                    {genres.map((genre) => (
-                    <div key={genre.value} className="form-check">
-                        <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value={genre.value}
-                        id={`genre-${genre.value}`}
-                        checked={genreTypes.includes(genre.value)}
-                        onChange={handleGenreTypeChange}
-                        />
-                        <label className="form-check-label" htmlFor={`genre-${genre.value}`}>
-                        {genre.label}
-                        </label>
+                <div className="dropdown" ref={genreDropdownRef}>
+                    <button
+                        className="btn btn-secondary dropdown-toggle"
+                        type="button"
+                        onClick={toggleGenreDropdown}
+                    >
+                        Genre
+                    </button>
+                    <div className={`dropdown-menu${genreDropdownOpen ? ' show' : ''}`}>
+                        <button onClick={genreReset}> Reset</button>
+                        {genres.map((genre) => (
+                        <div key={genre.value} className="form-check">
+                            <input
+                            className="form-check-input"
+                            type="checkbox"
+                            value={genre.value}
+                            id={`genre-${genre.value}`}
+                            checked={genreTypes.includes(genre.value)}
+                            onChange={handleGenreTypeChange}
+                            />
+                            <label className="form-check-label" htmlFor={`genre-${genre.value}`}>
+                            {genre.label}
+                            </label>
+                        </div>
+                        ))}
                     </div>
-                    ))}
-                </div>
-                </div>
-                </div>
-                <div className = "selected-genres-display">
-                    {genreTypes.length > 0 && (
-                        genreTypes.map((genre, index) => (
-                            <div className="genre-tags">
-                                <button className = "close-genre" onClick={() => handleGenreTypeTagChange(genre)}> x </button>
-                                <p key={index} className = "genre-tag-name">{genre}</p>
-                            </div>
-                        ))
-                    )}
                 </div>
 
-                {isAdmin && <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>}
-
-                <div ref={popupRef}> 
-                    {addMovieToggle && 
-                        <MoviePopUp  onClose={handleClosePopUp} addMovieBool={true}/>
-                    }
+                <div className="dropdown" ref={seenDropdownRef}>
+                    <button
+                        className="btn btn-secondary dropdown-toggle"
+                        type="button"
+                        onClick={toggleSeenDropdown}
+                    >
+                        Seen
+                    </button>
+                    <div className={`dropdown-menu${seenDropdownOpen ? ' show' : ''}`}>
+                        <button onClick={() => setSeenToggle(null)}> Reset</button>
+                        {options.map((option) => (
+                        <div key={option.value} className="form-check">
+                            <input
+                            className="form-check-input"
+                            type="checkbox"
+                            name="seenToggle"
+                            value={option.value}
+                            id={`seen-${option.value}`}
+                            checked={seenToggle === option.value}
+                            onChange={handleSeenToggleChange}
+                            />
+                            <label className="form-check-label" htmlFor={`genre-${option.value}`}>
+                            {option.label}
+                            </label>
+                        </div>
+                        ))}
+                    </div>
                 </div>
             </div>
-      </div>
-      <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} isAdmin = {isAdmin} />
+
+            <div className = "selected-genres-display">
+                {genreTypes.length > 0 && (
+                    genreTypes.map((genre, index) => (
+                        <div className="genre-tags">
+                            <button className = "close-genre" onClick={() => handleGenreTypeTagChange(genre)}> x </button>
+                            <p key={index} className = "genre-tag-name">{genre}</p>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            {isAdmin && <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>}
+
+            <div ref={popupRef}> 
+                {addMovieToggle && 
+                    <MoviePopUp  onClose={handleClosePopUp} addMovieBool={true}/>
+                }
+            </div>
+        </div>
+    </div>
     
-      <footer className="footer">
-        <p>&copy; {new Date().getFullYear()} Movie Bucket List. All rights reserved.</p>
-        <p> Created by <a href="https://www.linkedin.com/in/krystalpothilat" target="_blank" rel="noopener noreferrer" id="linked-in-tag" >Krystal Pothilat</a> </p>
-      </footer>
+    <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} isAdmin = {isAdmin} />
+
+    <footer className="footer">
+    <p>&copy; {new Date().getFullYear()} Movie Bucket List. All rights reserved.</p>
+    <p> Created by <a href="https://www.linkedin.com/in/krystalpothilat" target="_blank" rel="noopener noreferrer" id="linked-in-tag" >Krystal Pothilat</a> </p>
+    </footer>
     </div>
   );
 };
