@@ -80,13 +80,13 @@ app.get('/get-movies', async (req, res) => {
         const movies = await Movie.find(query).sort(sortOrder);
         console.log('Movies found:', movies.length);
 
-        let sortedMovies = movies;
-        if (sortBy && sortBy === 'rank') {
-            const rankedMovies = movies.filter(movie => movie.rank != null);
-            const unrankedMovies = movies.filter(movie => movie.rank == null);
-            sortedMovies = [...rankedMovies, ...unrankedMovies];
-        }
-        console.log("sorting");
+        // let sortedMovies = movies;
+        // if (sortBy && sortBy === 'rank') {
+        //     const rankedMovies = movies.filter(movie => movie.rank != null);
+        //     const unrankedMovies = movies.filter(movie => movie.rank == null);
+        //     sortedMovies = [...rankedMovies, ...unrankedMovies];
+        // }
+        // console.log("sorting");
         res.send('Testing get-movies endpoint: working!');
         // res.json(sortedMovies);
     } catch (err) {
