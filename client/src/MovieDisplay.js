@@ -28,8 +28,8 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
     useEffect(() => {
         console.log('use effect, getting movies');
         console.log('search title is ', searchTitle);
-        getMovies(genres, sortBy, searchTitle);
-    }, [genres, sortBy, searchTitle]);
+        getMovies(genres, sortBy, seenToggle, searchTitle);
+    }, [genres, sortBy, seenToggle, searchTitle]);
 
     useEffect(() => {
         // Close dropdown when clicking outside
@@ -49,7 +49,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
     }, []);
     
 
-    const getMovies = (genres, sortBy, searchTitle) => {
+    const getMovies = (genres, sortBy, seenToggle, searchTitle) => {
         const query = new URLSearchParams({
             genres: genres.join(','), 
             sortBy,
