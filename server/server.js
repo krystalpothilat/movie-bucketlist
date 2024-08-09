@@ -39,12 +39,20 @@ db.once('open', () => {
 
 app.get('/get-movies', async (req, res) => {
     
-    const { genres, sortBy, seeenToggle, searchTitle } = req.query;
+    const { genres, sortBy, seenToggle, searchTitle } = req.query;
     const genresArray = genres ? genres.split(',') : [];
     try{
         let query = {}
         if( genresArray.length > 0){ //query for db if looking for specific genre
             query.genre = { $in: genresArray };
+        }  
+
+        if (seenToggle) {
+            if (seenToggle === 'yes') {
+                query.seen = true;
+            } else if (seenToggle === 'no') {
+                query.seen = false;
+            }
         }
         
         //if searchTitle is provided, then query will be title and not genres
