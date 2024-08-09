@@ -59,6 +59,7 @@
     margin-bottom: 50px;
     /* white-space: nowrap; */
 }
+
 .pop-up-info{
     width: 100%;
 }
@@ -143,6 +144,8 @@
 
     .pop-up-title{
         font-size: 5vw;
+        margin: 0px;
+        margin-bottom: 10px;
     }
     .pop-up-image{
         visibility: none;
@@ -150,8 +153,15 @@
     }
 
     .pop-up-content{
+        max-height: 100%;
         border-top-left-radius: 20px;
         border-bottom-left-radius: 20px;
+        /* overflow-y:hidden; */
+    }
+
+    .pop-up-info{
+        font-size: 3vw;
     }
     
+
 }

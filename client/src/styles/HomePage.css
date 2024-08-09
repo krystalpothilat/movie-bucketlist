@@ -14,6 +14,9 @@ body, #root {
     width: auto;
 }
 
+#imgs-button-filters{
+    width: auto;
+}
 
 .form-select{
     width: 90px;
@@ -107,14 +110,22 @@ body, #root {
     border: 1px solid black;
 }
 
+.admin-buttons{
+    height: auto;
+    width: 100vw;
+}
+
 #add-movie-button{
+    position: absolute;
+    right: 0;
+    transform: translate(0, -100%);
+    height: auto;
     width: 125px;
     margin: 0px;
     padding: 0px;
-    margin-right: 15px;
     border-radius: 5px;
-    border: 1px solid black;
-    background-color: transparent;
+    border: 2px solid black;
+    background-color: #ffd700;
 }
 
 .search-bar-container{
@@ -148,6 +159,7 @@ body, #root {
     color: white;
     line-height: 0.75;
 }
+
 #linked-in-tag{
     color: white;
     /* text-decoration: none; */
@@ -158,8 +170,15 @@ body, #root {
 .form-check-input{
     font-weight: normal;
 }
+
+
 /* smaller screens*/
 @media (max-width: 1000px) { 
+
+
+    .selected-genres-display{
+        display: none;
+    }
 
     .title{
         font-size: 60px;
@@ -169,4 +188,32 @@ body, #root {
         visibility: hidden;
         display: none;
     }
+
+    .admin-buttons{
+        width: 95%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        height: 100%;
+    }
+
+    #add-movie-button{
+        position: relative;
+        transform: none;
+        right: auto;
+        height: auto;
+        border: none;
+    }
+
+    #admin-logout{
+        position: relative;
+        height: 100%;
+        border: none;
+        border-radius: 3px;
+        font-weight: normal;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+
 }

@@ -147,7 +147,7 @@ const HomePage = () => {
   return (
     <div>
         <div className = "header">
-            {isAdmin && <button id = "admin-logout" onClick={handleLogOut} > Log Out</button>}
+            {/* {isAdmin && <button id = "admin-logout" onClick={handleLogOut} > Log Out</button>} */}
             <div className = "titles">
                 <h1 className = "title">Movie Bucket List</h1>
                 <div className="search-bar-container">
@@ -231,7 +231,7 @@ const HomePage = () => {
                                 checked={seenToggle === option.value}
                                 onChange={handleSeenToggleChange}
                                 />
-                                <label className="form-check-label" htmlFor={`genre-${option.value}`}>
+                                <label className="form-check-label" htmlFor={`seen-${option.value}`}>
                                     {option.label}
                                 </label>
                             </div>
@@ -250,10 +250,17 @@ const HomePage = () => {
                         ))
                     )}
                 </div>
-
-                {isAdmin && <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>}
+    
+                {/* {isAdmin && <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>} */}
             </div>
 
+            {isAdmin && (
+                <div className="admin-buttons">
+                    <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>
+                    <button id="admin-logout" onClick={handleLogOut}> Log Out</button>
+                </div>
+            )}
+            
             <div ref={popupRef}> 
                 {addMovieToggle && 
                     <MoviePopUp  onClose={handleClosePopUp} addMovieBool={true}/>
