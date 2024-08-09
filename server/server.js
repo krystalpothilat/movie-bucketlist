@@ -39,7 +39,7 @@ db.once('open', () => {
 
 app.get('/get-movies', async (req, res) => {
     
-    const { genres, sortBy, searchTitle } = req.query;
+    const { genres, sortBy, seeenToggle, searchTitle } = req.query;
     const genresArray = genres ? genres.split(',') : [];
     try{
         let query = {}

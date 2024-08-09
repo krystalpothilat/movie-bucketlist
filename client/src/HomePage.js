@@ -51,7 +51,13 @@ const HomePage = () => {
     setAddMovieToggle(false);
   };
   const handleSeenToggleChange = (event) => {
-    setSeenToggle(event.target.value);
+    const { value } = event.target;
+    if (value === 'yes') {
+        setSeenToggle((seenToggle == null || seenToggle == 'no') ? 'yes' : null);// Toggle between 'yes' and null
+    } else if (value === 'no') {
+        setSeenToggle((seenToggle == null || seenToggle == 'yes') ? 'no' : null); // Toggle between 'no' and null
+    }
+    
   };
 
     const options = [
@@ -141,10 +147,9 @@ const HomePage = () => {
   return (
     <div>
         <div className = "header">
-        {isAdmin && <button id = "admin-logout" onClick={handleLogOut} > Log Out</button>}
+            {isAdmin && <button id = "admin-logout" onClick={handleLogOut} > Log Out</button>}
             <div className = "titles">
                 <h1 className = "title">Movie Bucket List</h1>
-                {/* {isAdmin && <p id = "admin-welcome">Welcome, Admin!</p>} */}
                 <div className="search-bar-container">
                     <FormControl
                         type="text"
@@ -155,99 +160,99 @@ const HomePage = () => {
                     />
                     <button id="clear-search" onClick = {() => setSearchTitle('')}> × </button>
                 </div>
-
             </div>
 
 
 
             <div className="filters-container">
                 <div className="filters-container" id="imgs-buttons-filters">
-                <img className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`} id = "grid" src = {grid} alt = "" onClick={toggleViewType}></img>
-                <img className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`} id = "carousel" src = {carousel} alt = "" onClick={toggleViewType}></img>
+                    <img className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`} id = "grid" src = {grid} alt = "" onClick={toggleViewType}></img>
+                    <img className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`} id = "carousel" src = {carousel} alt = "" onClick={toggleViewType}></img>
+                </div> 
+                    <select
+                        id="sortBySelect"
+                        className="form-select"
+                        value={sortBy}
+                        onChange={handleSortTypeChange}
+                        >
+                        <optgroup label="Sort By">
+                            <option value="rank">Rank</option>
+                            <option value="alphabetical">Alphabetical</option>
+                        </optgroup>
+                    </select>
 
-                <select
-                id="sortBySelect"
-                className="form-select"
-                value={sortBy}
-                onChange={handleSortTypeChange}
-                >
-                <optgroup label="Sort By">
-                    <option value="rank">Rank</option>
-                    <option value="alphabetical">Alphabetical</option>
-                </optgroup>
-                </select>
 
-
-                <div className="dropdown" ref={genreDropdownRef}>
-                    <button
-                        className="btn btn-secondary dropdown-toggle"
-                        type="button"
-                        onClick={toggleGenreDropdown}
-                    >
-                        Genre
-                    </button>
-                    <div className={`dropdown-menu${genreDropdownOpen ? ' show' : ''}`}>
-                        <button onClick={genreReset}> Reset</button>
-                        {genres.map((genre) => (
-                        <div key={genre.value} className="form-check">
-                            <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value={genre.value}
-                            id={`genre-${genre.value}`}
-                            checked={genreTypes.includes(genre.value)}
-                            onChange={handleGenreTypeChange}
-                            />
-                            <label className="form-check-label" htmlFor={`genre-${genre.value}`}>
-                            {genre.label}
-                            </label>
+                    <div className="dropdown" ref={genreDropdownRef}>
+                        <button
+                            className="btn btn-secondary dropdown-toggle"
+                            type="button"
+                            onClick={toggleGenreDropdown}
+                        >
+                            Genre
+                        </button>
+                        <div className={`dropdown-menu${genreDropdownOpen ? ' show' : ''}`}>
+                            <button onClick={genreReset}> Reset</button>
+                            {genres.map((genre) => (
+                            <div key={genre.value} className="form-check">
+                                <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value={genre.value}
+                                id={`genre-${genre.value}`}
+                                checked={genreTypes.includes(genre.value)}
+                                onChange={handleGenreTypeChange}
+                                />
+                                <label className="form-check-label" htmlFor={`genre-${genre.value}`}>
+                                {genre.label}
+                                </label>
+                            </div>
+                            ))}
                         </div>
-                        ))}
                     </div>
+
+                    <div className="dropdown" ref={seenDropdownRef}>
+                        <button
+                            className="btn btn-secondary dropdown-toggle"
+                            type="button"
+                            onClick={toggleSeenDropdown}
+                        >
+                            Seen
+                        </button>
+                        <div className={`dropdown-menu${seenDropdownOpen ? ' show' : ''}`}>
+                            <button onClick={() => setSeenToggle(null)}> Reset</button>
+                            {options.map((option) => (
+                            <div key={option.value} className="form-check">
+                                <input
+                                className="form-check-input"
+                                type="checkbox"
+                                name="seenToggle"
+                                value={option.value}
+                                id={`seen-${option.value}`}
+                                checked={seenToggle === option.value}
+                                onChange={handleSeenToggleChange}
+                                />
+                                <label className="form-check-label" htmlFor={`genre-${option.value}`}>
+                                    {option.label}
+                                </label>
+                            </div>
+                            ))}
+                        </div>
+                    </div>
+     
+                                
+                <div className = "selected-genres-display">
+                    {genreTypes.length > 0 && (
+                        genreTypes.map((genre, index) => (
+                            <div className="genre-tags">
+                                <button className = "close-genre" onClick={() => handleGenreTypeTagChange(genre)}> x </button>
+                                <p key={index} className = "genre-tag-name">{genre}</p>
+                            </div>
+                        ))
+                    )}
                 </div>
 
-                <div className="dropdown" ref={seenDropdownRef}>
-                    <button
-                        className="btn btn-secondary dropdown-toggle"
-                        type="button"
-                        onClick={toggleSeenDropdown}
-                    >
-                        Seen
-                    </button>
-                    <div className={`dropdown-menu${seenDropdownOpen ? ' show' : ''}`}>
-                        <button onClick={() => setSeenToggle(null)}> Reset</button>
-                        {options.map((option) => (
-                        <div key={option.value} className="form-check">
-                            <input
-                            className="form-check-input"
-                            type="checkbox"
-                            name="seenToggle"
-                            value={option.value}
-                            id={`seen-${option.value}`}
-                            checked={seenToggle === option.value}
-                            onChange={handleSeenToggleChange}
-                            />
-                            <label className="form-check-label" htmlFor={`genre-${option.value}`}>
-                            {option.label}
-                            </label>
-                        </div>
-                        ))}
-                    </div>
-                </div>
+                {isAdmin && <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>}
             </div>
-
-            <div className = "selected-genres-display">
-                {genreTypes.length > 0 && (
-                    genreTypes.map((genre, index) => (
-                        <div className="genre-tags">
-                            <button className = "close-genre" onClick={() => handleGenreTypeTagChange(genre)}> x </button>
-                            <p key={index} className = "genre-tag-name">{genre}</p>
-                        </div>
-                    ))
-                )}
-            </div>
-
-            {isAdmin && <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>}
 
             <div ref={popupRef}> 
                 {addMovieToggle && 
@@ -255,9 +260,8 @@ const HomePage = () => {
                 }
             </div>
         </div>
-    </div>
     
-    <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} isAdmin = {isAdmin} />
+    <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} seenToggle={seenToggle} isAdmin = {isAdmin} />
 
     <footer className="footer">
     <p>&copy; {new Date().getFullYear()} Movie Bucket List. All rights reserved.</p>

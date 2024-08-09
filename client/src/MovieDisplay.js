@@ -5,7 +5,7 @@ import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/MovieDisplay.css'
 
-const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
+const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdmin }) => {
     const [currentMovies, setCurrentMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
 
@@ -53,6 +53,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, isAdmin }) => {
         const query = new URLSearchParams({
             genres: genres.join(','), 
             sortBy,
+            seenToggle,
             searchTitle
         }).toString();
     
