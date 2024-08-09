@@ -1,26 +1,23 @@
 body, #root {
-    /* background-color: #1a1a1a; */
     height: 100%;
-    /* overflow-y: hidden; */
-
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway&=swap');
 
+.header{
+    width: 100vw;
+}
+
 .filters-container{
     display: flex;
     flex-direction: row;
+    width: auto;
 }
 
-#imgs-buttons-filters{
-    width: 25vw;
-    justify-content: space-around;
-}
 
 .form-select{
     width: 90px;
     height: 40px;
-    /* font-size: 12px; */
     border-color: black;
     cursor: pointer;
 }
@@ -114,6 +111,7 @@ body, #root {
     width: 125px;
     margin: 0px;
     padding: 0px;
+    margin-right: 15px;
     border-radius: 5px;
     border: 1px solid black;
     background-color: transparent;
@@ -156,6 +154,10 @@ body, #root {
     cursor: pointer;
 }
 
+
+.form-check-input{
+    font-weight: normal;
+}
 /* smaller screens*/
 @media (max-width: 1000px) { 
 
