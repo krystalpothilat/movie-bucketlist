@@ -1,0 +1,42 @@
+.scroll-button{
+    display: block;
+    position: fixed;
+    height: auto;
+    width: auto;
+    z-index: 5;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-button:hover {
+    opacity: 1; /* Fully visible when hovered */
+}
+
+#downscroll{
+    right: 5vw;
+    bottom: 7vw;
+}
+
+#upscroll{
+    right: 5vw;
+    top: 7vw;
+}
+
+/* smaller screens*/
+@media (max-width: 1000px) { 
+    .scroll-button{
+        height: 50px;
+        width: 50px;
+    }
+
+    #downscroll{
+        right: 5vw;
+        bottom: 15vh;
+    }
+    
+    #upscroll{
+        right: 5vw;
+        top: 15vh;
+    }
+
+}
