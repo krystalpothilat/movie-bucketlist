@@ -4,13 +4,13 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5001;
 const mongoose = require('mongoose');
-// require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-require('dotenv').config();
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+// require('dotenv').config();
 
 const Movie = require('./models/Movie.js');
 
 app.use(cors({
-    origin: 'https://movie-bucketlist.vercel.app',
+    origin: '*',
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
