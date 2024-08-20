@@ -3,10 +3,12 @@ import {FormControl } from 'react-bootstrap';
 import MovieDisplay from './MovieDisplay';
 import MoviePopUp from './MoviePopUp';
 import { AuthContext } from './AuthContext';
+import ScrollButton from './ScrollButton';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./styles/HomePage.css";
 import grid from "./imgs/grid.png";
 import carousel from "./imgs/carousel.png";
+
 
 const HomePage = () => {
   const [viewType, setViewType] = useState('grid');
@@ -21,6 +23,7 @@ const HomePage = () => {
   const [searchTitle , setSearchTitle] = useState('');
   const [seenToggle, setSeenToggle] = useState(null);
   const [popupClosed, setPopupClosed] = useState(false);
+
 
   const toggleViewType = () => {
     setViewType(prevType => prevType === 'grid' ? 'carousel' : 'grid');
@@ -272,6 +275,8 @@ const HomePage = () => {
         </div>
     
     <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} seenToggle={seenToggle} isAdmin = {isAdmin} refreshTrigger={popupClosed} />
+
+    <ScrollButton/>
 
     <footer className="footer">
         <p>&copy; {new Date().getFullYear()} Movie Bucket List. All rights reserved.</p>

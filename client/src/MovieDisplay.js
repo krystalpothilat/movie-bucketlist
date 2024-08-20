@@ -86,7 +86,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
     };
   
     const handleClosePopUp = () => {
-      setSelectedMovie(null);
+        setSelectedMovie(null);
     };
 
 
