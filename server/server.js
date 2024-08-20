@@ -133,7 +133,7 @@ app.post('/add-movie', async (req, res) => {
         res.status(201).send('Movie added successfully');
     } catch (error) {
         res.status(500).send('Error adding movie: ' + error.message);
-    }z
+    }
 
 });
 

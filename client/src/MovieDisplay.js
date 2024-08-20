@@ -5,7 +5,7 @@ import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/MovieDisplay.css'
 
-const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdmin }) => {
+const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdmin, refreshTrigger }) => {
     const [currentMovies, setCurrentMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
 
@@ -29,7 +29,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
         console.log('use effect, getting movies');
         console.log('search title is ', searchTitle);
         getMovies(genres, sortBy, seenToggle, searchTitle);
-    }, [genres, sortBy, seenToggle, searchTitle]);
+    }, [genres, sortBy, seenToggle, searchTitle, refreshTrigger]);
 
     useEffect(() => {
         // Close dropdown when clicking outside
