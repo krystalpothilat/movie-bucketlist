@@ -3,7 +3,7 @@ import "./styles/ScrollButton.css";
 import upscroll from './imgs/upscroll.png';
 import downscroll from './imgs/downscroll.png';
 
-const ScrollButton = () => {
+const ScrollButton = ({viewType}) => {
   const [showUpScroll, setShowUpScroll] = useState(false);
   const [showDownScroll, setShowDownScroll] = useState(false);
 
@@ -39,10 +39,10 @@ const ScrollButton = () => {
 
   return (
     <>
-      {showDownScroll && (
+      {showDownScroll && viewType == 'grid' && (
         <img src = {upscroll} alt = "Scroll Up" className = "scroll-button" id = "upscroll" onClick={scrollToTop}/>
       )}
-      {showUpScroll && (
+      {showUpScroll && viewType == 'grid' && (
         <img src = {downscroll} alt = "Scroll Down" className = "scroll-button" id = "downscroll" onClick={scrollToBottom}/>
       )}
     </>
