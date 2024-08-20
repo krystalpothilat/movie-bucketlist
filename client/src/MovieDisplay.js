@@ -101,12 +101,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
                 <Col key={index} sm={12} md={6} lg={4}>
                 <MovieCard
                     title={movie.title}
-                    description={movie.description}
                     image={movie.image}
-                    genre={movie.genre}
-                    rating={movie.rating}
-                    year={movie.year}
-                    imdbLink={movie.imdb_link}
                     seen={movie.seen}
                     onClick={() => handleCardClick(movie)}
                 />
@@ -124,12 +119,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
                   <div className="carousel-item-prev" onClick={handlePrevClick}>
                     <MovieCard
                       title={currentMovies[index - 1].title}
-                      description={currentMovies[index - 1].description}
                       image={currentMovies[index - 1].image}
-                      genre={currentMovies[index - 1].genre}
-                      rating={currentMovies[index - 1].rating}
-                      year={currentMovies[index - 1].year}
-                      imdbLink={currentMovies[index - 1].imdb_link}
                       seen={currentMovies[index - 1].seen}
                       onClick={() => handlePrevClick()}
                     />
@@ -138,12 +128,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
                 <div className="carousel-item-current">
                   <MovieCard
                     title={movie.title}
-                    description={movie.description}
                     image={movie.image}
-                    genre={movie.genre}
-                    rating={movie.rating}
-                    year={movie.year}
-                    imdbLink={movie.imdb_link}
                     seen={movie.seen}
                     onClick={() => handleCardClick(movie)}
                   />
@@ -152,12 +137,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
                   <div className="carousel-item-next" onClick={handleNextClick}>
                     <MovieCard
                       title={currentMovies[index + 1].title}
-                      description={currentMovies[index + 1].description}
                       image={currentMovies[index + 1].image}
-                      genre={currentMovies[index + 1].genre}
-                      rating={currentMovies[index + 1].rating}
-                      year={currentMovies[index + 1].year}
-                      imdbLink={currentMovies[index + 1].imdb_link}
                       seen={currentMovies[index + 1].seen}
                       onClick={handleNextClick}
                     />

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
 import './styles/MovieCard.css'
 
-const MovieCard = ({ title, image, description, genre, rating, imdbLink, seen, onClick }) => {
+const MovieCard = ({ title, image, seen, onClick }) => {
 
   const [isClicked, setIsClicked] = useState('false');
 
