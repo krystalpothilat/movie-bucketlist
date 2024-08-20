@@ -148,12 +148,10 @@ const HomePage = () => {
 
     const handleLogOut = () => {
         logout();
-        window.location.href = '/';
     }
   return (
     <div>
         <div className = "header">
-            {/* {isAdmin && <button id = "admin-logout" onClick={handleLogOut} > Log Out</button>} */}
             <div className = "titles">
                 <h1 className = "title">Movie Bucket List</h1>
                 <div className="search-bar-container">
@@ -257,7 +255,6 @@ const HomePage = () => {
                     )}
                 </div>
     
-                {/* {isAdmin && <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>} */}
             </div>
 
             {isAdmin && (
