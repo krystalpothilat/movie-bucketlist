@@ -10,15 +10,20 @@ const ScrollButton = ({viewType}) => {
   const handleScroll = () => {
     const scrollY = window.scrollY;
     const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
     const documentHeight = document.documentElement.scrollHeight;
 
-    // Check if we are within the top 80% of the page for the downscroll button
-    const isWithinTop80Percent = scrollY  > (documentHeight - windowHeight) * 0.2;
-    setShowDownScroll(isWithinTop80Percent);
+    // % appearance based on window screen size
+    const topThreshold = windowWidth < 1000 ? 0.05 : 0.2;
+    const bottomThreshold = windowWidth < 1000 ? 0.95 : 0.8;
 
-    // Check if we are within the bottom 80% of the page for the upscroll button
-    const isWithinBottom80Percent = scrollY < (documentHeight - windowHeight) * 0.8;
-    setShowUpScroll(isWithinBottom80Percent);
+    // to bottom of page scroll only available for top % of page
+    const isWithinTopPercent = scrollY  > (documentHeight - windowHeight) * topThreshold;
+    setShowDownScroll(isWithinTopPercent);
+
+    // to top of page scroll only available for bottom % of page
+    const isWithinBottomPercent = scrollY < (documentHeight - windowHeight) * bottomThreshold;
+    setShowUpScroll(isWithinBottomPercent);
   };
 
   useEffect(() => {
@@ -39,10 +44,10 @@ const ScrollButton = ({viewType}) => {
 
   return (
     <>
-      {showDownScroll && viewType == 'grid' && (
+      {showDownScroll && viewType === "grid" && (
         <img src = {upscroll} alt = "Scroll Up" className = "scroll-button" id = "upscroll" onClick={scrollToTop}/>
       )}
-      {showUpScroll && viewType == 'grid' && (
+      {showUpScroll && viewType === "grid" && (
         <img src = {downscroll} alt = "Scroll Down" className = "scroll-button" id = "downscroll" onClick={scrollToBottom}/>
       )}
     </>
