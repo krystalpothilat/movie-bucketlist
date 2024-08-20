@@ -59,9 +59,9 @@ const HomePage = () => {
   const handleSeenToggleChange = (event) => {
     const { value } = event.target;
     if (value === 'yes') {
-        setSeenToggle((seenToggle == null || seenToggle == 'no') ? 'yes' : null);// Toggle between 'yes' and null
+        setSeenToggle((seenToggle == null || seenToggle === 'no') ? 'yes' : null);// Toggle between 'yes' and null
     } else if (value === 'no') {
-        setSeenToggle((seenToggle == null || seenToggle == 'yes') ? 'no' : null); // Toggle between 'no' and null
+        setSeenToggle((seenToggle == null || seenToggle === 'yes') ? 'no' : null); // Toggle between 'no' and null
     }
     
   };
