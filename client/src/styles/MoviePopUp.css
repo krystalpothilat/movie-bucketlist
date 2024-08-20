@@ -54,14 +54,15 @@
 
 .pop-up-title{
     font-weight: bold;
-    font-size: 3vw;
+    font-size: 2vw;
     margin: 20px;
     margin-bottom: 50px;
-    /* white-space: nowrap; */
+    max-height: fit-content;
 }
 
 .pop-up-info{
     width: 100%;
+    font-size: 1vw;
 }
 
 .label {
@@ -147,6 +148,20 @@
         margin: 0px;
         margin-bottom: 10px;
     }
+
+    .pop-up-title{
+        font-weight: bold;
+        font-size: 5vw;
+        margin: 20px;
+        margin-bottom: 50px;
+        max-height: fit-content;
+    }
+    
+    .pop-up-info{
+        width: 100%;
+        font-size: 3vw;
+    }
+
     .pop-up-image{
         visibility: none;
         display: none;
@@ -159,9 +174,14 @@
         /* overflow-y:hidden; */
     }
 
-    .pop-up-info{
-        font-size: 3vw;
+
+    .delete-button{
+        height: 30px;
     }
-    
+
+    .pop-up{
+        padding: 30px;
+    }
+
 
 }

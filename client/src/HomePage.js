@@ -20,6 +20,7 @@ const HomePage = () => {
   const [addMovieToggle, setAddMovieToggle] = useState(false);
   const [searchTitle , setSearchTitle] = useState('');
   const [seenToggle, setSeenToggle] = useState(null);
+  const [popupClosed, setPopupClosed] = useState(false);
 
   const toggleViewType = () => {
     setViewType(prevType => prevType === 'grid' ? 'carousel' : 'grid');
@@ -49,7 +50,9 @@ const HomePage = () => {
 
   const handleClosePopUp = () => {
     setAddMovieToggle(false);
+    setPopupClosed(prev => !prev);
   };
+
   const handleSeenToggleChange = (event) => {
     const { value } = event.target;
     if (value === 'yes') {
@@ -263,12 +266,12 @@ const HomePage = () => {
             
             <div ref={popupRef}> 
                 {addMovieToggle && 
-                    <MoviePopUp  onClose={handleClosePopUp} addMovieBool={true}/>
+                    <MoviePopUp onClose={handleClosePopUp} addMovieBool={true}/>
                 }
             </div>
         </div>
     
-    <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} seenToggle={seenToggle} isAdmin = {isAdmin} />
+    <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} seenToggle={seenToggle} isAdmin = {isAdmin} refreshTrigger={popupClosed} />
 
     <footer className="footer">
         <p>&copy; {new Date().getFullYear()} Movie Bucket List. All rights reserved.</p>
