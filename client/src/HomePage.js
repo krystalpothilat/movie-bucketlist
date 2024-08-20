@@ -276,7 +276,7 @@ const HomePage = () => {
     
     <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} seenToggle={seenToggle} isAdmin = {isAdmin} refreshTrigger={popupClosed} />
 
-    <ScrollButton/>
+    <ScrollButton viewType = {viewType}/>
 
     <footer className="footer">
         <p>&copy; {new Date().getFullYear()} Movie Bucket List. All rights reserved.</p>
