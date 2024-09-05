@@ -4,6 +4,7 @@ import MovieDisplay from './MovieDisplay';
 import MoviePopUp from './MoviePopUp';
 import { AuthContext } from './AuthContext';
 import ScrollButton from './ScrollButton';
+import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./styles/HomePage.css";
 import grid from "./imgs/grid.png";
@@ -259,8 +260,9 @@ const HomePage = () => {
 
             {isAdmin && (
                 <div className="admin-buttons">
-                    <button onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</button>
-                    <button id="admin-logout" onClick={handleLogOut}> Log Out</button>
+                    <Button variant="warning" onClick={addMovieButtonClicked} id="add-movie-button"> Add Movie</Button>{' '} 
+                    {/* <button id="admin-logout" onClick={handleLogOut}> Log Out</button> */}
+                    <Button variant="secondary" id="admin-logout" onClick={handleLogOut}> Log Out</Button>{' '}
                 </div>
             )}
             
