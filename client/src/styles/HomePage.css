@@ -119,13 +119,8 @@ body, #root {
     position: absolute;
     right: 0;
     transform: translate(0, -100%);
-    height: auto;
-    width: 125px;
-    margin: 0px;
-    padding: 0px;
-    border-radius: 5px;
     border: 2px solid black;
-    background-color: #ffd700;
+    /* background-color: #ffd700; */
 }
 
 .search-bar-container{
@@ -147,7 +142,7 @@ body, #root {
     position: absolute;
     top: 0;
     right: 0;
-    font-weight: bold;
+    border-radius: 0px;
 }
 
 .footer{
@@ -209,7 +204,7 @@ body, #root {
         position: relative;
         height: 100%;
         border: none;
-        border-radius: 3px;
+        border-radius: 5px;
         font-weight: normal;
         padding-left: 15px;
         padding-right: 15px;

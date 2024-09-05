@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import './styles/MoviePopUp.css'
+import Button from 'react-bootstrap/Button';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, onClose, isAdmin, addMovieBool }) => {
 
     const [addMovieTitle, setAddMovieTitle] = useState('');
@@ -144,12 +148,12 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
                 <div className = "seen-container">
                     <label> Seen </label>
                     <div className = "seen-buttons-container">
-                        <button className = {`seenButton ${seen ? 'chosen' : ''}`} id = "seen-yes" onClick={updateSeen}>Yes</button>
-                        <button className = {`seenButton ${!seen ? 'chosen' : ''}`} id = "seen-no" onClick={updateSeen}>No</button>
+                        <Button variant={seen ? "success" : "outline-secondary"} className = "seenButton" onClick={updateSeen}>Yes</Button>{' '}
+                        <Button variant={seen ? "outline-secondary" : "success"} className = "seenButton" onClick={updateSeen} >No</Button>{' '}
                     </div>
                 </div>
 
-                <button className="delete-button" onClick={deleteMovie}>Delete</button>
+                <Button variant="danger" className="delete-button" onClick={deleteMovie}> Delete </Button>{' '} 
             </div>
         </div>
     ) : addMovieBool ? (

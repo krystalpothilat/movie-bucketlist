@@ -91,16 +91,6 @@
 .delete-button{
     left: 0;
     top: 0;
-    height: 50px;
-    width: 60px;
-    background-color: rgb(243, 102, 102);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    border: 2px solid rgb(203, 3, 3);
-    color: rgb(115, 5, 5);
-    font-weight: bold;
 }
 
 .new-movie-input-container{
@@ -126,15 +116,12 @@
 
 .seenButton{
     width: 50px;
-    margin: 0px 5px;
-    font-weight: normal;
-    border-radius: 8px;
 }
-
+/* 
 .chosen{
     border: 2px solid green;
     font-weight: bold;
-}
+} */
 
 .add-movie-confirm-button{
     border-radius: 5px;
