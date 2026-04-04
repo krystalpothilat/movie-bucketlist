@@ -26,7 +26,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
 
     const deleteMovie = async () => {
         try {
-            const response = await fetch(`https://movie-bucketlist-server.vercel.app/delete-movie`, {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/delete-movie`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
 
     const updateSeen = async () => {
         try {
-            const response = await fetch(`https://movie-bucketlist-server.vercel.app/update-seen`, {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/update-seen`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const MoviePopUp = ({ title, image, description, genre, rating, imdbLink, seen, 
 
     const addMovie = async () => {
         try {
-            const response = await fetch(`https://movie-bucketlist-server.vercel.app/add-movie`, {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/add-movie`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
