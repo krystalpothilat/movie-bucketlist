@@ -1,67 +1,101 @@
-
-
-.col-lg-4.col-md-6.col-sm-12{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.movie-card.card {
+.movie-card {
+    position: relative; /* needed for pseudo-element */
+    width: 250px;
+    height: 400px;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 30rem;
     border-radius: 10px;
-    overflow: hidden;
-    border: 10px solid transparent;
-    transition: border-color 0.3s ease;
+    overflow: visible;
+    border: none;
+    box-shadow: 0 0 0 5px #fff;
     cursor: pointer;
+    background-color: #fff;
+    box-sizing: border-box;
+    margin-bottom: 40px;
+}
+
+/* Gold outline when seen */
+.movie-card.seen::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    border-radius: 16px;
+    background: url('../imgs/gold3.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: 0;
+}
+
+/* Ensure card content sits above the gold outline */
+.movie-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 .image-wrapper {
-    flex: 1; /* Take up remaining space */
-    overflow: hidden; /* Hide any overflow */
+    width: 100%;
+    height: 85%;        /* taller image */
+    min-height: 85%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: block;
+    overflow: hidden;
 }
 
-img.card-img-top {
-    flex: 1;
-    width: 100%; 
+.image-wrapper img {
+    width: 100%;
     height: 100%;
     object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
-.card-body{
-    min-height: 75px;
-    max-height: 75px;
-    display: flex;  
+.card-body {
+    width: 100%;
+    height: 25%;        /* less space for text */
+    display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    box-sizing: border-box;
-    overflow: hidden;
+    padding: 0.25rem;   /* smaller padding for smaller text */
+    background-color: #fff;
+    border-bottom-left-radius: 10px;  /* round bottom-left */
+    border-bottom-right-radius: 10px; /* round bottom-right */
 }
 
-
-.movie-title.card-title.h5 {
+.movie-title {
     margin: 0;
-    padding: 0;
-    font-size: 1.2rem; 
-    transition: font-size 0.3s ease; 
-    line-height: 1.2; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
+    font-size: 0.9rem;  /* slightly smaller text */
+    line-height: 1.1;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: normal;
 }
 
-.movie-card.seen {
-    border: 10px solid transparent; 
-    border-image-source: url('../imgs/gold3.jpg'); 
-    border-image-slice: 50; 
-    border-image-repeat: round; 
-    overflow: hidden;
-    transition: border-color 0.3s ease; 
-}
-  
-  
 
-  
+
+/* ── Responsive ── */
+@media (max-width: 1000px) {
+    .movie-card {
+        width: 160px;
+        height: 270px;
+    }
+    .movie-title {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .movie-card {
+        width: 275px;
+        height: 500px;
+    }
+    .movie-title {
+        font-size: 1rem;
+    }
+}
+

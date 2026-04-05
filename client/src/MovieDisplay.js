@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Container, Row, Col, Carousel} from 'react-bootstrap';
+import { Carousel } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles/MovieDisplay.css'
+import './styles/MovieDisplay.css';
 
 const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdmin, refreshTrigger }) => {
-    const [allMovies, setAllMovies] = useState([]);       // cache - full list from DB
+    const [allMovies, setAllMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
 
     const popupRef = useRef(null);
@@ -24,12 +24,10 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
         }
     };
 
-    // Only fetch from DB on mount and after admin actions (add/delete/update)
     useEffect(() => {
         fetchAllMovies();
     }, [refreshTrigger]);
 
-    // Close popup when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
             if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -45,14 +43,10 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
     const fetchAllMovies = () => {
         fetch(`${process.env.REACT_APP_BACKEND_API}/get-movies`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
         })
         .then(data => {
@@ -64,25 +58,19 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
         });
     };
 
-    // Filter and sort entirely client-side from the cache
     const currentMovies = useMemo(() => {
+        if (!allMovies) return [];
         let filtered = [...allMovies];
 
-        // Filter by genre
-        if (genres.length > 0) {
+        if (genres && genres.length > 0) {
             filtered = filtered.filter(movie =>
                 movie.genre && genres.some(g => movie.genre.includes(g))
             );
         }
 
-        // Filter by seen
-        if (seenToggle === 'yes') {
-            filtered = filtered.filter(movie => movie.seen === true);
-        } else if (seenToggle === 'no') {
-            filtered = filtered.filter(movie => movie.seen === false);
-        }
+        if (seenToggle === 'yes') filtered = filtered.filter(movie => movie.seen);
+        else if (seenToggle === 'no') filtered = filtered.filter(movie => !movie.seen);
 
-        // Filter by search title
         if (searchTitle && searchTitle.trim()) {
             const query = searchTitle.trim().toLowerCase();
             filtered = filtered.filter(movie =>
@@ -90,7 +78,6 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
             );
         }
 
-        // Sort
         if (searchTitle && searchTitle.trim()) {
             filtered.sort((a, b) => a.title.localeCompare(b.title));
         } else if (sortBy === 'rank') {
@@ -104,33 +91,24 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
         return filtered;
     }, [allMovies, genres, seenToggle, searchTitle, sortBy]);
 
-
-    const handleCardClick = (movie) => {
-        setSelectedMovie(movie);
-    };
-
-    const handleClosePopUp = () => {
-        setSelectedMovie(null);
-    };
+    const handleCardClick = (movie) => setSelectedMovie(movie);
+    const handleClosePopUp = () => setSelectedMovie(null);
 
     return (
         <div className="movie-display">
-
             {viewType === 'grid' ? (
-                <Container className="grid-container">
-                    <Row className="grid-row">
-                        {currentMovies.map((movie, index) => (
-                            <Col key={index} sm={12} md={6} lg={4}>
-                                <MovieCard
-                                    title={movie.title}
-                                    image={movie.image}
-                                    seen={movie.seen}
-                                    onClick={() => handleCardClick(movie)}
-                                />
-                            </Col>
-                        ))}
-                    </Row>
-                </Container>
+                <div className="movie-display-grid row justify-content-center">
+                    {currentMovies.map((movie, index) => (
+                        <div key={index} className="col-12 col-sm-6 col-md-4 d-flex justify-content-center mb-4">
+                            <MovieCard
+                                title={movie.title}
+                                image={movie.image || '/imgs/gray-temp-img.jpg'}
+                                seen={movie.seen}
+                                onClick={() => handleCardClick(movie)}
+                            />
+                        </div>
+                    ))}
+                </div>
             ) : (
                 <Carousel slide={false} interval={null} controls={true} wrap={false} ref={carouselRef}>
                     {currentMovies.map((movie, index) => (
@@ -142,7 +120,7 @@ const MovieDisplay = ({ viewType, sortBy, genres, searchTitle, seenToggle, isAdm
                                             title={currentMovies[index - 1].title}
                                             image={currentMovies[index - 1].image}
                                             seen={currentMovies[index - 1].seen}
-                                            onClick={() => handlePrevClick()}
+                                            onClick={handlePrevClick}
                                         />
                                     </div>
                                 )}
