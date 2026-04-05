@@ -3,7 +3,6 @@ import {FormControl } from 'react-bootstrap';
 import MovieDisplay from './MovieDisplay';
 import MoviePopUp from './MoviePopUp';
 import { AuthContext } from './AuthContext';
-import ScrollButton from './ScrollButton';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./styles/HomePage.css";
@@ -151,7 +150,7 @@ const HomePage = () => {
         logout();
     }
   return (
-    <div>
+    <div className = "main-content">
         <div className = "header">
             <div className = "titles">
                 <h1 className = "title">Movie Bucket List</h1>
@@ -274,8 +273,6 @@ const HomePage = () => {
         </div>
     
     <MovieDisplay viewType={viewType} sortBy={sortBy} genres={genreTypes} searchTitle={searchTitle} seenToggle={seenToggle} isAdmin = {isAdmin} refreshTrigger={popupClosed} />
-
-    <ScrollButton viewType = {viewType}/>
 
     <footer className="footer">
         <p>&copy; {new Date().getFullYear()} Movie Bucket List. All rights reserved.</p>

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Card } from 'react-bootstrap';
 import './styles/MovieCard.css'
+import GRAY_TEMP_IMG from './imgs/gray-temp-img.jpg';
 
 const MovieCard = ({ title, image, seen, onClick }) => {
 
-  const [isClicked, setIsClicked] = useState('false');
+  const [isClicked, setIsClicked] = useState(false);
 
   const handleCardClick = () => {
       setIsClicked(!isClicked);
@@ -12,14 +12,22 @@ const MovieCard = ({ title, image, seen, onClick }) => {
   }
 
   return (
-    <Card className={`movie-card ${isClicked ? 'clicked' : ''} ${seen===true ? 'seen' : ''}`} onClick={handleCardClick} style={{ width: '18rem' }}>
+    <div className={`movie-card ${isClicked ? 'clicked' : ''} ${seen === true ? 'seen' : ''}`} onClick={handleCardClick}>
       <div className="image-wrapper">
-        <Card.Img variant="top" src={image} alt={title} className="card-img-top" />
+<img
+    src={image && image.trim() !== '' ? image : GRAY_TEMP_IMG}
+    alt={title}
+    className="card-img-top"
+    onError={(e) => {
+        e.target.onerror = null;
+        e.target.src = GRAY_TEMP_IMG;
+    }}
+/>
       </div>
-      <Card.Body>
-        <Card.Title className="movie-title">{title}</Card.Title>
-      </Card.Body>
-    </Card>
+      <div className="card-body">
+        <p className="movie-title">{title}</p>
+      </div>
+    </div>
   );
 };
 
