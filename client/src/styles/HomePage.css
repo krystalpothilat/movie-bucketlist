@@ -409,3 +409,27 @@ html, body, #root {
     margin: 0;
 }
 
+
+/* Wheel view icon button — sits alongside grid/carousel imgs */
+.wheel-view-btn {
+  background: transparent;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--color-text-secondary, #888);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+  opacity: 0.5;
+}
+
+.wheel-view-btn:hover {
+  opacity: 0.8;
+}
+
+.wheel-view-btn.selected {
+  opacity: 1;
+  color: var(--color-text-primary, #222);
+}
