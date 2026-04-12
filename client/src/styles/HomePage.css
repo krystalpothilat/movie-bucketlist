@@ -75,18 +75,6 @@ body,
 
 /* ── MOBILE ── */
 @media (max-width: 1000px) {
-  .title {
-    font-size: 60px;
-  }
-
-  .selected-genres-display {
-    display: none;
-  }
-
-  .genre-tags {
-    display: none;
-  }
-
   .admin-buttons {
     width: 95%;
     display: flex;
@@ -110,18 +98,4 @@ body,
     padding-left: 15px;
     padding-right: 15px;
   }
-}
-
-/* ── Dropdown checkboxes alignment ── */
-.dropdown-menu .form-check {
-  padding-left: 28px; /* enough space for checkbox */
-  position: relative;
-}
-
-.dropdown-menu .form-check-input {
-  position: absolute;
-  left: 6px; /* align checkbox to left inside dropdown */
-  top: 50%;
-  transform: translateY(-50%);
-  margin: 0;
 }
