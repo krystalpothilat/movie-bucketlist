@@ -18,13 +18,12 @@
 .title {
   color: #ffd700;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(40px, 8vw, 100px); /* scales with viewport */
+  font-size: clamp(60px, 8vw, 100px); /* scales with viewport */
   margin: 0;
   padding: 0;
   letter-spacing: 4px;
   text-shadow: 0 2px 12px rgba(255, 215, 0, 0.3);
   max-width: 90%; /* prevents overflow */
-  word-break: break-word; /* breaks long words */
 }
 
 .search-bar-container {
@@ -65,10 +64,6 @@
   cursor: pointer;
   padding: 0 8px;
   transition: color 0.2s;
-}
-
-#clear-search:hover {
-  color: #ffd700;
 }
 
 .clearSearchBar {

@@ -256,3 +256,19 @@ button.wheel-view-btn.selected {
   box-shadow: none !important;
   border-color: #ffd700 !important;
 }
+
+
+
+/* ── Dropdown checkboxes alignment ── */
+.dropdown-menu .form-check {
+  padding-left: 28px; /* enough space for checkbox */
+  position: relative;
+}
+
+.dropdown-menu .form-check-input {
+  position: absolute;
+  left: 6px; /* align checkbox to left inside dropdown */
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}

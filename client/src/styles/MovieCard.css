@@ -77,7 +77,7 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 1000px) {
+/* @media (max-width: 1000px) {
   .movie-card {
     width: 160px;
     height: 270px;
@@ -95,4 +95,4 @@
   .movie-title {
     font-size: 1rem;
   }
-}
+} */

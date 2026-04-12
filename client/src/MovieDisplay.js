@@ -132,6 +132,7 @@ const MovieDisplay = ({
           controls={true}
           wrap={false}
           ref={carouselRef}
+          indicators={false}
         >
           {currentMovies.map((movie, index) => (
             <Carousel.Item key={index}>
