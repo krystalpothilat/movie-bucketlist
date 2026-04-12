@@ -416,7 +416,7 @@ button.wheel-view-btn.selected {
   margin: 0;
 }
 
-/* Wheel view icon button — sits alongside grid/carousel imgs */
+/* WheelDisplay view icon button — sits alongside grid/carousel imgs */
 .wheel-view-btn {
   background: transparent;
   border: 2px solid transparent; /* add this */

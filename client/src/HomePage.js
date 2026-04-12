@@ -2,13 +2,14 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { FormControl } from 'react-bootstrap';
 import MovieDisplay from './MovieDisplay';
 import MoviePopUp from './MoviePopUp';
-import Wheel from './Wheel';
+import WheelDisplay from './WheelDisplay';
 import { AuthContext } from './AuthContext';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/HomePage.css';
 import grid from './imgs/grid.png';
 import carousel from './imgs/carousel.png';
+import wheel from './imgs/wheel.png';
 
 const HomePage = () => {
   const [viewType, setViewType] = useState('grid'); // 'grid' | 'carousel' | 'wheel'
@@ -25,7 +26,7 @@ const HomePage = () => {
   const [popupClosed, setPopupClosed] = useState(false);
   const [allMovies, setAllMovies] = useState([]);
 
-  // Fetch all movies once so Wheel can use them without its own fetch
+  // Fetch all movies once so WheelDisplay can use them without its own fetch
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BACKEND_API}/get-movies`, {
       method: 'GET',
@@ -36,11 +37,11 @@ const HomePage = () => {
       .catch((err) => console.error('Error fetching movies:', err));
   }, [popupClosed]);
 
-  const isWheelView = viewType === 'wheel';
+  const isWheelDisplayView = viewType === 'wheel';
 
   const setGridView = () => setViewType('grid');
   const setCarouselView = () => setViewType('carousel');
-  const setWheelView = () => setViewType('wheel');
+  const setWheelDisplayView = () => setViewType('wheel');
 
   const handleSortTypeChange = (e) => setSortType(e.target.value);
 
@@ -140,7 +141,7 @@ const HomePage = () => {
         <div className="titles">
           <h1 className="title">Movie Bucket List</h1>
           {/* Hide search bar in wheel view — not relevant there */}
-          {!isWheelView && (
+          {!isWheelDisplayView && (
             <div className="search-bar-container">
               <FormControl
                 type="text"
@@ -179,113 +180,20 @@ const HomePage = () => {
                 onClick={setCarouselView}
               />
             </div>
-            {/* Wheel icon */}
-            <button
-              className={`wheel-view-btn ${viewType === 'wheel' ? 'selected' : ''}`}
-              onClick={setWheelView}
-              title="Wheel view"
-              aria-label="Wheel view"
-            >
-              {/* Simple SVG wheel icon */}
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 22 22"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="11"
-                  cy="11"
-                  r="9.5"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                />
-                <circle
-                  cx="11"
-                  cy="11"
-                  r="2.5"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                />
-                <line
-                  x1="11"
-                  y1="1.5"
-                  x2="11"
-                  y2="8.5"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="11"
-                  y1="13.5"
-                  x2="11"
-                  y2="20.5"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="1.5"
-                  y1="11"
-                  x2="8.5"
-                  y2="11"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="13.5"
-                  y1="11"
-                  x2="20.5"
-                  y2="11"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="3.4"
-                  y1="3.4"
-                  x2="8.3"
-                  y2="8.3"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="13.7"
-                  y1="13.7"
-                  x2="18.6"
-                  y2="18.6"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="18.6"
-                  y1="3.4"
-                  x2="13.7"
-                  y2="8.3"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="8.3"
-                  y1="13.7"
-                  x2="3.4"
-                  y2="18.6"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
+            {/* WheelDisplay icon */}
+            <div className="iconWrapper">
+              <img
+                className={`filter-img ${viewType === 'wheel' ? 'selected' : ''}`}
+                id="wheel"
+                src={wheel}
+                alt="wheel selecter"
+                onClick={setWheelDisplayView}
+              />
+            </div>
           </div>
 
           {/* Hide sort/filter controls in wheel view */}
-          {!isWheelView && (
+          {!isWheelDisplayView && (
             <>
               <select
                 id="sortBySelect"
@@ -410,9 +318,9 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Main content area — swaps between MovieDisplay and Wheel */}
-      {isWheelView ? (
-        <Wheel allMovies={allMovies} />
+      {/* Main content area — swaps between MovieDisplay and WheelDisplay */}
+      {isWheelDisplayView ? (
+        <WheelDisplay allMovies={allMovies} />
       ) : (
         <MovieDisplay
           viewType={viewType}
