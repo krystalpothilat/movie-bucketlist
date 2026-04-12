@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import './styles/WheelDisplay.css';
 import WheelSlice from './WheelSlice';
 
@@ -13,13 +13,8 @@ const COLORS = [
   { bg: '#5DCAA5', text: '#04342C' },
 ];
 
-const MOCK_SAVED_WHEELS = [
-  { id: 1, name: 'Date night picks', movies: [] },
-  { id: 2, name: 'Friday horror', movies: [] },
-];
-
 const WheelDisplay = ({ allMovies = [] }) => {
-  const [savedWheelDisplays, setSavedWheelDisplays] = useState(MOCK_SAVED_WHEELS);
+  const [savedWheelDisplays, setSavedWheelDisplays] = useState([]);
   const [activeWheelDisplayId, setActiveWheelDisplayId] = useState(1);
   const [wheelMovies, setWheelDisplayMovies] = useState([]);
   const [wheelName, setWheelDisplayName] = useState('Date night picks');
@@ -50,7 +45,8 @@ const WheelDisplay = ({ allMovies = [] }) => {
     setResult(null);
   };
 
-  const isInWheelDisplay = (movie) => wheelMovies.some((m) => m.title === movie.title);
+  const isInWheelDisplay = (movie) =>
+    wheelMovies.some((m) => m.title === movie.title);
 
   // Spin logic
   const spin = () => {
@@ -79,26 +75,8 @@ const WheelDisplay = ({ allMovies = [] }) => {
     setRotation(0);
   };
 
-  const saveWheelDisplay = () => {
-    if (!wheelName.trim() || wheelMovies.length === 0) return;
-
-    setSavedWheelDisplays((prev) => {
-      const exists = prev.find((w) => w.id === activeWheelDisplayId);
-      if (exists) {
-        return prev.map((w) =>
-          w.id === activeWheelDisplayId
-            ? { ...w, name: wheelName, movies: wheelMovies }
-            : w
-        );
-      }
-      const newId = Date.now();
-      setActiveWheelDisplayId(newId);
-      return [...prev, { id: newId, name: wheelName, movies: wheelMovies }];
-    });
-  };
-
   const loadWheelDisplay = (wheel) => {
-    setActiveWheelDisplayId(wheel.id);
+    setActiveWheelDisplayId(wheel._id);
     setWheelDisplayName(wheel.name);
     setWheelDisplayMovies(wheel.movies || []);
     setResult(null);
@@ -108,7 +86,11 @@ const WheelDisplay = ({ allMovies = [] }) => {
   const createNewWheelDisplay = () => {
     if (!newWheelDisplayName.trim()) return;
     const newId = Date.now();
-    const newWheelDisplay = { id: newId, name: newWheelDisplayName, movies: [] };
+    const newWheelDisplay = {
+      id: newId,
+      name: newWheelDisplayName,
+      movies: [],
+    };
     setSavedWheelDisplays((prev) => [...prev, newWheelDisplay]);
     setActiveWheelDisplayId(newId);
     setWheelDisplayName(newWheelDisplayName);
@@ -132,6 +114,68 @@ const WheelDisplay = ({ allMovies = [] }) => {
     return 9;
   };
 
+  /// API FUNCTIONS
+
+  // SAVE WHEEL TO DB
+  const saveWheel = async () => {
+    if (!wheelName.trim() || wheelMovies.length === 0) return;
+
+    const wheelData = {
+      name: wheelName,
+      movies: wheelMovies.map((movie, i) => ({
+        title: movie.title,
+        color: i % COLORS.length,
+      })),
+    };
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/wheels/save-wheel`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(wheelData),
+        }
+      );
+
+      if (response.ok) {
+        console.log('Wheel saved successfully');
+      } else {
+        const errorText = await response.text();
+        console.error('Error saving wheel:', errorText);
+      }
+    } catch (error) {
+      console.error('Error saving wheel:', error);
+    }
+  };
+
+  // GET SAVED WHEELS
+  const getSavedWheels = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`,
+        {
+          method: 'GET',
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setSavedWheelDisplays(data);
+      } else {
+        const errorText = await response.text();
+        console.error('Error fetching wheels:', errorText);
+      }
+    } catch (error) {
+      console.error('Error fetching wheels:', error);
+    }
+  };
+
+  useEffect(() => {
+    getSavedWheels();
+  }, []);
+
   return (
     <div className="wheel-display-container">
       {/* Left panel: saved wheels */}
@@ -140,8 +184,8 @@ const WheelDisplay = ({ allMovies = [] }) => {
         <div className="wd-panel-body">
           {savedWheelDisplays.map((wheel) => (
             <div
-              key={wheel.id}
-              className={`wd-saved-item ${wheel.id === activeWheelDisplayId ? 'active' : ''}`}
+              key={wheel._id}
+              className={`wd-saved-item ${wheel._id === activeWheelDisplayId ? 'active' : ''}`}
               onClick={() => loadWheelDisplay(wheel)}
             >
               <div className="wd-saved-name">{wheel.name}</div>
@@ -181,7 +225,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
               className="wd-new-wheel-btn"
               onClick={() => setNewWheelDisplayMode(true)}
             >
-              + new wheel
+              + New Wheel
             </button>
           )}
         </div>
@@ -286,7 +330,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
             {spinning ? 'Spinning…' : 'Spin the wheel'}
           </button>
           <div className="wd-action-row">
-            <button className="wd-btn-secondary" onClick={saveWheelDisplay}>
+            <button className="wd-btn-secondary" onClick={saveWheel}>
               Save wheel
             </button>
             <button className="wd-btn-secondary" onClick={clearAll}>
@@ -316,7 +360,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
             const added = isInWheelDisplay(movie);
             return (
               <div
-                key={i}
+                key={movie.imdbid || movie.title}
                 className={`wd-movie-item ${added ? 'added' : ''}`}
                 onClick={() => toggleMovie(movie)}
               >

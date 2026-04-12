@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const movieRoutes = require('./routes/movie-endpoints');
+const wheelRoutes = require('./routes/wheel-endpoints.js');
 
 app.use(cors({
     origin: process.env.CLIENT_URL || 'https://movie-bucketlist.vercel.app',
@@ -38,6 +39,7 @@ db.once('open', () => {
 });
 
 app.use('/api/movies', movieRoutes);
+app.use('/api/wheels', wheelRoutes);
 
 app.use("/", (req, res) => {
     res.send("Server is running");

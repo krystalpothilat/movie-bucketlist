@@ -47,8 +47,8 @@
 .wd-saved-item {
   padding: 9px 10px;
   border-radius: 8px;
-  border: 0.5px solid var(--color-border-tertiary, #e0e0e0);
-  background: var(--color-background-primary, #fff);
+  border: 0.5px solid var(--color-border-tertiary, #4c4b4b);
+  background: var(--color-background-primary, #000000);
   margin-bottom: 8px;
   cursor: pointer;
   transition: background 0.12s;
