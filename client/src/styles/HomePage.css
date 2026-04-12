@@ -5,17 +5,16 @@ body,
 #root {
   height: 100%;
   margin: 0;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
 }
 
 .main-content {
-  height: 100%;
-  /* flex: 1; takes all available vertical space */
-  /* padding: 20px; */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: #1a1a1a;
   width: 100%;
-  /* box-sizing: border-box; */
 }
 
 #admin-logout {
