@@ -582,7 +582,9 @@ const WheelDisplay = ({ allMovies = [] }) => {
             </button>
             <div className="wd-result">
               <span className="wd-result-label">Tonight's pick:</span>
-              <span className="wd-result-title">{result?.title || "------"}</span>
+              <span className="wd-result-title">
+                {result?.title || '------'}
+              </span>
             </div>
           </div>
 
