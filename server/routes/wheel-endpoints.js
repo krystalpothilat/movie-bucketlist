@@ -11,7 +11,7 @@ router.post('/save-wheel', async (req, res) => {
     const wheel = new Wheel(wheelData); // Create a new Wheel instance
     await wheel.save(); // Save to database
 
-    res.status(200).send('Wheel saved successfully');
+    res.status(200).json(wheel);
   } catch (error) {
     res.status(500).send('Error adding wheel: ' + error.message);
   }

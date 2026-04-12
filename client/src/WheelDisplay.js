@@ -78,11 +78,10 @@ const WheelDisplay = ({ allMovies = [] }) => {
 
   const clearAll = () => {
     setWheelDisplayMovies([]);
-
-    syncActiveDraft([]);
-
     setResult(null);
     setRotation(0);
+
+    syncActiveDraft([]);
   };
 
   const loadWheelDisplay = (wheel) => {
@@ -149,6 +148,20 @@ const WheelDisplay = ({ allMovies = [] }) => {
     return 9;
   };
 
+  const getActiveSource = () => {
+    if (activeDraftId) {
+      return draftWheels.find((d) => d.draftId === activeDraftId);
+    }
+
+    if (activeWheelDisplayId) {
+      return savedWheelDisplays.find((w) => w._id === activeWheelDisplayId);
+    }
+
+    return {
+      name: wheelName,
+      movies: wheelMovies,
+    };
+  };
   /// API FUNCTIONS
 
   const handleSaveWheel = async () => {
@@ -174,11 +187,13 @@ const WheelDisplay = ({ allMovies = [] }) => {
 
   // SAVE WHEEL TO DB
   const saveWheel = async () => {
-    if (!wheelName.trim() || wheelMovies.length === 0) return;
+    const active = getActiveSource();
+
+    if (!active.name?.trim() || !active.movies?.length) return;
 
     const wheelData = {
-      name: wheelName,
-      movies: wheelMovies.map((movie, i) => ({
+      name: active.name,
+      movies: active.movies.map((movie, i) => ({
         title: movie.title,
         color: i % COLORS.length,
       })),
@@ -199,10 +214,20 @@ const WheelDisplay = ({ allMovies = [] }) => {
       if (response.ok) {
         const savedWheel = await response.json();
 
+        // move to saved state
+        setSavedWheelDisplays((prev) => [...prev, savedWheel]);
+
+        // remove from drafts
+        setDraftWheels((prev) =>
+          prev.filter((d) => d.draftId !== activeDraftId)
+        );
+
+        // set active saved wheel
         setActiveWheelDisplayId(savedWheel._id);
+        setActiveDraftId(null);
 
+        // sync editor
         setWheelDisplayName(savedWheel.name);
-
         setWheelDisplayMovies(
           (savedWheel.movies || []).map((m) => ({
             title: m.title,
@@ -213,6 +238,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
         setRotation(0);
 
         getSavedWheels();
+
         console.log('Wheel saved successfully');
       } else {
         const errorText = await response.text();
@@ -258,10 +284,32 @@ const WheelDisplay = ({ allMovies = [] }) => {
     }
   };
 
-  const deleteWheel = async (wheelId) => {
+  const deleteWheel = async (wheel) => {
+    if (!wheel) return;
+    const isDraft = !!wheel.draftId;
+
+    // -------------------
+    // DRAFT DELETE (LOCAL ONLY)
+    // -------------------
+    if (isDraft) {
+      setDraftWheels((prev) => prev.filter((d) => d.draftId !== wheel.draftId));
+
+      if (activeDraftId === wheel.draftId) {
+        setActiveDraftId(null);
+        setWheelDisplayName('');
+        setWheelDisplayMovies([]);
+      }
+
+      return;
+    }
+
+    // -------------------
+    // SAVED DELETE (API)
+    // -------------------
+
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/wheels/delete-wheel/${wheelId}`,
+        `${process.env.REACT_APP_BACKEND_API}/api/wheels/delete-wheel/${wheel._id}`,
         {
           method: 'DELETE',
           headers: {
@@ -274,8 +322,10 @@ const WheelDisplay = ({ allMovies = [] }) => {
       if (response.ok) {
         console.log('Wheel deleted successfully');
         // update UI immediately
-        setSavedWheelDisplays((prev) => prev.filter((w) => w._id !== wheelId));
-        if (activeWheelDisplayId === wheelId) {
+        setSavedWheelDisplays((prev) =>
+          prev.filter((w) => w._id !== wheel._id)
+        );
+        if (activeWheelDisplayId === wheel._id) {
           setActiveWheelDisplayId(null);
           setWheelDisplayName('');
           setWheelDisplayMovies([]);
@@ -314,6 +364,15 @@ const WheelDisplay = ({ allMovies = [] }) => {
     getSavedWheels();
   }, []);
 
+  useEffect(() => {
+    if (!activeDraftId) return;
+
+    setDraftWheels((prev) =>
+      prev.map((d) =>
+        d.draftId === activeDraftId ? { ...d, name: wheelName } : d
+      )
+    );
+  }, [wheelName, activeDraftId]);
   return (
     <div className="wheel-display-container">
       {/* Left panel: saved wheels */}
@@ -332,6 +391,15 @@ const WheelDisplay = ({ allMovies = [] }) => {
                   {(wheel.movies || []).length} movies
                 </div>
               </div>
+              <button
+                className="wd-delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteWheel(wheel);
+                }}
+              >
+                ✕
+              </button>
             </div>
           ))}
 
@@ -347,6 +415,15 @@ const WheelDisplay = ({ allMovies = [] }) => {
                   {(wheel.movies || []).length} movies
                 </div>
               </div>
+              <button
+                className="wd-delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteWheel(wheel);
+                }}
+              >
+                ✕
+              </button>
             </div>
           ))}
 
