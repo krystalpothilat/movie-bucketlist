@@ -28,7 +28,7 @@ const HomePage = () => {
 
   // Fetch all movies once so WheelDisplay can use them without its own fetch
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_API}/get-movies`, {
+    fetch(`${process.env.REACT_APP_BACKEND_API}/api/movies/get-movies`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })

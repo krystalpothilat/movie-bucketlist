@@ -49,7 +49,7 @@ const MovieDisplay = ({
   }, []);
 
   const fetchAllMovies = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_API}/get-movies`, {
+    fetch(`${process.env.REACT_APP_BACKEND_API}/api/movies/get-movies`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })

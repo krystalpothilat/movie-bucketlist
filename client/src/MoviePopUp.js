@@ -35,7 +35,7 @@ const MoviePopUp = ({
   const deleteMovie = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/delete-movie`,
+        `${process.env.REACT_APP_BACKEND_API}/api/movies/delete-movie`,
         {
           method: 'POST',
           headers: {
@@ -59,7 +59,7 @@ const MoviePopUp = ({
   const updateSeen = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/update-seen`,
+        `${process.env.REACT_APP_BACKEND_API}/api/movies/update-seen`,
         {
           method: 'POST',
           headers: {
@@ -84,7 +84,7 @@ const MoviePopUp = ({
   const addMovie = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/add-movie`,
+        `${process.env.REACT_APP_BACKEND_API}/api/movies/add-movie`,
         {
           method: 'POST',
           headers: {
