@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { FormControl } from 'react-bootstrap';
 import MovieDisplay from './MovieDisplay';
 import MoviePopUp from './MoviePopUp';
 import WheelDisplay from './WheelDisplay';
@@ -10,6 +9,30 @@ import './styles/HomePage.css';
 import grid from './imgs/grid.png';
 import carousel from './imgs/carousel.png';
 import wheel from './imgs/wheel.png';
+import Header from './Header';
+import FiltersBar from './FiltersBar';
+
+const genres = [
+  { value: 'Action', label: 'Action' },
+  { value: 'Adventure', label: 'Adventure' },
+  { value: 'Animation', label: 'Animation' },
+  { value: 'Biography', label: 'Biography' },
+  { value: 'Comedy', label: 'Comedy' },
+  { value: 'Crime', label: 'Crime' },
+  { value: 'Drama', label: 'Drama' },
+  { value: 'Family', label: 'Family' },
+  { value: 'Fantasy', label: 'Fantasy' },
+  { value: 'Film-Noir', label: 'Film-Noir' },
+  { value: 'History', label: 'History' },
+  { value: 'Horror', label: 'Horror' },
+  { value: 'Musical', label: 'Musical' },
+  { value: 'Mystery', label: 'Mystery' },
+  { value: 'Romance', label: 'Romance' },
+  { value: 'Sci-Fi', label: 'Sci-Fi' },
+  { value: 'Thriller', label: 'Thriller' },
+  { value: 'War', label: 'War' },
+  { value: 'Western', label: 'Western' },
+];
 
 const HomePage = () => {
   const [viewType, setViewType] = useState('grid'); // 'grid' | 'carousel' | 'wheel'
@@ -77,28 +100,6 @@ const HomePage = () => {
     { value: 'no', label: 'No' },
   ];
 
-  const genres = [
-    { value: 'Action', label: 'Action' },
-    { value: 'Adventure', label: 'Adventure' },
-    { value: 'Animation', label: 'Animation' },
-    { value: 'Biography', label: 'Biography' },
-    { value: 'Comedy', label: 'Comedy' },
-    { value: 'Crime', label: 'Crime' },
-    { value: 'Drama', label: 'Drama' },
-    { value: 'Family', label: 'Family' },
-    { value: 'Fantasy', label: 'Fantasy' },
-    { value: 'Film-Noir', label: 'Film-Noir' },
-    { value: 'History', label: 'History' },
-    { value: 'Horror', label: 'Horror' },
-    { value: 'Musical', label: 'Musical' },
-    { value: 'Mystery', label: 'Mystery' },
-    { value: 'Romance', label: 'Romance' },
-    { value: 'Sci-Fi', label: 'Sci-Fi' },
-    { value: 'Thriller', label: 'Thriller' },
-    { value: 'War', label: 'War' },
-    { value: 'Western', label: 'Western' },
-  ];
-
   const toggleGenreDropdown = () => setGenreDropdownOpen((prev) => !prev);
   const toggleSeenDropdown = () => setSeenDropdownOpen((prev) => !prev);
   const genreReset = () => setGenreTypes([]);
@@ -137,188 +138,62 @@ const HomePage = () => {
 
   return (
     <div className="main-content">
-      <div className="header">
-        <div className="titles">
-          <h1 className="title">Movie Bucket List</h1>
-          {/* Hide search bar in wheel view — not relevant there */}
-          {!isWheelDisplayView && (
-            <div className="search-bar-container">
-              <FormControl
-                type="text"
-                placeholder="Search for a movie..."
-                className="search-bar"
-                value={searchTitle}
-                onChange={(e) => setSearchTitle(e.target.value)}
-              />
-              <button id="clear-search" onClick={() => setSearchTitle('')}>
-                {' '}
-                ×{' '}
-              </button>
-            </div>
-          )}
+      <Header
+        searchTitle={searchTitle}
+        onSearchChange={setSearchTitle}
+        onClearSearch={() => setSearchTitle('')}
+      />
+
+      <FiltersBar
+        viewType={viewType}
+        setViewType={setViewType}
+        setGridView={setGridView}
+        setCarouselView={setCarouselView}
+        setWheelDisplayView={setWheelDisplayView}
+        gridIcon={grid}
+        carouselIcon={carousel}
+        wheelIcon={wheel}
+        sortBy={sortBy}
+        handleSortTypeChange={handleSortTypeChange}
+        genres={genres}
+        genreTypes={genreTypes}
+        handleGenreTypeChange={handleGenreTypeChange}
+        handleGenreTypeTagChange={handleGenreTypeTagChange}
+        genreDropdownOpen={genreDropdownOpen}
+        toggleGenreDropdown={toggleGenreDropdown}
+        genreReset={genreReset}
+        genreDropdownRef={genreDropdownRef}
+        options={options}
+        seenToggle={seenToggle}
+        setSeenToggle={setSeenToggle}
+        handleSeenToggleChange={handleSeenToggleChange}
+        seenDropdownOpen={seenDropdownOpen}
+        toggleSeenDropdown={toggleSeenDropdown}
+        seenDropdownRef={seenDropdownRef}
+        isWheelDisplayView={isWheelDisplayView}
+      />
+
+      {isAdmin && (
+        <div className="admin-buttons">
+          <Button
+            variant="warning"
+            onClick={addMovieButtonClicked}
+            id="add-movie-button"
+          >
+            Add Movie
+          </Button>{' '}
+          <Button variant="secondary" id="admin-logout" onClick={handleLogOut}>
+            Log Out
+          </Button>{' '}
         </div>
+      )}
 
-        <div className="filters-container">
-          <div className="filters-container" id="imgs-buttons-filters">
-            {/* Grid icon */}
-            <div className="iconWrapper">
-              <img
-                className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`}
-                id="grid"
-                src={grid}
-                alt="grid view"
-                onClick={setGridView}
-              />
-            </div>
-            {/* Carousel icon */}
-            <div className="iconWrapper">
-              <img
-                className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`}
-                id="carousel"
-                src={carousel}
-                alt="carousel view"
-                onClick={setCarouselView}
-              />
-            </div>
-            {/* WheelDisplay icon */}
-            <div className="iconWrapper">
-              <img
-                className={`filter-img ${viewType === 'wheel' ? 'selected' : ''}`}
-                id="wheel"
-                src={wheel}
-                alt="wheel selecter"
-                onClick={setWheelDisplayView}
-              />
-            </div>
-          </div>
-
-          {/* Hide sort/filter controls in wheel view */}
-          {!isWheelDisplayView && (
-            <>
-              <select
-                id="sortBySelect"
-                className="form-select"
-                value={sortBy}
-                onChange={handleSortTypeChange}
-              >
-                <optgroup label="Sort By">
-                  <option value="rank">Rank</option>
-                  <option value="alphabetical">Alphabetical</option>
-                </optgroup>
-              </select>
-
-              <div className="dropdown" ref={genreDropdownRef}>
-                <button
-                  className="btn btn-secondary dropdown-toggle"
-                  type="button"
-                  onClick={toggleGenreDropdown}
-                >
-                  Genre
-                </button>
-                <div
-                  className={`dropdown-menu${genreDropdownOpen ? ' show' : ''}`}
-                >
-                  <button onClick={genreReset}>Reset</button>
-                  {genres.map((genre) => (
-                    <div key={genre.value} className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value={genre.value}
-                        id={`genre-${genre.value}`}
-                        checked={genreTypes.includes(genre.value)}
-                        onChange={handleGenreTypeChange}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor={`genre-${genre.value}`}
-                      >
-                        {genre.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="dropdown" ref={seenDropdownRef}>
-                <button
-                  className="btn btn-secondary dropdown-toggle"
-                  type="button"
-                  onClick={toggleSeenDropdown}
-                >
-                  Seen
-                </button>
-                <div
-                  className={`dropdown-menu${seenDropdownOpen ? ' show' : ''}`}
-                >
-                  <button onClick={() => setSeenToggle(null)}>Reset</button>
-                  {options.map((option) => (
-                    <div key={option.value} className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        name="seenToggle"
-                        value={option.value}
-                        id={`seen-${option.value}`}
-                        checked={seenToggle === option.value}
-                        onChange={handleSeenToggleChange}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor={`seen-${option.value}`}
-                      >
-                        {option.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="selected-genres-display">
-                {genreTypes.length > 0 &&
-                  genreTypes.map((genre, index) => (
-                    <div className="genre-tags" key={index}>
-                      <button
-                        className="close-genre"
-                        onClick={() => handleGenreTypeTagChange(genre)}
-                      >
-                        x
-                      </button>
-                      <p className="genre-tag-name">{genre}</p>
-                    </div>
-                  ))}
-              </div>
-            </>
-          )}
-        </div>
-
-        {isAdmin && (
-          <div className="admin-buttons">
-            <Button
-              variant="warning"
-              onClick={addMovieButtonClicked}
-              id="add-movie-button"
-            >
-              Add Movie
-            </Button>{' '}
-            <Button
-              variant="secondary"
-              id="admin-logout"
-              onClick={handleLogOut}
-            >
-              Log Out
-            </Button>{' '}
-          </div>
+      <div ref={popupRef}>
+        {addMovieToggle && (
+          <MoviePopUp onClose={handleClosePopUp} addMovieBool={true} />
         )}
-
-        <div ref={popupRef}>
-          {addMovieToggle && (
-            <MoviePopUp onClose={handleClosePopUp} addMovieBool={true} />
-          )}
-        </div>
       </div>
 
-      {/* Main content area — swaps between MovieDisplay and WheelDisplay */}
       {isWheelDisplayView ? (
         <WheelDisplay allMovies={allMovies} />
       ) : (
