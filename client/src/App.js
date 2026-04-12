@@ -9,15 +9,13 @@ import { AuthProvider } from './AuthContext';
 function App() {
   return (
     <AuthProvider>
-
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} /> 
-        <Route path="/admin" element={<AdminPage />} />
-      </Routes>
-    </Router>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
+      </Router>
     </AuthProvider>
-
   );
 }
 
