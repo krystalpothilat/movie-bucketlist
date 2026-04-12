@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import './styles/WheelDisplay.css';
 import WheelSlice from './WheelSlice';
+import ToastMessage from './ToastMessage';
 
 const COLORS = [
   { bg: '#B5D4F4', text: '#0C447C' },
@@ -26,6 +27,8 @@ const WheelDisplay = ({ allMovies = [] }) => {
   const [result, setResult] = useState(null);
   const [newWheelDisplayMode, setNewWheelDisplayMode] = useState(false);
   const [newWheelDisplayName, setNewWheelDisplayName] = useState('');
+
+  const [toastAction, setToastAction] = useState(null);
 
   const wheelRef = useRef(null);
 
@@ -239,6 +242,11 @@ const WheelDisplay = ({ allMovies = [] }) => {
 
         getSavedWheels();
 
+        setToastAction({
+          type: 'saved',
+          id: crypto.randomUUID(),
+        });
+
         console.log('Wheel saved successfully');
       } else {
         const errorText = await response.text();
@@ -274,6 +282,11 @@ const WheelDisplay = ({ allMovies = [] }) => {
         setSavedWheelDisplays((prev) =>
           prev.map((w) => (w._id === wheelId ? { ...w, ...wheelData } : w))
         );
+
+        setToastAction({
+          type: 'updated',
+          id: crypto.randomUUID(),
+        });
         console.log('Wheel updated successfully');
       } else {
         const errorText = await response.text();
@@ -299,6 +312,11 @@ const WheelDisplay = ({ allMovies = [] }) => {
         setWheelDisplayName('');
         setWheelDisplayMovies([]);
       }
+
+      setToastAction({
+        type: 'draft_deleted',
+        id: crypto.randomUUID(),
+      });
 
       return;
     }
@@ -330,6 +348,11 @@ const WheelDisplay = ({ allMovies = [] }) => {
           setWheelDisplayName('');
           setWheelDisplayMovies([]);
         }
+
+        setToastAction({
+          type: 'deleted',
+          id: crypto.randomUUID(),
+        });
       } else {
         const errorText = await response.text();
         console.error('Error deleting wheel:', errorText);
@@ -375,6 +398,8 @@ const WheelDisplay = ({ allMovies = [] }) => {
   }, [wheelName, activeDraftId]);
   return (
     <div className="wheel-display-container">
+      <ToastMessage action={toastAction} />
+
       {/* Left panel: saved wheels */}
       <div className="wd-panel wd-panel-left">
         <div className="wd-panel-header">Saved wheels</div>

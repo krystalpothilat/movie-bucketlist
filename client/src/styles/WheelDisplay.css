@@ -9,6 +9,8 @@
   --color-text-secondary: #d1d5db;
   --color-text-tertiary: #9ca3af;
   --color-text-black: black;
+
+  z-index: 3;
 }
 
 /* Panels */
@@ -93,6 +95,9 @@
 .wd-saved-item:hover:not(.active) .wd-saved-count,
 .wd-saved-item:hover:not(.active) .wd-delete-btn {
   color: black;
+}
+.wd-saved-item:hover:not(.active) .wd-delete-btn:hover {
+  color: #e24b4a;
 }
 .wd-new-wheel-btn {
   width: 100%;
