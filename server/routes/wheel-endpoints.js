@@ -3,51 +3,48 @@ const router = express.Router();
 
 const Wheel = require('../models/Wheel');
 
-
 //SAVE WHEEL TO DB
 router.post('/save-wheel', async (req, res) => {
-    try {
-        const wheelData = req.body;
-        console.log(wheelData);
-        const wheel = new Wheel(wheelData); // Create a new Wheel instance
-        await wheel.save(); // Save to database
+  try {
+    const wheelData = req.body;
+    console.log(wheelData);
+    const wheel = new Wheel(wheelData); // Create a new Wheel instance
+    await wheel.save(); // Save to database
 
-        res.status(200).send('Wheel saved successfully');
-    } catch (error) {
-        res.status(500).send('Error adding wheel: ' + error.message);
-    }
-
+    res.status(200).send('Wheel saved successfully');
+  } catch (error) {
+    res.status(500).send('Error adding wheel: ' + error.message);
+  }
 });
 
 // DELETE WHEEL FROM DB
 router.delete('/delete-wheel/:id', async (req, res) => {
-    try {
+  try {
     await Wheel.findByIdAndDelete(req.params.id);
-    res.status(200).send('Wheel deleted');
+    res.status(200).send('Wheel deleted successfully');
   } catch (err) {
     res.status(500).send('Error deleting wheel');
   }
 });
 
-// // UPDATE WHEEL
-// router.post('/update-wheel/:id', async (req, res) => {
-//     try {
-//     const updatedWheel = await Wheel.findByIdAndUpdate(
-//       req.params.id,
-//       req.body,
-//       { new: true }
-//     );
+// UPDATE WHEEL
+router.post('/update-wheel/:id', async (req, res) => {
+  try {
+    const updatedWheel = await Wheel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-//     res.status(200).json(updatedWheel);
-//   } catch (err) {
-//     res.status(500).send('Error updating wheel');
-//   }
-// });
-
+    res.status(200).send('Wheel updated successfully');
+  } catch (err) {
+    res.status(500).send('Error updating wheel');
+  }
+});
 
 // GET ALL SAVED WHEELS
 router.get('/get-saved-wheels', async (req, res) => {
-    try {
+  try {
     const wheels = await Wheel.find();
     res.status(200).json(wheels);
   } catch (err) {

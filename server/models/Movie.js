@@ -12,7 +12,6 @@ const movieSchema = new mongoose.Schema({
   rating: String,
   year: String,
   seen: Boolean,
-
 });
 
 module.exports = mongoose.model('Movie', movieSchema);
