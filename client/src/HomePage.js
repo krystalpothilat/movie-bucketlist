@@ -194,19 +194,21 @@ const HomePage = () => {
         )}
       </div>
 
-      {isWheelDisplayView ? (
-        <WheelDisplay allMovies={allMovies} />
-      ) : (
-        <MovieDisplay
-          viewType={viewType}
-          sortBy={sortBy}
-          genres={genreTypes}
-          searchTitle={searchTitle}
-          seenToggle={seenToggle}
-          isAdmin={isAdmin}
-          refreshTrigger={popupClosed}
-        />
-      )}
+      <div className="page-content">
+        {isWheelDisplayView ? (
+            <WheelDisplay allMovies={allMovies} />
+        ) : (
+            <MovieDisplay
+            viewType={viewType}
+            sortBy={sortBy}
+            genres={genreTypes}
+            searchTitle={searchTitle}
+            seenToggle={seenToggle}
+            isAdmin={isAdmin}
+            refreshTrigger={popupClosed}
+            />
+        )}
+        </div>
 
       <footer className="footer">
         <p>
