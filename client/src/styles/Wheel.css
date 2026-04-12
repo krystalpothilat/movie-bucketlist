@@ -5,7 +5,7 @@
   min-height: 520px;
   border-top: 0.5px solid var(--color-border-tertiary, #e0e0e0);
 
-  --color-text-primary: white;    
+  --color-text-primary: white;
   --color-text-secondary: #d1d5db;
   --color-text-tertiary: #9ca3af;
   --color-text-black: black;
@@ -182,13 +182,29 @@
 
 .wd-wheel-svg-wrap {
   width: 100%;
-  max-width: 320px;
+  max-width: 500px;
+  font-size: 50%;
 }
 
 .wd-wheel-svg {
   width: 100%;
   height: auto;
   display: block;
+}
+
+/* Allow text to wrap instead of cutting off */
+.wd-wheel-empty-text,
+.wd-wheel-svg text {
+  white-space: normal; /* allow wrapping */
+  overflow: visible; /* show overflowing text */
+  text-overflow: unset; /* remove ellipsis */
+  word-break: break-word; /* break long words if needed */
+}
+
+/* Keep text centered inside the slice */
+.wd-wheel-svg text {
+  text-anchor: middle;
+  dominant-baseline: middle;
 }
 
 .wd-wheel-empty {
@@ -367,7 +383,7 @@
 }
 
 .wd-result .wd-result-placeholder {
-    color: var(--color-text-black);
+  color: var(--color-text-black);
 }
 
 .wd-wheel-empty-circle {
@@ -391,8 +407,8 @@
 }
 
 .wd-wheel-pointer {
-  fill: #E24B4A;
-  transform-origin: 160px 16px; /* roughly the center of the triangle */
+  fill: #e24b4a;
+  transform-origin: 205px 16px; /* roughly the center of the triangle */
   transform: rotate(180deg); /* upside down */
 }
 
