@@ -172,6 +172,37 @@ const WheelDisplay = ({ allMovies = [] }) => {
     }
   };
 
+  const deleteWheel = async (wheelId) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/wheels/delete-wheel/${wheelId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(),
+        }
+      );
+
+      if (response.ok) {
+        console.log('Wheel deleted successfully');
+        // update UI immediately
+        setSavedWheelDisplays((prev) => prev.filter((w) => w._id !== wheelId));
+        if (activeWheelDisplayId === wheelId) {
+          setActiveWheelDisplayId(null);
+          setWheelDisplayName('');
+          setWheelDisplayMovies([]);
+        }
+      } else {
+        const errorText = await response.text();
+        console.error('Error deleting wheel:', errorText);
+      }
+    } catch (error) {
+      console.error('Error deleting wheel:', error);
+    }
+  };
+
   useEffect(() => {
     getSavedWheels();
   }, []);
@@ -188,10 +219,21 @@ const WheelDisplay = ({ allMovies = [] }) => {
               className={`wd-saved-item ${wheel._id === activeWheelDisplayId ? 'active' : ''}`}
               onClick={() => loadWheelDisplay(wheel)}
             >
-              <div className="wd-saved-name">{wheel.name}</div>
-              <div className="wd-saved-count">
-                {(wheel.movies || []).length} movies
+              <div className="wd-saved-data">
+                <div className="wd-saved-name">{wheel.name}</div>
+                <div className="wd-saved-count">
+                  {(wheel.movies || []).length} movies
+                </div>
               </div>
+              <button
+                className="wd-delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteWheel(wheel._id);
+                }}
+              >
+                ✕
+              </button>
             </div>
           ))}
 
