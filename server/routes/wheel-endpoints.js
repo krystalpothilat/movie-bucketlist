@@ -20,14 +20,14 @@ router.post('/save-wheel', async (req, res) => {
 });
 
 // DELETE WHEEL FROM DB
-// router.post('/delete-wheel/:id', async (req, res) => {
-//     try {
-//     await Wheel.findByIdAndDelete(req.params.id);
-//     res.status(200).send('Wheel deleted');
-//   } catch (err) {
-//     res.status(500).send('Error deleting wheel');
-//   }
-// });
+router.delete('/delete-wheel/:id', async (req, res) => {
+    try {
+    await Wheel.findByIdAndDelete(req.params.id);
+    res.status(200).send('Wheel deleted');
+  } catch (err) {
+    res.status(500).send('Error deleting wheel');
+  }
+});
 
 // // UPDATE WHEEL
 // router.post('/update-wheel/:id', async (req, res) => {

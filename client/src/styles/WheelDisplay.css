@@ -52,15 +52,21 @@
   margin-bottom: 8px;
   cursor: pointer;
   transition: background 0.12s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .wd-saved-item:hover:not(.active) {
   background: var(--color-background-secondary, #f5f5f5);
+  color: black;
 }
 
 .wd-saved-item.active {
-  border-color: var(--color-border-info, #378add);
-  background: var(--color-background-info, #e6f1fb);
+  border-color: var(--color-border-info, #ffd700);
+  border-width: 3px;
+  background: var(--color-background-info, #d4c98b);
+  color: black;
 }
 
 .wd-saved-name {
@@ -70,7 +76,7 @@
 }
 
 .wd-saved-item.active .wd-saved-name {
-  color: var(--color-text-info, #185fa5);
+  color: var(--color-text-info, #000000);
 }
 
 .wd-saved-count {
@@ -80,9 +86,14 @@
 }
 
 .wd-saved-item.active .wd-saved-count {
-  color: var(--color-text-info, #185fa5);
+  color: var(--color-text-info, #000000);
 }
 
+.wd-saved-item:hover:not(.active) .wd-saved-name,
+.wd-saved-item:hover:not(.active) .wd-saved-count,
+.wd-saved-item:hover:not(.active) .wd-delete-btn {
+  color: black;
+}
 .wd-new-wheel-btn {
   width: 100%;
   padding: 7px;
@@ -98,6 +109,7 @@
 
 .wd-new-wheel-btn:hover {
   background: var(--color-background-secondary, #f5f5f5);
+  color: black;
 }
 
 .wd-new-wheel-form {
@@ -131,10 +143,6 @@
   background: transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
-}
-
-.wd-btn-sm:hover {
-  background: var(--color-background-secondary, #f5f5f5);
 }
 
 .wd-btn-ghost {
@@ -294,6 +302,7 @@
 
 .wd-btn-secondary:hover {
   background: var(--color-background-secondary, #f5f5f5);
+  color: black;
 }
 
 /* Right panel */
@@ -336,9 +345,9 @@
   gap: 6px;
 }
 
-.wd-movie-item:hover:not(.added) {
+/* .wd-movie-item:hover:not(.added) {
   background: var(--color-background-secondary, #f5f5f5);
-}
+} */
 
 .wd-movie-item.added {
   background: var(--color-background-success, #eaf3de);
@@ -429,4 +438,24 @@
   .wd-panel-center {
     max-height: none;
   }
+}
+
+.wd-delete-btn {
+  border: none;
+  background: none;
+  position: right;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.wd-saved-item .wd-delete-btn {
+  color: #ffff;
+}
+
+.wd-saved-item.active .wd-delete-btn {
+  color: #000000;
+}
+
+.wd-saved-item .wd-delete-btn:hover {
+  color: #e24b4a;
 }
