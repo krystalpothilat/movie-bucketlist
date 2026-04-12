@@ -156,6 +156,7 @@
 
 /* Center panel */
 .wd-panel-center {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -165,7 +166,7 @@
 
 .wd-panel-center .wd-panel-header {
   width: 100%;
-  padding: 10px 16px;
+  padding: 10px 14px;
 }
 
 .wd-wheel-name-input {
@@ -226,13 +227,12 @@
 }
 
 .wd-result {
+  flex: 7;
   padding: 8px 20px;
   border-radius: 8px;
   background: var(--color-background-warning, #faeeda);
   font-size: 13px;
   text-align: center;
-  width: calc(100% - 2rem);
-  margin: 0 1rem;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -266,8 +266,15 @@
   flex-shrink: 0;
 }
 
-.wd-spin-btn {
+.wd-spin-container {
+  flex: 3;
+  display: flex;
   width: 100%;
+  gap: 10px;
+}
+
+.wd-spin-btn {
+  width: 30%;
   padding: 9px;
   background: var(--color-background-info, #e6f1fb);
   border: none;
@@ -349,10 +356,6 @@
   transition: background 0.12s;
   gap: 6px;
 }
-
-/* .wd-movie-item:hover:not(.added) {
-  background: var(--color-background-secondary, #f5f5f5);
-} */
 
 .wd-movie-item.added {
   background: var(--color-background-success, #eaf3de);
