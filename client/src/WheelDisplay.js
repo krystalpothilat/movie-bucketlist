@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
-import './styles/Wheel.css';
+import './styles/WheelDisplay.css';
 import WheelSlice from './WheelSlice';
 
 const COLORS = [
@@ -18,17 +18,17 @@ const MOCK_SAVED_WHEELS = [
   { id: 2, name: 'Friday horror', movies: [] },
 ];
 
-const Wheel = ({ allMovies = [] }) => {
-  const [savedWheels, setSavedWheels] = useState(MOCK_SAVED_WHEELS);
-  const [activeWheelId, setActiveWheelId] = useState(1);
-  const [wheelMovies, setWheelMovies] = useState([]);
-  const [wheelName, setWheelName] = useState('Date night picks');
+const WheelDisplay = ({ allMovies = [] }) => {
+  const [savedWheelDisplays, setSavedWheelDisplays] = useState(MOCK_SAVED_WHEELS);
+  const [activeWheelDisplayId, setActiveWheelDisplayId] = useState(1);
+  const [wheelMovies, setWheelDisplayMovies] = useState([]);
+  const [wheelName, setWheelDisplayName] = useState('Date night picks');
   const [movieSearch, setMovieSearch] = useState('');
   const [spinning, setSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState(null);
-  const [newWheelMode, setNewWheelMode] = useState(false);
-  const [newWheelName, setNewWheelName] = useState('');
+  const [newWheelDisplayMode, setNewWheelDisplayMode] = useState(false);
+  const [newWheelDisplayName, setNewWheelDisplayName] = useState('');
 
   const wheelRef = useRef(null);
 
@@ -42,7 +42,7 @@ const Wheel = ({ allMovies = [] }) => {
   }, [allMovies, movieSearch]);
 
   const toggleMovie = (movie) => {
-    setWheelMovies((prev) =>
+    setWheelDisplayMovies((prev) =>
       prev.some((m) => m.title === movie.title)
         ? prev.filter((m) => m.title !== movie.title)
         : [...prev, movie]
@@ -50,7 +50,7 @@ const Wheel = ({ allMovies = [] }) => {
     setResult(null);
   };
 
-  const isInWheel = (movie) => wheelMovies.some((m) => m.title === movie.title);
+  const isInWheelDisplay = (movie) => wheelMovies.some((m) => m.title === movie.title);
 
   // Spin logic
   const spin = () => {
@@ -74,52 +74,52 @@ const Wheel = ({ allMovies = [] }) => {
   };
 
   const clearAll = () => {
-    setWheelMovies([]);
+    setWheelDisplayMovies([]);
     setResult(null);
     setRotation(0);
   };
 
-  const saveWheel = () => {
+  const saveWheelDisplay = () => {
     if (!wheelName.trim() || wheelMovies.length === 0) return;
 
-    setSavedWheels((prev) => {
-      const exists = prev.find((w) => w.id === activeWheelId);
+    setSavedWheelDisplays((prev) => {
+      const exists = prev.find((w) => w.id === activeWheelDisplayId);
       if (exists) {
         return prev.map((w) =>
-          w.id === activeWheelId
+          w.id === activeWheelDisplayId
             ? { ...w, name: wheelName, movies: wheelMovies }
             : w
         );
       }
       const newId = Date.now();
-      setActiveWheelId(newId);
+      setActiveWheelDisplayId(newId);
       return [...prev, { id: newId, name: wheelName, movies: wheelMovies }];
     });
   };
 
-  const loadWheel = (wheel) => {
-    setActiveWheelId(wheel.id);
-    setWheelName(wheel.name);
-    setWheelMovies(wheel.movies || []);
+  const loadWheelDisplay = (wheel) => {
+    setActiveWheelDisplayId(wheel.id);
+    setWheelDisplayName(wheel.name);
+    setWheelDisplayMovies(wheel.movies || []);
     setResult(null);
     setRotation(0);
   };
 
-  const createNewWheel = () => {
-    if (!newWheelName.trim()) return;
+  const createNewWheelDisplay = () => {
+    if (!newWheelDisplayName.trim()) return;
     const newId = Date.now();
-    const newWheel = { id: newId, name: newWheelName, movies: [] };
-    setSavedWheels((prev) => [...prev, newWheel]);
-    setActiveWheelId(newId);
-    setWheelName(newWheelName);
-    setWheelMovies([]);
+    const newWheelDisplay = { id: newId, name: newWheelDisplayName, movies: [] };
+    setSavedWheelDisplays((prev) => [...prev, newWheelDisplay]);
+    setActiveWheelDisplayId(newId);
+    setWheelDisplayName(newWheelDisplayName);
+    setWheelDisplayMovies([]);
     setResult(null);
     setRotation(0);
-    setNewWheelMode(false);
-    setNewWheelName('');
+    setNewWheelDisplayMode(false);
+    setNewWheelDisplayName('');
   };
 
-  const getWheelFontSize = (movies, radius = 145) => {
+  const getWheelDisplayFontSize = (movies, radius = 145) => {
     if (!movies.length) return 13;
     const boxW = radius - 5 - 20 - 5; // 115
     const longestTitle = movies.reduce(
@@ -138,11 +138,11 @@ const Wheel = ({ allMovies = [] }) => {
       <div className="wd-panel wd-panel-left">
         <div className="wd-panel-header">Saved wheels</div>
         <div className="wd-panel-body">
-          {savedWheels.map((wheel) => (
+          {savedWheelDisplays.map((wheel) => (
             <div
               key={wheel.id}
-              className={`wd-saved-item ${wheel.id === activeWheelId ? 'active' : ''}`}
-              onClick={() => loadWheel(wheel)}
+              className={`wd-saved-item ${wheel.id === activeWheelDisplayId ? 'active' : ''}`}
+              onClick={() => loadWheelDisplay(wheel)}
             >
               <div className="wd-saved-name">{wheel.name}</div>
               <div className="wd-saved-count">
@@ -151,25 +151,25 @@ const Wheel = ({ allMovies = [] }) => {
             </div>
           ))}
 
-          {newWheelMode ? (
+          {newWheelDisplayMode ? (
             <div className="wd-new-wheel-form">
               <input
                 className="wd-input"
-                placeholder="Wheel name…"
-                value={newWheelName}
-                onChange={(e) => setNewWheelName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && createNewWheel()}
+                placeholder="WheelDisplay name…"
+                value={newWheelDisplayName}
+                onChange={(e) => setNewWheelDisplayName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && createNewWheelDisplay()}
                 autoFocus
               />
               <div className="wd-new-wheel-actions">
-                <button className="wd-btn-sm" onClick={createNewWheel}>
+                <button className="wd-btn-sm" onClick={createNewWheelDisplay}>
                   Create
                 </button>
                 <button
                   className="wd-btn-sm wd-btn-ghost"
                   onClick={() => {
-                    setNewWheelMode(false);
-                    setNewWheelName('');
+                    setNewWheelDisplayMode(false);
+                    setNewWheelDisplayName('');
                   }}
                 >
                   Cancel
@@ -179,7 +179,7 @@ const Wheel = ({ allMovies = [] }) => {
           ) : (
             <button
               className="wd-new-wheel-btn"
-              onClick={() => setNewWheelMode(true)}
+              onClick={() => setNewWheelDisplayMode(true)}
             >
               + new wheel
             </button>
@@ -193,8 +193,8 @@ const Wheel = ({ allMovies = [] }) => {
           <input
             className="wd-wheel-name-input"
             value={wheelName}
-            onChange={(e) => setWheelName(e.target.value)}
-            placeholder="Wheel name…"
+            onChange={(e) => setWheelDisplayName(e.target.value)}
+            placeholder="WheelDisplay name…"
           />
         </div>
         <div className="wd-wheel-wrap">
@@ -245,7 +245,7 @@ const Wheel = ({ allMovies = [] }) => {
                         total={wheelMovies.length}
                         radius={145}
                         movie={movie}
-                        fontSize={getWheelFontSize(wheelMovies, 145)}
+                        fontSize={getWheelDisplayFontSize(wheelMovies, 145)}
                         color={COLORS[i % COLORS.length]}
                       />
                     ))}
@@ -286,7 +286,7 @@ const Wheel = ({ allMovies = [] }) => {
             {spinning ? 'Spinning…' : 'Spin the wheel'}
           </button>
           <div className="wd-action-row">
-            <button className="wd-btn-secondary" onClick={saveWheel}>
+            <button className="wd-btn-secondary" onClick={saveWheelDisplay}>
               Save wheel
             </button>
             <button className="wd-btn-secondary" onClick={clearAll}>
@@ -313,7 +313,7 @@ const Wheel = ({ allMovies = [] }) => {
             <p className="wd-no-results">No movies found</p>
           ) : null}
           {filteredMovies.map((movie, i) => {
-            const added = isInWheel(movie);
+            const added = isInWheelDisplay(movie);
             return (
               <div
                 key={i}
@@ -331,4 +331,4 @@ const Wheel = ({ allMovies = [] }) => {
   );
 };
 
-export default Wheel;
+export default WheelDisplay;
