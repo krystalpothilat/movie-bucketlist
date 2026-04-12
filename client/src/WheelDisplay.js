@@ -571,21 +571,21 @@ const WheelDisplay = ({ allMovies = [] }) => {
           </div>
         </div>
 
-        {result ? (
-          <div className="wd-result">
-            <span className="wd-result-label">Tonight's pick:</span>
-            <span className="wd-result-title">{result.title}</span>
-          </div>
-        ) : null}
-
         <div className="wd-actions">
-          <button
-            className="wd-spin-btn"
-            onClick={spin}
-            disabled={spinning || wheelMovies.length < 2}
-          >
-            {spinning ? 'Spinning…' : 'Spin the wheel'}
-          </button>
+          <div className="wd-spin-container">
+            <button
+              className="wd-spin-btn"
+              onClick={spin}
+              disabled={spinning || wheelMovies.length < 2}
+            >
+              {spinning ? 'Spinning…' : 'Spin the wheel'}
+            </button>
+            <div className="wd-result">
+              <span className="wd-result-label">Tonight's pick:</span>
+              <span className="wd-result-title">{result?.title || "------"}</span>
+            </div>
+          </div>
+
           <div className="wd-action-row">
             <button className="wd-btn-secondary" onClick={handleSaveWheel}>
               Save wheel
