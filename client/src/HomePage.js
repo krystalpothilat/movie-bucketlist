@@ -160,21 +160,25 @@ const HomePage = () => {
         <div className="filters-container">
           <div className="filters-container" id="imgs-buttons-filters">
             {/* Grid icon */}
-            <img
-              className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`}
-              id="grid"
-              src={grid}
-              alt="grid view"
-              onClick={setGridView}
-            />
+            <div className="iconWrapper">
+              <img
+                className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`}
+                id="grid"
+                src={grid}
+                alt="grid view"
+                onClick={setGridView}
+              />
+            </div>
             {/* Carousel icon */}
-            <img
-              className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`}
-              id="carousel"
-              src={carousel}
-              alt="carousel view"
-              onClick={setCarouselView}
-            />
+            <div className="iconWrapper">
+              <img
+                className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`}
+                id="carousel"
+                src={carousel}
+                alt="carousel view"
+                onClick={setCarouselView}
+              />
+            </div>
             {/* Wheel icon */}
             <button
               className={`wheel-view-btn ${viewType === 'wheel' ? 'selected' : ''}`}

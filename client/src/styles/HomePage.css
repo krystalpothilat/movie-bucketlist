@@ -109,6 +109,10 @@ body,
   gap: 6px;
 }
 
+button.wheel-view-btn.selected {
+  color: #ffd700 !important;
+}
+
 /* view toggle icons */
 .filter-img {
   height: 32px;
@@ -124,9 +128,9 @@ body,
   opacity: 0.8;
 }
 
-.filter-img.selected {
-  opacity: 1;
+.iconWrapper:has(.filter-img.selected) {
   border: 2px solid #ffd700;
+  opacity: 1;
   border-radius: 4px;
 }
 
@@ -415,18 +419,19 @@ body,
 /* Wheel view icon button — sits alongside grid/carousel imgs */
 .wheel-view-btn {
   background: transparent;
-  border: none;
+  border: 2px solid transparent; /* add this */
   padding: 2px;
   cursor: pointer;
-  color: var(--color-text-secondary, #888);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
   transition:
-    color 0.15s,
-    background 0.15s;
+    opacity 0.2s,
+    border 0.2s,
+    background 0.2s;
   opacity: 0.5;
+  color: #fff; /* important for svg */
 }
 
 .wheel-view-btn:hover {
@@ -435,5 +440,17 @@ body,
 
 .wheel-view-btn.selected {
   opacity: 1;
-  color: var(--color-text-primary, #222);
+  border: 2px solid #ffd700; /* MATCH grid style */
+  background-color: rgba(255, 215, 0, 0.08);
+}
+
+.btn:focus,
+.btn:active,
+.btn:focus-visible,
+.form-select:focus,
+.form-control:focus,
+.dropdown-toggle:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ffd700 !important;
 }
