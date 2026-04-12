@@ -15,7 +15,9 @@ const COLORS = [
 
 const WheelDisplay = ({ allMovies = [] }) => {
   const [savedWheelDisplays, setSavedWheelDisplays] = useState([]);
+  const [draftWheels, setDraftWheels] = useState([]);
   const [activeWheelDisplayId, setActiveWheelDisplayId] = useState(null);
+  const [activeDraftId, setActiveDraftId] = useState(null);
   const [wheelMovies, setWheelDisplayMovies] = useState([]);
   const [wheelName, setWheelDisplayName] = useState('Date night picks');
   const [movieSearch, setMovieSearch] = useState('');
@@ -37,11 +39,16 @@ const WheelDisplay = ({ allMovies = [] }) => {
   }, [allMovies, movieSearch]);
 
   const toggleMovie = (movie) => {
-    setWheelDisplayMovies((prev) =>
-      prev.some((m) => m.title === movie.title)
+    setWheelDisplayMovies((prev) => {
+      const updated = prev.some((m) => m.title === movie.title)
         ? prev.filter((m) => m.title !== movie.title)
-        : [...prev, movie]
-    );
+        : [...prev, movie];
+
+      syncActiveDraft(updated);
+
+      return updated;
+    });
+
     setResult(null);
   };
 
@@ -71,34 +78,62 @@ const WheelDisplay = ({ allMovies = [] }) => {
 
   const clearAll = () => {
     setWheelDisplayMovies([]);
+
+    syncActiveDraft([]);
+
     setResult(null);
     setRotation(0);
   };
 
   const loadWheelDisplay = (wheel) => {
-    setActiveWheelDisplayId(wheel._id);
+    const isDraft = !!wheel.draftId;
+
+    setActiveWheelDisplayId(isDraft ? null : wheel._id);
+    setActiveDraftId(isDraft ? wheel.draftId : null);
+
     setWheelDisplayName(wheel.name);
     setWheelDisplayMovies(wheel.movies || []);
+
     setResult(null);
     setRotation(0);
   };
 
   const createNewWheelDisplay = () => {
     if (!newWheelDisplayName.trim()) return;
-    const newId = Date.now();
-    const newWheelDisplay = {
-      id: newId,
+
+    const draftId = Date.now().toString();
+
+    const newDraft = {
+      draftId,
       name: newWheelDisplayName,
       movies: [],
     };
-    setSavedWheelDisplays((prev) => [...prev, newWheelDisplay]);
-    setActiveWheelDisplayId(newId);
+
+    setDraftWheels((prev) => [...prev, newDraft]);
+
+    setActiveDraftId(draftId);
+    setActiveWheelDisplayId(null);
+
     setWheelDisplayName(newWheelDisplayName);
     setWheelDisplayMovies([]);
+
     setResult(null);
     setRotation(0);
+
     setNewWheelDisplayMode(false);
     setNewWheelDisplayName('');
+  };
+
+  const syncActiveDraft = (updatedMovies) => {
+    if (!activeDraftId) return;
+
+    setDraftWheels((prev) =>
+      prev.map((d) =>
+        d.draftId === activeDraftId
+          ? { ...d, movies: updatedMovies, name: wheelName }
+          : d
+      )
+    );
   };
 
   const getWheelDisplayFontSize = (movies, radius = 145) => {
@@ -162,12 +197,22 @@ const WheelDisplay = ({ allMovies = [] }) => {
       );
 
       if (response.ok) {
-        const newWheel = {
-          ...wheelData,
-          _id: Date.now().toString(), // temporary id (replace if backend returns real _id)
-        };
+        const savedWheel = await response.json();
 
-        setSavedWheelDisplays((prev) => [...prev, newWheel]);
+        setActiveWheelDisplayId(savedWheel._id);
+
+        setWheelDisplayName(savedWheel.name);
+
+        setWheelDisplayMovies(
+          (savedWheel.movies || []).map((m) => ({
+            title: m.title,
+          }))
+        );
+
+        setResult(null);
+        setRotation(0);
+
+        getSavedWheels();
         console.log('Wheel saved successfully');
       } else {
         const errorText = await response.text();
@@ -287,15 +332,21 @@ const WheelDisplay = ({ allMovies = [] }) => {
                   {(wheel.movies || []).length} movies
                 </div>
               </div>
-              <button
-                className="wd-delete-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteWheel(wheel._id);
-                }}
-              >
-                ✕
-              </button>
+            </div>
+          ))}
+
+          {draftWheels.map((wheel) => (
+            <div
+              key={wheel.draftId}
+              className={`wd-saved-item ${wheel.draftId === activeDraftId ? 'active' : ''}`}
+              onClick={() => loadWheelDisplay(wheel)}
+            >
+              <div className="wd-saved-data">
+                <div className="wd-saved-name">{wheel.name} (draft)</div>
+                <div className="wd-saved-count">
+                  {(wheel.movies || []).length} movies
+                </div>
+              </div>
             </div>
           ))}
 

@@ -29,9 +29,7 @@ const WheelSlice = ({ index, total, radius, movie, fontSize, color }) => {
   const boxW = radius - RIM_PAD - HUB_R - HUB_PAD; // e.g. 145-5-20-5 = 115
   const boxH = fontSize + 4;
 
-  const INNER_R = 20 + 5; // hub + padding (you already implied this)
   const OUTER_R = radius - 5; // rim padding
-  const MAX_WIDTH = OUTER_R - INNER_R;
   // Anchor point: midpoint of the text box along the radius
   const anchorR = OUTER_R;
   const anchorX = anchorR * Math.cos(midAngle);
