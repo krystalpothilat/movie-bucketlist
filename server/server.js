@@ -10,13 +10,15 @@ require('dotenv').config();
 const movieRoutes = require('./routes/movie-endpoints');
 const wheelRoutes = require('./routes/wheel-endpoints.js');
 
-app.use(cors({
+app.use(
+  cors({
     origin: process.env.CLIENT_URL || 'https://movie-bucketlist.vercel.app',
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
     optionsSuccessStatus: 204,
-}));
+  })
+);
 
 app.options('*', cors());
 
@@ -24,12 +26,16 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/public')));
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
 });
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, dbName: 'Movie-Bucketlist'});
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  dbName: 'Movie-Bucketlist',
+});
 
 const db = mongoose.connection;
 
@@ -41,11 +47,10 @@ db.once('open', () => {
 app.use('/api/movies', movieRoutes);
 app.use('/api/wheels', wheelRoutes);
 
-app.use("/", (req, res) => {
-    res.send("Server is running");
+app.use('/', (req, res) => {
+  res.send('Server is running');
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
-

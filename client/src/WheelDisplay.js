@@ -15,7 +15,7 @@ const COLORS = [
 
 const WheelDisplay = ({ allMovies = [] }) => {
   const [savedWheelDisplays, setSavedWheelDisplays] = useState([]);
-  const [activeWheelDisplayId, setActiveWheelDisplayId] = useState(1);
+  const [activeWheelDisplayId, setActiveWheelDisplayId] = useState(null);
   const [wheelMovies, setWheelDisplayMovies] = useState([]);
   const [wheelName, setWheelDisplayName] = useState('Date night picks');
   const [movieSearch, setMovieSearch] = useState('');
@@ -116,6 +116,27 @@ const WheelDisplay = ({ allMovies = [] }) => {
 
   /// API FUNCTIONS
 
+  const handleSaveWheel = async () => {
+    const hasMovies = wheelMovies.length > 0;
+
+    // CASE 1: Existing
+    if (activeWheelDisplayId) {
+      // Delete wheel if no movies
+      if (!hasMovies) {
+        await deleteWheel(activeWheelDisplayId);
+        return;
+      }
+
+      await updateWheel(activeWheelDisplayId);
+      return;
+    }
+
+    // CASE 2: New wheel
+    if (hasMovies) {
+      await saveWheel();
+    }
+  };
+
   // SAVE WHEEL TO DB
   const saveWheel = async () => {
     if (!wheelName.trim() || wheelMovies.length === 0) return;
@@ -141,6 +162,12 @@ const WheelDisplay = ({ allMovies = [] }) => {
       );
 
       if (response.ok) {
+        const newWheel = {
+          ...wheelData,
+          _id: Date.now().toString(), // temporary id (replace if backend returns real _id)
+        };
+
+        setSavedWheelDisplays((prev) => [...prev, newWheel]);
         console.log('Wheel saved successfully');
       } else {
         const errorText = await response.text();
@@ -151,24 +178,38 @@ const WheelDisplay = ({ allMovies = [] }) => {
     }
   };
 
-  // GET SAVED WHEELS
-  const getSavedWheels = async () => {
+  const updateWheel = async (wheelId) => {
+    const wheelData = {
+      name: wheelName,
+      movies: wheelMovies.map((movie, i) => ({
+        title: movie.title,
+        color: i % COLORS.length,
+      })),
+    };
+
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`,
+        `${process.env.REACT_APP_BACKEND_API}/api/wheels/update-wheel/${wheelId}`,
         {
-          method: 'GET',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(wheelData),
         }
       );
+
       if (response.ok) {
-        const data = await response.json();
-        setSavedWheelDisplays(data);
+        setSavedWheelDisplays((prev) =>
+          prev.map((w) => (w._id === wheelId ? { ...w, ...wheelData } : w))
+        );
+        console.log('Wheel updated successfully');
       } else {
         const errorText = await response.text();
-        console.error('Error fetching wheels:', errorText);
+        console.error('Error updating wheel:', errorText);
       }
     } catch (error) {
-      console.error('Error fetching wheels:', error);
+      console.error('Error updating wheel:', error);
     }
   };
 
@@ -200,6 +241,27 @@ const WheelDisplay = ({ allMovies = [] }) => {
       }
     } catch (error) {
       console.error('Error deleting wheel:', error);
+    }
+  };
+
+  // GET SAVED WHEELS
+  const getSavedWheels = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`,
+        {
+          method: 'GET',
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setSavedWheelDisplays(data);
+      } else {
+        const errorText = await response.text();
+        console.error('Error fetching wheels:', errorText);
+      }
+    } catch (error) {
+      console.error('Error fetching wheels:', error);
     }
   };
 
@@ -372,7 +434,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
             {spinning ? 'Spinning…' : 'Spin the wheel'}
           </button>
           <div className="wd-action-row">
-            <button className="wd-btn-secondary" onClick={saveWheel}>
+            <button className="wd-btn-secondary" onClick={handleSaveWheel}>
               Save wheel
             </button>
             <button className="wd-btn-secondary" onClick={clearAll}>
