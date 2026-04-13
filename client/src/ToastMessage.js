@@ -26,7 +26,7 @@ const ToastMessage = ({ action }) => {
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [action?.id]); // IMPORTANT: id triggers re-show
+  }, [action]); // IMPORTANT: id triggers re-show
 
   if (!visible) return null;
 
