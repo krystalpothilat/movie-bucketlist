@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './styles/FiltersBar.css';
+import filterImg from './imgs/filter.png';
 
 export default function FiltersBar({
   // VIEW
@@ -15,6 +16,7 @@ export default function FiltersBar({
 
   // SORT
   sortBy,
+  setSortBy,
   handleSortTypeChange,
 
   // GENRES
@@ -39,15 +41,20 @@ export default function FiltersBar({
   // VIEW CONDITION
   isWheelDisplayView,
 }) {
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const closeMobileFilters = () => {
+    setMobileFiltersOpen(false);
+  };
+
   return (
     <div className="filters-container">
-      {/* VIEW ICONS */}
-      <div className="filters-container" id="imgs-buttons-filters">
+      {/* VIEW ICONS (always visible) */}
+      <div id="imgs-buttons-filters">
         <div className="iconWrapper">
           <img
             className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`}
             src={gridIcon}
-            alt="grid"
             onClick={() => {
               setViewType('grid');
               setGridView?.();
@@ -59,7 +66,6 @@ export default function FiltersBar({
           <img
             className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`}
             src={carouselIcon}
-            alt="carousel"
             onClick={() => {
               setViewType('carousel');
               setCarouselView?.();
@@ -71,7 +77,6 @@ export default function FiltersBar({
           <img
             className={`filter-img ${viewType === 'wheel' ? 'selected' : ''}`}
             src={wheelIcon}
-            alt="wheel"
             onClick={() => {
               setViewType('wheel');
               setWheelDisplayView?.();
@@ -80,9 +85,9 @@ export default function FiltersBar({
         </div>
       </div>
 
-      {/* HIDE FILTERS IN WHEEL VIEW */}
+      {/* DESKTOP CONTROLS */}
       {!isWheelDisplayView && (
-        <>
+        <div className="filters-desktop">
           {/* SORT */}
           <select
             id="sortBySelect"
@@ -165,7 +170,85 @@ export default function FiltersBar({
                 </div>
               ))}
           </div>
-        </>
+        </div>
+      )}
+
+      {/* MOBILE FILTER BUTTON */}
+      {!isWheelDisplayView && (
+        <div className="filters-mobile">
+          <img
+            src={filterImg}
+            className="filter-toggle-btn"
+            onClick={() => setMobileFiltersOpen((p) => !p)}
+          />
+        </div>
+      )}
+
+      {/* MOBILE FILTER POPUP */}
+      {mobileFiltersOpen && (
+        <div className="filters-popup">
+          {/* SORT */}
+          <div className="filters-section">
+            <button onClick={closeMobileFilters} className="filters-close-btn">
+              ×
+            </button>
+            <div className="filter-section-title">Order</div>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={sortBy === 'rank'}
+                onChange={() => setSortBy('rank')}
+              />
+              Rank
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={sortBy === 'alphabetical'}
+                onChange={() => setSortBy('alphabetical')}
+              />
+              Alphabetical
+            </label>
+          </div>
+
+          {/* SEEN */}
+          <div className="filters-section">
+            <div className="filter-section-title">Seen</div>
+            {options.map((opt) => (
+              <label key={opt.value}>
+                <input
+                  type="checkbox"
+                  checked={seenToggle === opt.value}
+                  onChange={handleSeenToggleChange}
+                  value={opt.value}
+                />
+                {opt.label}
+              </label>
+            ))}
+          </div>
+
+          {/* GENRE */}
+          <div className="filters-section">
+            <div className="filter-section-title">Genres</div>
+            <button className="filter-reset-btn" onClick={genreReset}>
+              Reset
+            </button>
+
+            {genres.map((g) => (
+              <label key={g.value}>
+                <input
+                  type="checkbox"
+                  value={g.value}
+                  checked={genreTypes.includes(g.value)}
+                  onChange={handleGenreTypeChange}
+                />
+                {g.label}
+              </label>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
