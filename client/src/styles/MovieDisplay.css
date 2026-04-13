@@ -76,8 +76,11 @@
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  filter: brightness(0) saturate(100%) invert(79%) sepia(63%) saturate(746%) hue-rotate(2deg) brightness(105%) contrast(105%);
+  filter: brightness(0) saturate(100%) invert(79%) sepia(63%) saturate(746%)
+    hue-rotate(2deg) brightness(105%) contrast(105%);
   opacity: 0.9;
   transform: scale(1.2);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }

@@ -154,6 +154,7 @@ const HomePage = () => {
         carouselIcon={carousel}
         wheelIcon={wheel}
         sortBy={sortBy}
+        setSortBy={setSortType}
         handleSortTypeChange={handleSortTypeChange}
         genres={genres}
         genreTypes={genreTypes}
@@ -165,7 +166,6 @@ const HomePage = () => {
         genreDropdownRef={genreDropdownRef}
         options={options}
         seenToggle={seenToggle}
-        setSeenToggle={setSeenToggle}
         handleSeenToggleChange={handleSeenToggleChange}
         seenDropdownOpen={seenDropdownOpen}
         toggleSeenDropdown={toggleSeenDropdown}
@@ -196,9 +196,9 @@ const HomePage = () => {
 
       <div className="page-content">
         {isWheelDisplayView ? (
-            <WheelDisplay allMovies={allMovies} />
+          <WheelDisplay allMovies={allMovies} />
         ) : (
-            <MovieDisplay
+          <MovieDisplay
             viewType={viewType}
             sortBy={sortBy}
             genres={genreTypes}
@@ -206,9 +206,9 @@ const HomePage = () => {
             seenToggle={seenToggle}
             isAdmin={isAdmin}
             refreshTrigger={popupClosed}
-            />
+          />
         )}
-        </div>
+      </div>
 
       <footer className="footer">
         <p>
