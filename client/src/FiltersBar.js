@@ -55,6 +55,7 @@ export default function FiltersBar({
           <img
             className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`}
             src={gridIcon}
+            alt="grid view"
             onClick={() => {
               setViewType('grid');
               setGridView?.();
@@ -66,6 +67,7 @@ export default function FiltersBar({
           <img
             className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`}
             src={carouselIcon}
+            alt="carousel view"
             onClick={() => {
               setViewType('carousel');
               setCarouselView?.();
@@ -77,6 +79,7 @@ export default function FiltersBar({
           <img
             className={`filter-img ${viewType === 'wheel' ? 'selected' : ''}`}
             src={wheelIcon}
+            alt="wheel selector"
             onClick={() => {
               setViewType('wheel');
               setWheelDisplayView?.();
@@ -178,6 +181,7 @@ export default function FiltersBar({
         <div className="filters-mobile">
           <img
             src={filterImg}
+            alt="filter panel"
             className="filter-toggle-btn"
             onClick={() => setMobileFiltersOpen((p) => !p)}
           />
