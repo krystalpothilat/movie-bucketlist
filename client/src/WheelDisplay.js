@@ -649,6 +649,29 @@ const WheelDisplay = ({ allMovies = [] }) => {
             value={movieSearch}
             onChange={(e) => setMovieSearch(e.target.value)}
           />
+          {/* Divider + pinned section */}
+          {wheelMovies.length > 0 && (
+            <>
+              <div className="wd-divider" />
+
+              <div className="wd-pinned-movies">
+                {wheelMovies.map((movie) => (
+                  <div
+                    key={movie.imdbid || movie.title}
+                    className={`wd-movie-item`}
+                    onClick={() => toggleMovie(movie)}
+                  >
+                    <span className="wd-movie-title pinned ">
+                      {movie.title}
+                    </span>
+                    <span className="wd-add-icon pinned">×</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="wd-divider" />
+            </>
+          )}
           {filteredMovies.length === 0 ? (
             <p className="wd-no-results">No movies found</p>
           ) : null}
