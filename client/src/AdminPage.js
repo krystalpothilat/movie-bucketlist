@@ -51,32 +51,36 @@ const AdminPage = () => {
 
   return (
     <div className="admin-page">
-      <h1>Admin Login</h1>
+      <div className="admin-card">
+        <h1 className="admin-title">Admin Login</h1>
 
-      <div className="login">
-        <label>
-          Username:{' '}
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </label>
+        <div className="admin-form">
+          <label className="admin-label">
+            Username
+            <input
+              className="admin-input"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </label>
 
-        <label>
-          Password:{' '}
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
+          <label className="admin-label">
+            Password
+            <input
+              className="admin-input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
 
-        <button onClick={handleLogin} id="login-button">
-          Login
-        </button>
+          <button onClick={handleLogin} id="login-button">
+            Login
+          </button>
 
-        {loginStatus && <p className="login-status">{loginStatus}</p>}
+          {loginStatus && <p className="login-status">{loginStatus}</p>}
+        </div>
       </div>
     </div>
   );
