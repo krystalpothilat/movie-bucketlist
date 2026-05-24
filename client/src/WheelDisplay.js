@@ -20,7 +20,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
   const [activeWheelDisplayId, setActiveWheelDisplayId] = useState(null);
   const [activeDraftId, setActiveDraftId] = useState(null);
   const [wheelMovies, setWheelDisplayMovies] = useState([]);
-  const [wheelName, setWheelDisplayName] = useState('Date night picks');
+  const [wheelName, setWheelDisplayName] = useState('');
   const [movieSearch, setMovieSearch] = useState('');
   const [spinning, setSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -500,7 +500,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
             <div className="wd-new-wheel-form">
               <input
                 className="wd-input"
-                placeholder="WheelDisplay name…"
+                placeholder="Create a wheel picker"
                 value={newWheelDisplayName}
                 onChange={(e) => setNewWheelDisplayName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && createNewWheelDisplay()}
@@ -539,7 +539,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
             className="wd-wheel-name-input"
             value={wheelName}
             onChange={(e) => setWheelDisplayName(e.target.value)}
-            placeholder="WheelDisplay name…"
+            placeholder="Create a picker wheel"
           />
         </div>
         <div className="wd-wrap" style={{ width: SIZE, height: SIZE }}>
