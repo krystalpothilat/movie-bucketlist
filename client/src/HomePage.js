@@ -171,22 +171,10 @@ const HomePage = () => {
         toggleSeenDropdown={toggleSeenDropdown}
         seenDropdownRef={seenDropdownRef}
         isWheelDisplayView={isWheelDisplayView}
+        isAdmin={isAdmin}
+        handleLogOut={handleLogOut}
+        addMovieButtonClicked={addMovieButtonClicked}
       />
-
-      {isAdmin && (
-        <div className="admin-buttons">
-          <Button
-            variant="warning"
-            onClick={addMovieButtonClicked}
-            id="add-movie-button"
-          >
-            Add Movie
-          </Button>{' '}
-          <Button variant="secondary" id="admin-logout" onClick={handleLogOut}>
-            Log Out
-          </Button>{' '}
-        </div>
-      )}
 
       <div ref={popupRef}>
         {addMovieToggle && (

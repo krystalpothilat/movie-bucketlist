@@ -23,30 +23,6 @@ body,
   flex-direction: column;
 }
 
-#admin-logout {
-  position: absolute;
-  top: 0;
-  right: 0;
-  border-radius: 0;
-  background-color: transparent !important;
-  border: none !important;
-  color: #888 !important;
-  font-family: 'Raleway', sans-serif;
-  font-size: 13px;
-  transition: color 0.2s;
-}
-
-#admin-logout:hover {
-  color: #ffd700 !important;
-}
-
-#admin-welcome {
-  font-family: 'Raleway', sans-serif;
-  font-weight: 600;
-  font-size: 30px;
-  color: #e0e0e0;
-}
-
 /* ── FOOTER ── */
 .footer {
   display: flex;
@@ -71,31 +47,4 @@ body,
 
 #linked-in-tag:hover {
   color: #fff;
-}
-
-/* ── MOBILE ── */
-@media (max-width: 1000px) {
-  .admin-buttons {
-    width: 95%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    height: 100%;
-  }
-
-  #add-movie-button {
-    position: relative;
-    transform: none;
-    right: auto;
-    height: auto;
-    border: none !important;
-  }
-
-  #admin-logout {
-    position: relative;
-    height: 100%;
-    border-radius: 5px;
-    padding-left: 15px;
-    padding-right: 15px;
-  }
 }

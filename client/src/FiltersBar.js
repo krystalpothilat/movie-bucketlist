@@ -40,6 +40,11 @@ export default function FiltersBar({
 
   // VIEW CONDITION
   isWheelDisplayView,
+
+  // ADMIN CONTROLS
+  isAdmin,
+  handleLogOut,
+  addMovieButtonClicked,
 }) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -49,142 +54,170 @@ export default function FiltersBar({
 
   return (
     <div className="filters-container">
-      {/* VIEW ICONS (always visible) */}
-      <div id="imgs-buttons-filters">
-        <div className="iconWrapper">
-          <img
-            className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`}
-            src={gridIcon}
-            alt="grid view"
-            onClick={() => {
-              setViewType('grid');
-              setGridView?.();
-            }}
-          />
+      {/* LEFT SIDE */}
+      <div className="filters-left">
+        {/* VIEW ICONS (always visible) */}
+        <div id="imgs-buttons-filters">
+          <div className="iconWrapper">
+            <img
+              className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`}
+              src={gridIcon}
+              alt="grid view"
+              onClick={() => {
+                setViewType('grid');
+                setGridView?.();
+              }}
+            />
+          </div>
+
+          <div className="iconWrapper">
+            <img
+              className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`}
+              src={carouselIcon}
+              alt="carousel view"
+              onClick={() => {
+                setViewType('carousel');
+                setCarouselView?.();
+              }}
+            />
+          </div>
+
+          <div className="iconWrapper">
+            <img
+              className={`filter-img ${viewType === 'wheel' ? 'selected' : ''}`}
+              src={wheelIcon}
+              alt="wheel selector"
+              onClick={() => {
+                setViewType('wheel');
+                setWheelDisplayView?.();
+              }}
+            />
+          </div>
         </div>
 
-        <div className="iconWrapper">
-          <img
-            className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`}
-            src={carouselIcon}
-            alt="carousel view"
-            onClick={() => {
-              setViewType('carousel');
-              setCarouselView?.();
-            }}
-          />
-        </div>
+        {/* DESKTOP CONTROLS */}
+        {!isWheelDisplayView && (
+          <div className="filters-desktop">
+            {/* SORT */}
+            <select
+              id="sortBySelect"
+              className="form-select"
+              value={sortBy}
+              onChange={handleSortTypeChange}
+            >
+              <optgroup label="Sort By">
+                <option value="rank">Rank</option>
+                <option value="alphabetical">Alphabetical</option>
+              </optgroup>
+            </select>
 
-        <div className="iconWrapper">
-          <img
-            className={`filter-img ${viewType === 'wheel' ? 'selected' : ''}`}
-            src={wheelIcon}
-            alt="wheel selector"
-            onClick={() => {
-              setViewType('wheel');
-              setWheelDisplayView?.();
-            }}
-          />
-        </div>
+            {/* GENRE */}
+            <div className="dropdown" ref={genreDropdownRef}>
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                onClick={toggleGenreDropdown}
+              >
+                Genre
+              </button>
+
+              <div
+                className={`dropdown-menu${genreDropdownOpen ? ' show' : ''}`}
+              >
+                <button onClick={genreReset}>Reset</button>
+
+                {genres.map((genre) => (
+                  <div key={genre.value} className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value={genre.value}
+                      checked={genreTypes.includes(genre.value)}
+                      onChange={handleGenreTypeChange}
+                    />
+                    <label className="form-check-label">{genre.label}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SEEN */}
+            <div className="dropdown" ref={seenDropdownRef}>
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                onClick={toggleSeenDropdown}
+              >
+                Seen
+              </button>
+
+              <div
+                className={`dropdown-menu${seenDropdownOpen ? ' show' : ''}`}
+              >
+                <button onClick={() => setSeenToggle(null)}>Reset</button>
+
+                {options.map((option) => (
+                  <div key={option.value} className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value={option.value}
+                      checked={seenToggle === option.value}
+                      onChange={handleSeenToggleChange}
+                    />
+                    <label className="form-check-label">{option.label}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SELECTED GENRES */}
+            <div className="selected-genres-display">
+              {genreTypes.length > 0 &&
+                genreTypes.map((genre, index) => (
+                  <div className="genre-tags" key={index}>
+                    <button
+                      className="close-genre"
+                      onClick={() => handleGenreTypeTagChange(genre)}
+                    >
+                      x
+                    </button>
+                    <p className="genre-tag-name">{genre}</p>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* MOBILE FILTER BUTTON */}
+        {!isWheelDisplayView && (
+          <div className="filters-mobile">
+            <img
+              src={filterImg}
+              alt="filter panel"
+              className="filter-toggle-btn"
+              onClick={() => setMobileFiltersOpen((p) => !p)}
+            />
+          </div>
+        )}
       </div>
 
-      {/* DESKTOP CONTROLS */}
-      {!isWheelDisplayView && (
-        <div className="filters-desktop">
-          {/* SORT */}
-          <select
-            id="sortBySelect"
-            className="form-select"
-            value={sortBy}
-            onChange={handleSortTypeChange}
+      {/* RIGHT SIDE */}
+      {isAdmin && (
+        <div className="filters-right">
+          <button
+            className="btn btn-secondary dropdown-toggle"
+            id="add-movie-button"
+            onClick={addMovieButtonClicked}
           >
-            <optgroup label="Sort By">
-              <option value="rank">Rank</option>
-              <option value="alphabetical">Alphabetical</option>
-            </optgroup>
-          </select>
+            Add Movie
+          </button>
 
-          {/* GENRE */}
-          <div className="dropdown" ref={genreDropdownRef}>
-            <button
-              className="btn btn-secondary dropdown-toggle"
-              onClick={toggleGenreDropdown}
-            >
-              Genre
-            </button>
-
-            <div className={`dropdown-menu${genreDropdownOpen ? ' show' : ''}`}>
-              <button onClick={genreReset}>Reset</button>
-
-              {genres.map((genre) => (
-                <div key={genre.value} className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value={genre.value}
-                    checked={genreTypes.includes(genre.value)}
-                    onChange={handleGenreTypeChange}
-                  />
-                  <label className="form-check-label">{genre.label}</label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* SEEN */}
-          <div className="dropdown" ref={seenDropdownRef}>
-            <button
-              className="btn btn-secondary dropdown-toggle"
-              onClick={toggleSeenDropdown}
-            >
-              Seen
-            </button>
-
-            <div className={`dropdown-menu${seenDropdownOpen ? ' show' : ''}`}>
-              <button onClick={() => setSeenToggle(null)}>Reset</button>
-
-              {options.map((option) => (
-                <div key={option.value} className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value={option.value}
-                    checked={seenToggle === option.value}
-                    onChange={handleSeenToggleChange}
-                  />
-                  <label className="form-check-label">{option.label}</label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* SELECTED GENRES */}
-          <div className="selected-genres-display">
-            {genreTypes.length > 0 &&
-              genreTypes.map((genre, index) => (
-                <div className="genre-tags" key={index}>
-                  <button
-                    className="close-genre"
-                    onClick={() => handleGenreTypeTagChange(genre)}
-                  >
-                    x
-                  </button>
-                  <p className="genre-tag-name">{genre}</p>
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
-
-      {/* MOBILE FILTER BUTTON */}
-      {!isWheelDisplayView && (
-        <div className="filters-mobile">
-          <img
-            src={filterImg}
-            alt="filter panel"
-            className="filter-toggle-btn"
-            onClick={() => setMobileFiltersOpen((p) => !p)}
-          />
+          <button
+            className="btn btn-secondary dropdown-toggle"
+            id="admin-logout"
+            onClick={handleLogOut}
+          >
+            Log Out
+          </button>
         </div>
       )}
 
