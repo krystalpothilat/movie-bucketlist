@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import './styles/WheelDisplay.css';
 import WheelSlice from './WheelSlice';
 import ToastMessage from './ToastMessage';
@@ -29,8 +29,6 @@ const WheelDisplay = ({ allMovies = [] }) => {
   const [newWheelDisplayName, setNewWheelDisplayName] = useState('');
 
   const [toastAction, setToastAction] = useState(null);
-
-  const wheelRef = useRef(null);
 
   const RADIUS = 200;
   const PADDING = 20;
@@ -77,17 +75,6 @@ const WheelDisplay = ({ allMovies = [] }) => {
 
     setTimeout(() => {
       setSpinning(false);
-
-      // Pointer tip is at the top-center of the wheel, which is 270° in standard math (or -90°)
-      // Work out which slice is under the pointer from the final rotation
-      const segAngle = 360 / wheelMovies.length;
-
-      // Normalize the total rotation to 0-360
-      const normalizedRotation = ((newRotation % 360) + 360) % 360;
-
-      // The pointer sits at the top = 270° in SVG coords (since slices start at -90°)
-      // Which degree of the *unrotated* wheel is now at the top?
-      const pointerAngle = (270 - normalizedRotation + 360) % 360;
 
       // Which slice owns that angle?
       const winnerIndex = getWinnerIndex(newRotation, wheelMovies.length);
