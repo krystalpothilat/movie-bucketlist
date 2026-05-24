@@ -1,15 +1,19 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import './styles/AdminPage.css';
 
 const AdminPage = () => {
   const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginStatus, setLoginStatus] = useState('');
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from || '/';
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -31,7 +35,11 @@ const AdminPage = () => {
 
       if (data.success) {
         login(); // sets isAuthenticated = true
-        navigate('/');
+        navigate(from, {
+          state: {
+            restoreWheel: location.state?.restoreWheel,
+          },
+        });
       } else {
         setLoginStatus('Invalid login');
       }

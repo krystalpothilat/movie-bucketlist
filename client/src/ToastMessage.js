@@ -6,9 +6,10 @@ export const TOAST_MESSAGES = {
   updated: 'Wheel updated successfully',
   deleted: 'Wheel deleted successfully',
   draft_deleted: 'Draft deleted',
+  login_required: 'Admin access is required for this actions',
 };
 
-const ToastMessage = ({ action }) => {
+const ToastMessage = ({ action = {} }) => {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -30,7 +31,30 @@ const ToastMessage = ({ action }) => {
 
   if (!visible) return null;
 
-  return <div className="toast-message">{message}</div>;
+  return (
+    <div className="toast-message">
+      {action.type === 'login_required' ? (
+        <>
+          Please{' '}
+          <span
+            className="toast-login-link"
+            onClick={(e) => {
+              e.stopPropagation();
+
+              if (action.onClick) {
+                action.onClick();
+              }
+            }}
+          >
+            log in
+          </span>{' '}
+          to save your wheel
+        </>
+      ) : (
+        message
+      )}
+    </div>
+  );
 };
 
 export default ToastMessage;

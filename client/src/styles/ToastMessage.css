@@ -20,6 +20,16 @@
   animation: toastIn 0.1s ease-out;
 }
 
+.toast-login-link {
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.toast-message {
+  pointer-events: auto;
+}
+
 @keyframes toastIn {
   from {
     opacity: 0;

@@ -2,6 +2,9 @@ import React, { useState, useMemo, useEffect } from 'react';
 import './styles/WheelDisplay.css';
 import WheelSlice from './WheelSlice';
 import ToastMessage from './ToastMessage';
+import { useContext } from 'react';
+import { AuthContext } from './AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const COLORS = [
   { bg: '#B5D4F4', text: '#0C447C' },
@@ -27,8 +30,12 @@ const WheelDisplay = ({ allMovies = [] }) => {
   const [result, setResult] = useState(null);
   const [newWheelDisplayMode, setNewWheelDisplayMode] = useState(false);
   const [newWheelDisplayName, setNewWheelDisplayName] = useState('');
-
   const [toastAction, setToastAction] = useState(null);
+
+  const { isAdmin } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const RADIUS = 200;
   const PADDING = 20;
@@ -199,6 +206,32 @@ const WheelDisplay = ({ allMovies = [] }) => {
   /// API FUNCTIONS
 
   const handleSaveWheel = async () => {
+    if (!isAdmin) {
+      setToastAction({
+        type: 'login_required',
+        id: crypto.randomUUID(),
+
+        onClick: () => {
+          navigate('/admin', {
+            state: {
+              from: location.pathname,
+
+              restoreWheel: {
+                wheelName,
+                wheelMovies,
+                activeDraftId,
+                activeWheelDisplayId,
+              },
+            },
+          });
+        },
+      });
+
+      return;
+
+      return;
+    }
+
     const hasMovies = wheelMovies.length > 0;
 
     // CASE 1: Existing
@@ -356,6 +389,29 @@ const WheelDisplay = ({ allMovies = [] }) => {
     // SAVED DELETE (API)
     // -------------------
 
+    if (!isAdmin) {
+      setToastAction({
+        type: 'login_required',
+        id: crypto.randomUUID(),
+
+        onClick: () => {
+          navigate('/admin', {
+            state: {
+              from: location.pathname,
+              restoreWheel: {
+                wheelName,
+                wheelMovies,
+                activeDraftId,
+                activeWheelDisplayId,
+              },
+            },
+          });
+        },
+      });
+
+      return;
+    }
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_API}/api/wheels/delete-wheel/${wheel._id}`,
@@ -427,6 +483,20 @@ const WheelDisplay = ({ allMovies = [] }) => {
       )
     );
   }, [wheelName, activeDraftId]);
+
+  useEffect(() => {
+    const restore = location.state?.restoreWheel;
+    if (!restore) return;
+
+    setWheelDisplayName(restore.wheelName || '');
+    setWheelDisplayMovies(restore.wheelMovies || []);
+    setActiveDraftId(restore.activeDraftId || null);
+    setActiveWheelDisplayId(restore.activeWheelDisplayId || null);
+
+    // clear so it doesn't re-run on refresh
+    window.history.replaceState({}, document.title);
+  }, [location, navigate]);
+
   return (
     <div className="wheel-display-container">
       <ToastMessage action={toastAction} />
