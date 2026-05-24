@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const movieRoutes = require('./routes/movie-endpoints');
 const wheelRoutes = require('./routes/wheel-endpoints.js');
+const loginRoutes = require('./routes/login-endpoints.js');
 
 app.use(
   cors({
@@ -46,6 +47,7 @@ db.once('open', () => {
 
 app.use('/api/movies', movieRoutes);
 app.use('/api/wheels', wheelRoutes);
+app.use('/api/login', loginRoutes);
 
 app.use('/', (req, res) => {
   res.send('Server is running');
