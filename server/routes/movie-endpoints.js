@@ -38,7 +38,7 @@ router.get('/get-movies', async (req, res) => {
         sortOrder.title = 1;
       }
     }
-    console.log('Constructed query:', JSON.stringify(query));
+    // console.log('Constructed query:', JSON.stringify(query));
 
     const movies = await Movie.find(query).sort(sortOrder);
 

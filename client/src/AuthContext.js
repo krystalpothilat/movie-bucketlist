@@ -4,41 +4,44 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return !!localStorage.getItem('isAuthenticated');
+    return localStorage.getItem('isAuthenticated') === 'true';
   });
+
   const [isAdmin, setIsAdmin] = useState(() => {
-    // Check local storage or session for admin status if applicable
     return localStorage.getItem('isAdmin') === 'true';
   });
 
-  const login = (username, password) => {
-    if (username === 'admin' && password === 'password') {
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('isAdmin', 'true');
-      setIsAuthenticated(true);
-      setIsAdmin(true);
-    } else {
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.removeItem('isAdmin');
-      setIsAuthenticated(true);
-      setIsAdmin(false);
-    }
+  const login = () => {
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('isAdmin', 'true');
+
+    setIsAuthenticated(true);
+    setIsAdmin(true);
   };
 
   const logout = () => {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('isAdmin');
+
     setIsAuthenticated(false);
     setIsAdmin(false);
   };
 
   useEffect(() => {
-    setIsAuthenticated(!!localStorage.getItem('isAuthenticated'));
+    setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
+
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isAdmin,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

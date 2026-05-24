@@ -7,12 +7,15 @@ router.post('/', async (req, res) => {
   const { username, password } = req.body;
 
   try {
+    console.log('in login');
     const user = await User.findOne({ username });
-
     if (!user) {
       return res.json({ success: false });
     }
+    console.log(user);
 
+    console.log(user.password);
+    console.log(password);
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
