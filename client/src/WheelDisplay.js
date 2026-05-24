@@ -226,9 +226,6 @@ const WheelDisplay = ({ allMovies = [] }) => {
           });
         },
       });
-
-      return;
-
       return;
     }
 

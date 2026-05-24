@@ -3,7 +3,6 @@ import MovieDisplay from './MovieDisplay';
 import MoviePopUp from './MoviePopUp';
 import WheelDisplay from './WheelDisplay';
 import { AuthContext } from './AuthContext';
-import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/HomePage.css';
 import grid from './imgs/grid.png';
