@@ -32,6 +32,11 @@ const WheelDisplay = ({ allMovies = [] }) => {
 
   const wheelRef = useRef(null);
 
+  const RADIUS = 200;
+  const PADDING = 20;
+  const SIZE = (RADIUS + PADDING) * 2;
+  const CENTER = SIZE / 2;
+
   // Filter movies based on search
   const filteredMovies = useMemo(() => {
     if (!movieSearch.trim()) return allMovies;
@@ -65,16 +70,27 @@ const WheelDisplay = ({ allMovies = [] }) => {
     setSpinning(true);
 
     const extraSpins = 5 + Math.floor(Math.random() * 5);
-    const segAngle = 360 / wheelMovies.length;
-    const winnerIndex = Math.floor(Math.random() * wheelMovies.length);
-    const targetAngle =
-      360 * extraSpins + (360 - winnerIndex * segAngle - segAngle / 2);
+    const targetAngle = 360 * extraSpins + Math.random() * 360;
     const newRotation = rotation + targetAngle;
 
     setRotation(newRotation);
 
     setTimeout(() => {
       setSpinning(false);
+
+      // Pointer tip is at the top-center of the wheel, which is 270° in standard math (or -90°)
+      // Work out which slice is under the pointer from the final rotation
+      const segAngle = 360 / wheelMovies.length;
+
+      // Normalize the total rotation to 0-360
+      const normalizedRotation = ((newRotation % 360) + 360) % 360;
+
+      // The pointer sits at the top = 270° in SVG coords (since slices start at -90°)
+      // Which degree of the *unrotated* wheel is now at the top?
+      const pointerAngle = (270 - normalizedRotation + 360) % 360;
+
+      // Which slice owns that angle?
+      const winnerIndex = getWinnerIndex(newRotation, wheelMovies.length);
       setResult(wheelMovies[winnerIndex]);
     }, 4000);
   };
@@ -138,9 +154,9 @@ const WheelDisplay = ({ allMovies = [] }) => {
     );
   };
 
-  const getWheelDisplayFontSize = (movies, radius = 145) => {
+  const getWheelDisplayFontSize = (movies) => {
     if (!movies.length) return 13;
-    const boxW = radius - 5 - 20 - 5; // 115
+    const boxW = RADIUS - 5 - 20 - 5; // 115
     const longestTitle = movies.reduce(
       (max, m) => (m.title.length > max.length ? m.title : max),
       ''
@@ -165,6 +181,34 @@ const WheelDisplay = ({ allMovies = [] }) => {
       movies: wheelMovies,
     };
   };
+
+  const getWinnerIndex = (rotation, total) => {
+    const segAngle = 360 / total;
+
+    const normalizedRotation = ((rotation % 360) + 360) % 360;
+
+    // convert wheel rotation into "what angle is at the top pointer"
+    const pointerAngle = (360 - normalizedRotation) % 360;
+
+    let winnerIndex = 0;
+    let smallestDistance = Infinity;
+
+    for (let i = 0; i < total; i++) {
+      const sliceCenter = i * segAngle + segAngle / 2;
+
+      const distance = Math.abs(
+        ((sliceCenter - pointerAngle + 540) % 360) - 180
+      );
+
+      if (distance < smallestDistance) {
+        smallestDistance = distance;
+        winnerIndex = i;
+      }
+    }
+
+    return winnerIndex;
+  };
+
   /// API FUNCTIONS
 
   const handleSaveWheel = async () => {
@@ -498,77 +542,70 @@ const WheelDisplay = ({ allMovies = [] }) => {
             placeholder="WheelDisplay name…"
           />
         </div>
-        <div className="wd-wheel-wrap">
-          <div className="wd-wheel-svg-wrap">
-            <svg viewBox="0 0 320 320" className="wd-wheel-svg">
-              <g
-                transform={`translate(160,160) rotate(${rotation})`}
-                style={{
-                  transition: spinning
-                    ? 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 1)'
-                    : 'none',
-                }}
-                ref={wheelRef}
-              >
-                {/* EMPTY STATE */}
-                {wheelMovies.length === 0 ? (
-                  <>
-                    <circle
-                      className="wd-wheel-empty-circle"
-                      cx="0"
-                      cy="0"
-                      r="145"
+        <div className="wd-wrap" style={{ width: SIZE, height: SIZE }}>
+          <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="wd-wheel-svg">
+            <g
+              className="wheel"
+              transform={`translate(${CENTER}, ${CENTER}) rotate(${rotation})`}
+            >
+              {/* EMPTY STATE */}
+              {wheelMovies.length === 0 ? (
+                <>
+                  <circle
+                    className="wd-wheel-empty-circle"
+                    cx="0"
+                    cy="0"
+                    r={RADIUS}
+                  />
+                  <text
+                    x="0"
+                    y="-5"
+                    textAnchor="middle"
+                    className="wd-wheel-empty-text"
+                  >
+                    Add movies
+                  </text>
+                  <text
+                    x="0"
+                    y="15"
+                    textAnchor="middle"
+                    className="wd-wheel-empty-text"
+                  >
+                    from the right →
+                  </text>
+                </>
+              ) : (
+                <>
+                  {/* SLICES */}
+                  {wheelMovies.map((movie, i) => (
+                    <WheelSlice
+                      key={movie.title}
+                      index={i}
+                      total={wheelMovies.length}
+                      radius={RADIUS}
+                      movie={movie}
+                      fontSize={getWheelDisplayFontSize(wheelMovies)}
+                      color={COLORS[i % COLORS.length]}
                     />
-                    <text
-                      x="0"
-                      y="-5"
-                      textAnchor="middle"
-                      className="wd-wheel-empty-text"
-                    >
-                      Add movies
-                    </text>
-                    <text
-                      x="0"
-                      y="15"
-                      textAnchor="middle"
-                      className="wd-wheel-empty-text"
-                    >
-                      from the right →
-                    </text>
-                  </>
-                ) : (
-                  <>
-                    {/* SLICES */}
-                    {wheelMovies.map((movie, i) => (
-                      <WheelSlice
-                        key={movie.title}
-                        index={i}
-                        total={wheelMovies.length}
-                        radius={145}
-                        movie={movie}
-                        fontSize={getWheelDisplayFontSize(wheelMovies, 145)}
-                        color={COLORS[i % COLORS.length]}
-                      />
-                    ))}
+                  ))}
 
-                    {/* CENTER HUB */}
-                    <circle
-                      className="wd-wheel-center-circle"
-                      cx="0"
-                      cy="0"
-                      r="20"
-                    />
-                  </>
-                )}
-              </g>
-
-              {/* POINTER (ALWAYS OUTSIDE ROTATION) */}
-              <polygon
-                className="wd-wheel-pointer"
-                points="250,13 239,38 261,38"
-              />
-            </svg>
-          </div>
+                  {/* CENTER HUB */}
+                  <circle
+                    className="wd-wheel-center-circle"
+                    cx="0"
+                    cy="0"
+                    r="10"
+                  />
+                </>
+              )}
+            </g>
+            <polygon
+              className="wd-wheel-pointer"
+              points={`${CENTER},${PADDING + 20} 
+         ${CENTER - 15},${PADDING - 10} 
+         ${CENTER + 15},${PADDING - 10}`}
+            />
+          </svg>
         </div>
 
         <div className="wd-actions">
