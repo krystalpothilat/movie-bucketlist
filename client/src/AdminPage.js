@@ -9,6 +9,7 @@ const AdminPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginStatus, setLoginStatus] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -66,13 +67,23 @@ const AdminPage = () => {
           </label>
 
           <label className="admin-label">
-            Password
-            <input
-              className="admin-input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            Password:{' '}
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                className="admin-input"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <button
+                type="button"
+                className="eye-button"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </label>
 
           <button onClick={handleLogin} id="login-button">
