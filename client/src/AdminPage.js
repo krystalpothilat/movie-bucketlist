@@ -50,6 +50,12 @@ const AdminPage = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <div className="admin-page">
       <div className="admin-card">
@@ -74,6 +80,7 @@ const AdminPage = () => {
                 value={password}
                 className="admin-input"
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
 
               <button
