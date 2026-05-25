@@ -39,18 +39,14 @@ const MoviePopUp = ({
         `${process.env.REACT_APP_BACKEND_API}/api/movies/delete-movie`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ title }),
         }
       );
       if (response.ok) {
-        console.log('deleted');
-        onClose(); // close the popup and refresh the movie list
+        onClose();
       } else {
-        const errorText = await response.text();
-        console.error('Error deleting movie:', errorText);
+        console.error('Error deleting movie:', await response.text());
       }
     } catch (error) {
       console.error('Error deleting movie:', error);
@@ -63,19 +59,15 @@ const MoviePopUp = ({
         `${process.env.REACT_APP_BACKEND_API}/api/movies/update-seen`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ title }),
         }
       );
       if (response.ok) {
-        console.log('updated');
         seen = !seen;
-        onClose(); // close the popup and refresh the movie list
+        onClose();
       } else {
-        const errorText = await response.text();
-        console.error('Error updating seen for movie:', errorText);
+        console.error('Error updating seen for movie:', await response.text());
       }
     } catch (error) {
       console.error('Error updating seen for movie:', error);
@@ -88,18 +80,14 @@ const MoviePopUp = ({
         `${process.env.REACT_APP_BACKEND_API}/api/movies/add-movie`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newMovieData),
         }
       );
       if (response.ok) {
-        console.log('Movie added successfully');
-        onClose(); // Close the popup if needed
+        onClose();
       } else {
-        const errorText = await response.text();
-        console.error('Error adding movie:', errorText);
+        console.error('Error adding movie:', await response.text());
       }
     } catch (error) {
       console.error('Error adding movie:', error);
@@ -113,228 +101,158 @@ const MoviePopUp = ({
         console.error('OMDB API key is missing');
         return;
       }
-      fetch(
+      const response = await fetch(
         `https://www.omdbapi.com/?apikey=${apiKey}&t=${encodeURIComponent(newTitle)}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.Response === 'True') {
-            console.log(data);
-            setNewMovieData({
-              title: data.Title,
-              description: data.Plot,
-              genre: data.Genre.split(', '),
-              rating: data.imdbRating,
-              imdb_link: `https://www.imdb.com/title/${data.imdbID}/`,
-              image: data.Poster,
-              year: data.Year,
-              imdbid: data.imdbID,
-              seen: false,
-            });
-            console.log('api fetch successful');
-          } else {
-            console.error(data.Error);
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching data:', error);
+      );
+      const data = await response.json();
+      if (data.Response === 'True') {
+        setNewMovieData({
+          title: data.Title,
+          description: data.Plot,
+          genre: data.Genre.split(', '),
+          rating: data.imdbRating,
+          imdb_link: `https://www.imdb.com/title/${data.imdbID}/`,
+          image: data.Poster,
+          year: data.Year,
+          imdbid: data.imdbID,
+          seen: false,
         });
+      } else {
+        console.error(data.Error);
+      }
     } catch (error) {
-      console.error('Error updating seen for movie:', error);
+      console.error('Error fetching movie data:', error);
     }
   };
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      event.preventDefault(); // Prevent default behavior (e.g., form submission)
-      document.getElementById('submit-button').click(); // Trigger the button's onClick event
+      event.preventDefault();
+      document.getElementById('submit-button').click();
     }
   };
 
-  return isAdmin ? (
-    <div className={`pop-up ${seen ? 'seen' : ''}`} id="reg-pop-up">
-      <img
-        src={
-          image && image.trim() !== '' && image !== 'N/A'
-            ? image
-            : GRAY_TEMP_IMG
-        }
-        alt={title}
-        className="pop-up-image"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = GRAY_TEMP_IMG;
-        }}
-      />
+  // Decide which data to display
+  const displayImage = addMovieBool ? newMovieData.image : image;
+  const displayTitle = addMovieBool ? newMovieData.title : title;
+  const displayDescription = addMovieBool
+    ? newMovieData.description
+    : description;
+  const displayGenre = addMovieBool ? newMovieData.genre : genre;
+  const displayRating = addMovieBool ? newMovieData.rating : rating;
+  const displayImdbLink = addMovieBool ? newMovieData.imdb_link : imdbLink;
 
-      <button className="close-button" onClick={onClose}>
-        {' '}
-        ×{' '}
-      </button>
+  const resolvedImage =
+    displayImage && displayImage.trim() !== '' && displayImage !== 'N/A'
+      ? displayImage
+      : GRAY_TEMP_IMG;
 
-      <div className="pop-up-content">
-        <h2 className="pop-up-title">{title}</h2>
-        <p className="pop-up-info" id="pop-up-desc">
-          {description}
-        </p>
-        <p className="pop-up-info" id="pop-up-genre">
-          <span className="label">Genre:</span> {genre.join(', ')}
-        </p>
-        <p className="pop-up-info" id="pop-up-rating">
-          <span className="label">Rating:</span> {rating}
-        </p>
-        <a
-          href={imdbLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          id="imdb-link"
-        >
-          IMDb Link
-        </a>
-        <div className="seen-container">
-          <label> Seen </label>
-          <div className="seen-buttons-container">
-            <Button
-              variant={seen ? 'success' : 'outline-secondary'}
-              className="seenButton"
-              onClick={updateSeen}
-            >
-              Yes
-            </Button>{' '}
-            <Button
-              variant={seen ? 'outline-secondary' : 'success'}
-              className="seenButton"
-              onClick={updateSeen}
-            >
-              No
-            </Button>{' '}
-          </div>
-        </div>
-        <Button
-          variant="danger"
-          className="delete-button"
-          onClick={deleteMovie}
-        >
-          {' '}
-          Delete{' '}
-        </Button>{' '}
-      </div>
-    </div>
-  ) : addMovieBool ? (
-    <div className="pop-up" id="add-movie-popup">
-      <button className="close-button" onClick={onClose}>
-        {' '}
-        ×{' '}
-      </button>
-      <div className="new-movie-input-container">
-        <input
-          type="text"
-          placeholder="Enter movie name"
-          value={addMovieTitle}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-        />
-        <button onClick={() => searchMovie(addMovieTitle)} id="submit-button">
-          {' '}
-          Submit{' '}
-        </button>
-      </div>
-      <div className="pop-up" id="add-movie-popup-insert">
+  return (
+    <div
+      className={`pop-up ${seen && !addMovieBool ? 'seen' : ''}`}
+      id="reg-pop-up"
+    >
+      <>
         <img
-          src={
-            image && image.trim() !== '' && image !== 'N/A'
-              ? image
-              : GRAY_TEMP_IMG
-          }
-          alt={title}
+          src={resolvedImage}
+          alt={displayTitle}
           className="pop-up-image"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = GRAY_TEMP_IMG;
           }}
         />
+        <button className="close-button" onClick={onClose}>
+          ×
+        </button>
         <div className="pop-up-content">
-          <h2 className="pop-up-title">{newMovieData.title}</h2>
-          <p className="pop-up-info" id="pop-up-desc">
-            {newMovieData.description}
-          </p>
-          <p className="pop-up-info" id="pop-up-genre">
-            {' '}
-            <span className="label">Genre:</span>{' '}
-            {newMovieData.genre.join(', ')}
-          </p>
-          <p className="pop-up-info" id="pop-up-rating">
-            {' '}
-            <span className="label">Rating:</span> {newMovieData.rating}
-          </p>
-          <a
-            href={newMovieData.imdb_link}
-            target="_blank"
-            rel="noopener noreferrer"
-            id="imdb-link"
-          >
-            IMDb Link
-          </a>
-          <button
-            className="add-movie-confirm-button"
-            onClick={() => addMovie()}
-          >
-            {' '}
-            Add Movie
-          </button>
+          {/* Search bar only in add-movie mode */}
+          {addMovieBool && (
+            <div className="new-movie-input-container">
+              <input
+                type="text"
+                placeholder="Enter movie name"
+                value={addMovieTitle}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+              />
+              <button
+                onClick={() => searchMovie(addMovieTitle)}
+                id="submit-button"
+              >
+                Submit
+              </button>
+            </div>
+          )}
+
+          <div className="pop-up-info-container">
+            <h2 className="pop-up-title">{displayTitle}</h2>
+            <p className="pop-up-info" id="pop-up-desc">
+              {displayDescription}
+            </p>
+            <p className="pop-up-info" id="pop-up-genre">
+              <span className="label">Genre:</span> {displayGenre.join(', ')}
+            </p>
+            <p className="pop-up-info" id="pop-up-rating">
+              <span className="label">Rating:</span> {displayRating}
+            </p>
+            <a
+              href={displayImdbLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              id="imdb-link"
+            >
+              IMDb Link
+            </a>
+
+            {/* Add-movie confirm button */}
+            {addMovieBool && (
+              <button className="add-movie-confirm-button" onClick={addMovie}>
+                Add Movie
+              </button>
+            )}
+
+            {/* Admin-only controls */}
+            {isAdmin && !addMovieBool && (
+              <>
+                <div className="seen-container">
+                  <label>Seen</label>
+                  <div className="seen-buttons-container">
+                    <Button
+                      variant={seen ? 'success' : 'outline-secondary'}
+                      className="seenButton"
+                      onClick={updateSeen}
+                    >
+                      Yes
+                    </Button>{' '}
+                    <Button
+                      variant={seen ? 'outline-secondary' : 'success'}
+                      className="seenButton"
+                      onClick={updateSeen}
+                    >
+                      No
+                    </Button>
+                  </div>
+                </div>
+                <Button
+                  variant="danger"
+                  className="delete-button"
+                  onClick={deleteMovie}
+                >
+                  Delete
+                </Button>
+              </>
+            )}
+
+            {/* Regular user seen display */}
+            {!isAdmin && !addMovieBool && (
+              <p className="pop-up-info" id="pop-up-seen">
+                <span className="label">Seen:</span> {seen ? 'Yes' : 'No'}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
-  ) : (
-    <div className="pop-up" id="reg-pop-up">
-      <img
-        src={
-          newMovieData.image &&
-          newMovieData.image.trim() !== '' &&
-          newMovieData.image !== 'N/A'
-            ? newMovieData.image
-            : GRAY_TEMP_IMG
-        }
-        alt={newMovieData.title}
-        className={`pop-up-image ${
-          !image || image === 'N/A' || image.trim() === '' ? 'placeholder' : ''
-        }`}
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = GRAY_TEMP_IMG;
-        }}
-      />
-
-      <button className="close-button" onClick={onClose}>
-        {' '}
-        ×{' '}
-      </button>
-
-      <div className="pop-up-content">
-        <h2 className="pop-up-title">{title}</h2>
-        <p className="pop-up-info" id="pop-up-desc">
-          {description}
-        </p>
-        <p className="pop-up-info" id="pop-up-genre">
-          {' '}
-          <span className="label">Genre:</span> {genre.join(', ')}
-        </p>
-        <p className="pop-up-info" id="pop-up-rating">
-          {' '}
-          <span className="label">Rating:</span> {rating}
-        </p>
-        <p className="pop-up-info" id="pop-up-seen">
-          <span className="label">Seen:</span> {seen ? 'Yes' : 'No'}
-        </p>
-        <a
-          href={imdbLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          id="imdb-link"
-        >
-          IMDb Link
-        </a>
-      </div>
+      </>
     </div>
   );
 };
