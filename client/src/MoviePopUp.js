@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './styles/MoviePopUp.css';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import GRAY_TEMP_IMG from './imgs/gray-temp-img.jpg';
 
 const MoviePopUp = ({
   title,
@@ -152,7 +153,19 @@ const MoviePopUp = ({
 
   return isAdmin ? (
     <div className={`pop-up ${seen ? 'seen' : ''}`} id="reg-pop-up">
-      <img src={image} alt={title} className="pop-up-image" />
+      <img
+        src={
+          image && image.trim() !== '' && image !== 'N/A'
+            ? image
+            : GRAY_TEMP_IMG
+        }
+        alt={title}
+        className="pop-up-image"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = GRAY_TEMP_IMG;
+        }}
+      />
 
       <button className="close-button" onClick={onClose}>
         {' '}
@@ -227,7 +240,19 @@ const MoviePopUp = ({
         </button>
       </div>
       <div className="pop-up" id="add-movie-popup-insert">
-        <img src={newMovieData.image} alt={title} className="pop-up-image" />
+        <img
+          src={
+            image && image.trim() !== '' && image !== 'N/A'
+              ? image
+              : GRAY_TEMP_IMG
+          }
+          alt={title}
+          className="pop-up-image"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = GRAY_TEMP_IMG;
+          }}
+        />
         <div className="pop-up-content">
           <h2 className="pop-up-title">{newMovieData.title}</h2>
           <p className="pop-up-info" id="pop-up-desc">
@@ -262,7 +287,23 @@ const MoviePopUp = ({
     </div>
   ) : (
     <div className="pop-up" id="reg-pop-up">
-      <img src={image} alt={title} className="pop-up-image" />
+      <img
+        src={
+          newMovieData.image &&
+          newMovieData.image.trim() !== '' &&
+          newMovieData.image !== 'N/A'
+            ? newMovieData.image
+            : GRAY_TEMP_IMG
+        }
+        alt={newMovieData.title}
+        className={`pop-up-image ${
+          !image || image === 'N/A' || image.trim() === '' ? 'placeholder' : ''
+        }`}
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = GRAY_TEMP_IMG;
+        }}
+      />
 
       <button className="close-button" onClick={onClose}>
         {' '}
