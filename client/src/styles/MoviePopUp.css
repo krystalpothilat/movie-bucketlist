@@ -7,10 +7,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: 5px solid #ffd700;
-  background-color: rgb(233, 227, 227);
+
+  border: 5px solid #ffd700; /* KEEP */
+  background-color: #1a1a1a; /* FIX: match app */
   border-radius: 30px;
-  padding: 50px;
+  padding: 20px; /* KEEP spacing “inner separation” */
   box-sizing: border-box;
   z-index: 5;
 }
@@ -38,6 +39,8 @@
   height: 100%;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
+
+  border-right: 1px solid #444; /* subtle separation line */
 }
 
 .pop-up-content {
@@ -46,23 +49,30 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: white;
+
+  background-color: #2a2a2a;
   padding: 8%;
+
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
+  font-family: 'Raleway', sans-serif;
 }
 
 .pop-up-title {
-  font-weight: bold;
-  font-size: 2vw;
-  margin: 20px;
-  margin-bottom: 50px;
-  max-height: fit-content;
+  font-weight: 700;
+  font-size: 28px; /* bigger */
+  margin: 0 0 20px 0;
+  color: #ffd700;
 }
 
 .pop-up-info {
   width: 100%;
-  font-size: 1vw;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #e0e0e0;
 }
 
 .label {
@@ -70,22 +80,32 @@
 }
 
 #imdb-link {
-  font-weight: bold;
+  font-weight: 600;
   text-decoration: none;
-  color: #dbc33b;
+  color: #ffd700;
   cursor: pointer;
-  width: 100%;
+  margin-top: 10px;
+}
+
+#imdb-link:hover {
+  color: #fff;
 }
 
 .close-button {
-  position: fixed;
-  right: 0;
-  top: 0;
-  height: 50px;
-  width: 50px;
-  border: 0px;
-  background-color: transparent;
-  font-weight: bold;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  height: 32px;
+  width: 32px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #ffd700;
 }
 
 .delete-button {
@@ -111,16 +131,12 @@
   align-items: center;
   width: 40%;
   margin: 15px;
+  color: white;
 }
 
 .seenButton {
   width: 50px;
 }
-/* 
-.chosen{
-    border: 2px solid green;
-    font-weight: bold;
-} */
 
 .add-movie-confirm-button {
   border-radius: 5px;
