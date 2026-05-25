@@ -2,18 +2,33 @@
   display: flex;
   flex-direction: row;
   position: fixed;
+  overflow: hidden;
+
   width: 80%;
   height: 80%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 
-  border: 5px solid #ffd700; /* KEEP */
+  border: 5px solid #ffffff; /* KEEP */
   background-color: #1a1a1a; /* FIX: match app */
   border-radius: 30px;
   padding: 20px; /* KEEP spacing “inner separation” */
   box-sizing: border-box;
   z-index: 5;
+}
+
+.pop-up.seen {
+  border: 5px solid transparent;
+  border-radius: 30px;
+
+  background:
+    linear-gradient(#1a1a1a, #1a1a1a) padding-box,
+    url('../imgs/gold3.jpg') border-box;
+
+  background-clip: padding-box, border-box;
+
+  overflow: hidden;
 }
 
 .pop-up-container {
@@ -93,14 +108,14 @@
 
 .close-button {
   position: absolute;
-  right: 10px;
+  right: 25px;
   top: 10px;
   height: 32px;
   width: 32px;
   border: none;
   background: transparent;
   color: #9ca3af;
-  font-size: 20px;
+  font-size: 35px;
   cursor: pointer;
 }
 

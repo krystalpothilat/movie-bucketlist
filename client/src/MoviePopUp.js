@@ -151,7 +151,7 @@ const MoviePopUp = ({
   };
 
   return isAdmin ? (
-    <div className="pop-up" id="admin-pop-up">
+    <div className={`pop-up ${seen ? 'seen' : ''}`} id="reg-pop-up">
       <img src={image} alt={title} className="pop-up-image" />
 
       <button className="close-button" onClick={onClose}>
