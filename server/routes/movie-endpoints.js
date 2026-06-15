@@ -1,106 +1,89 @@
 const express = require('express');
 const router = express.Router();
-
-const Movie = require('../models/Movie');
+const prisma = require('../lib/prisma');
 
 // GET ALL MOVIES
 router.get('/get-movies', async (req, res) => {
   const { genres, sortBy, seenToggle, searchTitle } = req.query;
   const genresArray = genres ? genres.split(',') : [];
+
   try {
-    let query = {};
+    let where = {};
+
     if (genresArray.length > 0) {
-      //query for db if looking for specific genre
-      query.genre = { $in: genresArray };
+      where.genre = { hasSome: genresArray };
     }
 
-    if (seenToggle) {
-      if (seenToggle === 'yes') {
-        query.seen = true;
-      } else if (seenToggle === 'no') {
-        query.seen = false;
-      }
-    }
+    if (seenToggle === 'yes') where.seen = true;
+    else if (seenToggle === 'no') where.seen = false;
 
-    //if searchTitle is provided, then query will be title and not genres
     if (searchTitle && searchTitle.trim()) {
-      query.title = { $regex: new RegExp(searchTitle.trim(), 'i') };
+      where.title = { contains: searchTitle.trim(), mode: 'insensitive' };
     }
 
-    let sortOrder = {};
+    let orderBy = [];
     if (searchTitle) {
-      sortOrder.title = 1;
-    } else if (sortBy) {
-      if (sortBy === 'rank') {
-        sortOrder.rank = 1;
-        sortOrder.title = 1;
-      } else {
-        sortOrder.title = 1;
-      }
+      orderBy = [{ title: 'asc' }];
+    } else if (sortBy === 'rank') {
+      orderBy = [{ rank: 'asc' }, { title: 'asc' }];
+    } else {
+      orderBy = [{ title: 'asc' }];
     }
-    // console.log('Constructed query:', JSON.stringify(query));
 
-    const movies = await Movie.find(query).sort(sortOrder);
+    let movies = await prisma.movie.findMany({ where, orderBy });
 
-    let sortedMovies = movies;
-    if (sortBy && sortBy === 'rank') {
-      const rankedMovies = movies.filter((movie) => movie.rank != null);
-      const unrankedMovies = movies.filter((movie) => movie.rank == null);
-      sortedMovies = [...rankedMovies, ...unrankedMovies];
+    if (sortBy === 'rank') {
+      const ranked = movies.filter((m) => m.rank != null);
+      const unranked = movies.filter((m) => m.rank == null).sort((a, b) => a.title.localeCompare(b.title));
+      movies = [...ranked, ...unranked];
     }
-    // res.send('Testing get-movies endpoint: working!');
-    res.json(sortedMovies);
+
+    res.json(movies);
   } catch (err) {
+    console.error(err);
     res.status(500).send('Server error fetching movies');
   }
 });
 
-// DELETE MOVIE FROM DB
+// DELETE MOVIE
 router.post('/delete-movie', async (req, res) => {
   const { title } = req.body;
   try {
-    const result = await Movie.deleteOne({ title: title });
-    if (result.deletedCount === 1) {
-      res.status(200).send('Movie deleted successfully');
-    }
+    await prisma.movie.deleteMany({ where: { title } });
+    res.status(200).send('Movie deleted successfully');
   } catch (err) {
-    res.status(500).send('Error fetching movies');
+    res.status(500).send('Error deleting movie');
   }
 });
 
-// UPDATE SEEN FIELD
+// TOGGLE SEEN
 router.post('/update-seen', async (req, res) => {
   const { title } = req.body;
   try {
-    const movie = await Movie.findOne({ title: title });
+    const movie = await prisma.movie.findFirst({ where: { title } });
+    if (!movie) return res.status(404).send('Movie not found');
 
-    if (!movie) {
-      return res.status(404).send('Movie not found');
-    }
-
-    const updatedSeen = !movie.seen;
-
-    const result = await Movie.updateOne(
-      { title: title },
-      { $set: { seen: updatedSeen } }
-    );
+    await prisma.movie.update({
+      where: { id: movie.id },
+      data: { seen: !movie.seen },
+    });
 
     res.status(200).send('Movie updated successfully');
   } catch (err) {
-    res.status(500).send('Error updating moviee');
+    res.status(500).send('Error updating movie');
   }
 });
 
-// ADD MOVIE TO DB
+// ADD MOVIE
 router.post('/add-movie', async (req, res) => {
   try {
-    const movieData = req.body;
-    console.log(movieData);
-    const movie = new Movie(movieData); // Create a new Movie instance
-    await movie.save(); // Save to database
-    res.status(201).send('Movie added successfully');
-  } catch (error) {
-    res.status(500).send('Error adding movie: ' + error.message);
+    const { title, genre, description, imdbId, imdbLink, rank, image, rating, year } = req.body;
+    const movie = await prisma.movie.create({
+      data: { title, genre, description, imdbId, imdbLink, rank, image, rating, year },
+    });
+    res.status(201).json(movie);
+  } catch (err) {
+    res.status(500).send('Error adding movie: ' + err.message);
   }
 });
 

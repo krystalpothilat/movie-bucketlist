@@ -1,26 +1,30 @@
 const express = require('express');
 const router = express.Router();
+const prisma = require('../lib/prisma');
 
-const Wheel = require('../models/Wheel');
-
-//SAVE WHEEL TO DB
+// SAVE WHEEL
 router.post('/save-wheel', async (req, res) => {
   try {
-    const wheelData = req.body;
-    console.log(wheelData);
-    const wheel = new Wheel(wheelData); // Create a new Wheel instance
-    await wheel.save(); // Save to database
-
+    const { name, movies } = req.body;
+    const wheel = await prisma.wheel.create({
+      data: {
+        name,
+        movies: {
+          create: movies.map((m) => ({ title: m.title, color: m.color })),
+        },
+      },
+      include: { movies: true },
+    });
     res.status(200).json(wheel);
-  } catch (error) {
-    res.status(500).send('Error adding wheel: ' + error.message);
+  } catch (err) {
+    res.status(500).send('Error adding wheel: ' + err.message);
   }
 });
 
-// DELETE WHEEL FROM DB
+// DELETE WHEEL
 router.delete('/delete-wheel/:id', async (req, res) => {
   try {
-    await Wheel.findByIdAndDelete(req.params.id);
+    await prisma.wheel.delete({ where: { id: req.params.id } });
     res.status(200).send('Wheel deleted successfully');
   } catch (err) {
     res.status(500).send('Error deleting wheel');
@@ -30,22 +34,27 @@ router.delete('/delete-wheel/:id', async (req, res) => {
 // UPDATE WHEEL
 router.post('/update-wheel/:id', async (req, res) => {
   try {
-    const updatedWheel = await Wheel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-
+    const { name, movies } = req.body;
+    await prisma.wheelMovie.deleteMany({ where: { wheelId: req.params.id } });
+    await prisma.wheel.update({
+      where: { id: req.params.id },
+      data: {
+        name,
+        movies: {
+          create: movies.map((m) => ({ title: m.title, color: m.color })),
+        },
+      },
+    });
     res.status(200).send('Wheel updated successfully');
   } catch (err) {
     res.status(500).send('Error updating wheel');
   }
 });
 
-// GET ALL SAVED WHEELS
+// GET ALL WHEELS
 router.get('/get-saved-wheels', async (req, res) => {
   try {
-    const wheels = await Wheel.find();
+    const wheels = await prisma.wheel.findMany({ include: { movies: true } });
     res.status(200).json(wheels);
   } catch (err) {
     res.status(500).send('Server error fetching wheels');

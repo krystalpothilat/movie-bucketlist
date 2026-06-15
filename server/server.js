@@ -3,8 +3,8 @@ const cors = require('cors');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5001;
-const mongoose = require('mongoose');
-// require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+const prisma = require('./lib/prisma');
+
 require('dotenv').config();
 
 const movieRoutes = require('./routes/movie-endpoints');
@@ -31,19 +31,10 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something went wrong!');
 });
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  dbName: 'Movie-Bucketlist',
-});
 
-const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-  console.log('Connected to MongoDB');
-});
+prisma.$connect()
+  .then(() => console.log('Connected to Postgres via Prisma'))
+  .catch((err) => console.error('Prisma connection error:', err));
 
 app.use('/api/movies', movieRoutes);
 app.use('/api/wheels', wheelRoutes);
