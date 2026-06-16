@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './styles/FiltersBar.css';
-import filterImg from './imgs/filter.png';
+import '../../styles/FiltersBar.css';
+import filterImg from '../../assets/imgs/filter.png';
 
 export default function FiltersBar({
   // VIEW
@@ -41,8 +41,7 @@ export default function FiltersBar({
   // VIEW CONDITION
   isWheelDisplayView,
 
-  // ADMIN CONTROLS
-  isAdmin,
+  // LOGIN CONTROLS
   handleLogOut,
   addMovieButtonClicked,
 }) {
@@ -201,25 +200,23 @@ export default function FiltersBar({
       </div>
 
       {/* RIGHT SIDE */}
-      {isAdmin && (
-        <div className="filters-right">
-          <button
-            className="btn btn-secondary dropdown-toggle"
-            id="add-movie-button"
-            onClick={addMovieButtonClicked}
-          >
-            Add Movie
-          </button>
+      <div className="filters-right">
+        <button
+          className="btn btn-secondary dropdown-toggle"
+          id="add-movie-button"
+          onClick={addMovieButtonClicked}
+        >
+          Add Movie
+        </button>
 
-          <button
-            className="btn btn-secondary dropdown-toggle"
-            id="admin-logout"
-            onClick={handleLogOut}
-          >
-            Log Out
-          </button>
-        </div>
-      )}
+        <button
+          className="btn btn-secondary dropdown-toggle"
+          id="admin-logout"
+          onClick={handleLogOut}
+        >
+          Log Out
+        </button>
+      </div>
 
       {/* MOBILE FILTER POPUP */}
       {mobileFiltersOpen && (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormControl } from 'react-bootstrap';
-import './styles/Header.css';
+import '../../styles/Header.css';
 
 export default function Header({ searchTitle, onSearchChange, onClearSearch }) {
   return (

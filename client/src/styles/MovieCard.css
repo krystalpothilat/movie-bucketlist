@@ -23,7 +23,7 @@
   right: -6px;
   bottom: -6px;
   border-radius: 16px;
-  background: url('../imgs/gold3.jpg') no-repeat center center;
+  background: url('../assets/imgs/gold3.jpg') no-repeat center center;
   background-size: cover;
   z-index: 0;
 }

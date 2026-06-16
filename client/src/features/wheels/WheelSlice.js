@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/WheelSlice.css';
+import '../../styles/WheelSlice.css';
 
 const HUB_R = 20;
 const RIM_PAD = 5;

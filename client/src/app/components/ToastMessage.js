@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './styles/ToastMessage.css';
+import '../../styles/ToastMessage.css';
 
 export const TOAST_MESSAGES = {
   saved: 'Wheel saved successfully',

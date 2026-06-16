@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './styles/MovieCard.css';
-import GRAY_TEMP_IMG from './imgs/gray-temp-img.jpg';
+import '../../styles/MovieCard.css';
+import GRAY_TEMP_IMG from '../../assets/imgs/gray-temp-img.jpg';
 
 const MovieCard = ({ title, image, seen, onClick }) => {
   const [isClicked, setIsClicked] = useState(false);

@@ -8,6 +8,7 @@ This project started with the Top 100 IMDb movies powered through the [OMDb API]
 ## ✨ Features
 
 ### 🎞️ Curated Movie Collection
+
 - Browse the Top 100 IMDb movies
 - Add additional movies that captivate your interest
 - Organized movie tracking experience
@@ -15,6 +16,7 @@ This project started with the Top 100 IMDb movies powered through the [OMDb API]
 - Editing and management controls are gated to authorized users (project owner/admin access)
 
 ### 🎡 Wheel Picker
+
 - Interactive wheel picker for choosing what movie to watch next
 - Helps eliminate decision fatigue
 - Fun randomized movie selection experience
@@ -24,6 +26,7 @@ This project started with the Top 100 IMDb movies powered through the [OMDb API]
 I wanted a personal movie tracker that felt more interactive and visually engaging than a standard list.
 
 The goal was to combine:
+
 - movie discovery
 - bucket list tracking
 - randomized selection

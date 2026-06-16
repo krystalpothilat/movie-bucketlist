@@ -1,15 +1,16 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
-import MovieDisplay from './MovieDisplay';
-import MoviePopUp from './MoviePopUp';
-import WheelDisplay from './WheelDisplay';
-import { AuthContext } from './AuthContext';
+import React, { useState, useEffect, useRef } from 'react';
+import MovieDisplay from '../features/movies/MovieDisplay';
+import MoviePopUp from '../features/movies/MoviePopUp';
+import WheelDisplay from '../features/wheels/WheelDisplay';
+import { AuthContext } from '../app/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles/HomePage.css';
-import grid from './imgs/grid.png';
-import carousel from './imgs/carousel.png';
-import wheel from './imgs/wheel.png';
-import Header from './Header';
-import FiltersBar from './FiltersBar';
+import '../styles/HomePage.css';
+import grid from '../assets/imgs/grid.png';
+import carousel from '../assets/imgs/carousel.png';
+import wheel from '../assets/imgs/wheel.png';
+import Header from '../app/components/Header';
+import FiltersBar from '../features/movies/FiltersBar';
+import { useAuth } from '../app/AuthContext';
 
 const genres = [
   { value: 'Action', label: 'Action' },
@@ -132,7 +133,7 @@ const HomePage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const { isAdmin, logout } = useContext(AuthContext);
+  const { user, logout } = useAuth();
   const handleLogOut = () => logout();
 
   return (
@@ -170,7 +171,6 @@ const HomePage = () => {
         toggleSeenDropdown={toggleSeenDropdown}
         seenDropdownRef={seenDropdownRef}
         isWheelDisplayView={isWheelDisplayView}
-        isAdmin={isAdmin}
         handleLogOut={handleLogOut}
         addMovieButtonClicked={addMovieButtonClicked}
       />
@@ -191,7 +191,6 @@ const HomePage = () => {
             genres={genreTypes}
             searchTitle={searchTitle}
             seenToggle={seenToggle}
-            isAdmin={isAdmin}
             refreshTrigger={popupClosed}
           />
         )}

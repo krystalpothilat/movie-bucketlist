@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import './styles/WheelDisplay.css';
+import '../../styles/WheelDisplay.css';
 import WheelSlice from './WheelSlice';
-import ToastMessage from './ToastMessage';
+import ToastMessage from '../../app/components/ToastMessage';
 import { useContext } from 'react';
-import { AuthContext } from './AuthContext';
+import { AuthContext } from '../../app/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const COLORS = [
@@ -31,8 +31,6 @@ const WheelDisplay = ({ allMovies = [] }) => {
   const [newWheelDisplayMode, setNewWheelDisplayMode] = useState(false);
   const [newWheelDisplayName, setNewWheelDisplayName] = useState('');
   const [toastAction, setToastAction] = useState(null);
-
-  const { isAdmin } = useContext(AuthContext);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -206,28 +204,26 @@ const WheelDisplay = ({ allMovies = [] }) => {
   /// API FUNCTIONS
 
   const handleSaveWheel = async () => {
-    if (!isAdmin) {
-      setToastAction({
-        type: 'login_required',
-        id: crypto.randomUUID(),
+    setToastAction({
+      type: 'login_required',
+      id: crypto.randomUUID(),
 
-        onClick: () => {
-          navigate('/admin', {
-            state: {
-              from: location.pathname,
+      onClick: () => {
+        navigate('/admin', {
+          state: {
+            from: location.pathname,
 
-              restoreWheel: {
-                wheelName,
-                wheelMovies,
-                activeDraftId,
-                activeWheelDisplayId,
-              },
+            restoreWheel: {
+              wheelName,
+              wheelMovies,
+              activeDraftId,
+              activeWheelDisplayId,
             },
-          });
-        },
-      });
-      return;
-    }
+          },
+        });
+      },
+    });
+    return;
 
     const hasMovies = wheelMovies.length > 0;
 
@@ -386,28 +382,26 @@ const WheelDisplay = ({ allMovies = [] }) => {
     // SAVED DELETE (API)
     // -------------------
 
-    if (!isAdmin) {
-      setToastAction({
-        type: 'login_required',
-        id: crypto.randomUUID(),
+    setToastAction({
+      type: 'login_required',
+      id: crypto.randomUUID(),
 
-        onClick: () => {
-          navigate('/admin', {
-            state: {
-              from: location.pathname,
-              restoreWheel: {
-                wheelName,
-                wheelMovies,
-                activeDraftId,
-                activeWheelDisplayId,
-              },
+      onClick: () => {
+        navigate('/admin', {
+          state: {
+            from: location.pathname,
+            restoreWheel: {
+              wheelName,
+              wheelMovies,
+              activeDraftId,
+              activeWheelDisplayId,
             },
-          });
-        },
-      });
+          },
+        });
+      },
+    });
 
-      return;
-    }
+    return;
 
     try {
       const response = await fetch(

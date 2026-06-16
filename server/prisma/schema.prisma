@@ -28,10 +28,13 @@ model Movie {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  googleId     String?  @unique
+  passwordHash String?
+  authProvider String
+  createdAt    DateTime @default(now())
 }
 
 model Wheel {

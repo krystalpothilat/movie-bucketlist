@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import './styles/MoviePopUp.css';
+import '../../styles/MoviePopUp.css';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import GRAY_TEMP_IMG from './imgs/gray-temp-img.jpg';
+import GRAY_TEMP_IMG from '../../assets/imgs/gray-temp-img.jpg';
 
 const MoviePopUp = ({
   title,
@@ -13,7 +13,6 @@ const MoviePopUp = ({
   imdbLink,
   seen,
   onClose,
-  isAdmin,
   addMovieBool,
 }) => {
   const [addMovieTitle, setAddMovieTitle] = useState('');
@@ -213,7 +212,7 @@ const MoviePopUp = ({
             )}
 
             {/* Admin-only controls */}
-            {isAdmin && !addMovieBool && (
+            {!addMovieBool && (
               <>
                 <div className="seen-container">
                   <label>Seen</label>
@@ -245,7 +244,7 @@ const MoviePopUp = ({
             )}
 
             {/* Regular user seen display */}
-            {!isAdmin && !addMovieBool && (
+            {!addMovieBool && (
               <p className="pop-up-info" id="pop-up-seen">
                 <span className="label">Seen:</span> {seen ? 'Yes' : 'No'}
               </p>

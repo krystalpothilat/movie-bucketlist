@@ -34,7 +34,9 @@ router.get('/get-movies', async (req, res) => {
 
     if (sortBy === 'rank') {
       const ranked = movies.filter((m) => m.rank != null);
-      const unranked = movies.filter((m) => m.rank == null).sort((a, b) => a.title.localeCompare(b.title));
+      const unranked = movies
+        .filter((m) => m.rank == null)
+        .sort((a, b) => a.title.localeCompare(b.title));
       movies = [...ranked, ...unranked];
     }
 
@@ -77,9 +79,29 @@ router.post('/update-seen', async (req, res) => {
 // ADD MOVIE
 router.post('/add-movie', async (req, res) => {
   try {
-    const { title, genre, description, imdbId, imdbLink, rank, image, rating, year } = req.body;
+    const {
+      title,
+      genre,
+      description,
+      imdbId,
+      imdbLink,
+      rank,
+      image,
+      rating,
+      year,
+    } = req.body;
     const movie = await prisma.movie.create({
-      data: { title, genre, description, imdbId, imdbLink, rank, image, rating, year },
+      data: {
+        title,
+        genre,
+        description,
+        imdbId,
+        imdbLink,
+        rank,
+        image,
+        rating,
+        year,
+      },
     });
     res.status(201).json(movie);
   } catch (err) {

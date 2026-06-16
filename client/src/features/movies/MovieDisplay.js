@@ -3,7 +3,7 @@ import { Carousel } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles/MovieDisplay.css';
+import '../../styles/MovieDisplay.css';
 
 const MovieDisplay = ({
   viewType,
@@ -11,7 +11,6 @@ const MovieDisplay = ({
   genres,
   searchTitle,
   seenToggle,
-  isAdmin,
   refreshTrigger,
 }) => {
   const [allMovies, setAllMovies] = useState([]);
@@ -182,7 +181,6 @@ const MovieDisplay = ({
             imdbLink={selectedMovie.imdbLink}
             seen={selectedMovie.seen}
             onClose={handleClosePopUp}
-            isAdmin={isAdmin}
           />
         )}
       </div>
