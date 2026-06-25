@@ -133,7 +133,7 @@ const HomePage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const handleLogOut = () => logout();
 
   return (

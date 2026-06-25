@@ -202,42 +202,17 @@ const WheelDisplay = ({ allMovies = [] }) => {
   /// API FUNCTIONS
 
   const handleSaveWheel = async () => {
-    setToastAction({
-      type: 'login_required',
-      id: crypto.randomUUID(),
-
-      onClick: () => {
-        navigate('/admin', {
-          state: {
-            from: location.pathname,
-
-            restoreWheel: {
-              wheelName,
-              wheelMovies,
-              activeDraftId,
-              activeWheelDisplayId,
-            },
-          },
-        });
-      },
-    });
-    return;
-
     const hasMovies = wheelMovies.length > 0;
 
-    // CASE 1: Existing
     if (activeWheelDisplayId) {
-      // Delete wheel if no movies
       if (!hasMovies) {
-        await deleteWheel(activeWheelDisplayId);
+        await deleteWheel({ _id: activeWheelDisplayId });
         return;
       }
-
       await updateWheel(activeWheelDisplayId);
       return;
     }
 
-    // CASE 2: New wheel
     if (hasMovies) {
       await saveWheel();
     }
@@ -266,6 +241,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(wheelData),
+          credentials: 'include',
         }
       );
 
@@ -330,6 +306,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(wheelData),
+          credentials: 'include',
         }
       );
 
@@ -399,8 +376,6 @@ const WheelDisplay = ({ allMovies = [] }) => {
       },
     });
 
-    return;
-
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_API}/api/wheels/delete-wheel/${wheel._id}`,
@@ -410,6 +385,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(),
+          credentials: 'include',
         }
       );
 
@@ -445,6 +421,7 @@ const WheelDisplay = ({ allMovies = [] }) => {
         `${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`,
         {
           method: 'GET',
+          credentials: 'include',
         }
       );
       if (response.ok) {
