@@ -179,6 +179,7 @@ const MovieDisplay = ({
             image={selectedMovie.image}
             genre={selectedMovie.genre}
             rating={selectedMovie.rating}
+            notes={selectedMovie.notes}
             imdbLink={selectedMovie.imdbLink}
             seen={selectedMovie.seen}
             onClose={handleClosePopUp}

@@ -10,10 +10,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
 
-  border: 5px solid #ffffff; /* KEEP */
-  background-color: #1a1a1a; /* FIX: match app */
+  border: 5px solid #ffffff;
+  background-color: #1a1a1a;
   border-radius: 30px;
-  padding: 20px; /* KEEP spacing “inner separation” */
+  padding: 20px;
   box-sizing: border-box;
   z-index: 5;
 
@@ -23,32 +23,11 @@
 .pop-up.seen {
   border: 5px solid transparent;
   border-radius: 30px;
-
   background:
     linear-gradient(#1a1a1a, #1a1a1a) padding-box,
     url('../assets/imgs/gold3.jpg') border-box;
-
   background-clip: padding-box, border-box;
-
   overflow: hidden;
-}
-
-.pop-up-container {
-  border: 10px solid;
-}
-
-#add-movie-popup {
-  flex-direction: column;
-}
-
-#add-movie-popup-insert {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  padding: 0px;
-  margin: 0px;
-  background-color: transparent;
 }
 
 .pop-up-image {
@@ -57,76 +36,66 @@
   height: 100%;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
-
-  border-right: 1px solid #444; /* subtle separation line */
+  border-right: 1px solid #444;
 }
 
-.pop-up-image.placeholder {
-  width: 200px;
-  height: 100%;
-  object-fit: cover;
-  min-width: 200px;
-}
-
-/* Allow content to scroll if movie data overflows */
 .pop-up-content {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   min-height: 0;
   height: 100%;
   width: 100%;
   background-color: #2a2a2a;
-  padding: 8%;
-
+  padding: 6% 8%;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-
   font-family: 'Raleway', sans-serif;
-
-  overflow: hidden;
-  flex: 1; /* take remaining width so it doesn't resize weirdly */
-}
-
-.pop-up-title {
-  font-weight: 700;
-  font-size: 28px; /* bigger */
-  margin: 0 0 20px 0;
-  color: #ffd700;
-}
-
-.pop-up-info {
-  width: 100%;
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #e0e0e0;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .pop-up-info-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
-  flex: 1;
-  /* overflow-y: auto; */
-  height: 100%;
-  padding: 50px;
+  gap: 10px;
+}
+
+.pop-up-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 400;
+  color: #ffd700;
+  margin: 0 0 4px 0;
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+
+.pop-up-info {
+  font-size: 14px;
+  color: #e0e0e0;
+  margin: 0;
 }
 
 .label {
-  font-weight: bold; /* Bold the label text */
+  font-weight: 600;
+  color: #9ca3af;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 6px;
 }
 
 #imdb-link {
+  font-family: 'Raleway', sans-serif;
+  font-size: 13px;
   font-weight: 600;
   text-decoration: none;
   color: #ffd700;
-  cursor: pointer;
-  margin-top: 10px;
+  letter-spacing: 0.04em;
 }
 
 #imdb-link:hover {
@@ -150,22 +119,156 @@
   color: #ffd700;
 }
 
-.delete-button {
-  left: 0;
-  top: 0;
+/* ── USER CONTROLS ── */
+.user-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #3a3a3a;
 }
 
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.control-row--notes {
+  align-items: flex-start;
+}
+
+.control-label {
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+  min-width: 80px;
+}
+
+/* Seen toggle */
+.toggle-group {
+  display: flex;
+  gap: 6px;
+}
+
+.toggle-btn {
+  height: 32px;
+  min-width: 52px;
+  background-color: #1a1a1a;
+  color: #9ca3af;
+  border: 1px solid #444;
+  border-radius: 6px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background-color 0.2s;
+}
+
+.toggle-btn:hover {
+  border-color: #ffd700;
+  color: #ffd700;
+}
+
+.toggle-btn.active {
+  background-color: rgba(255, 215, 0, 0.12);
+  border-color: #ffd700;
+  color: #ffd700;
+}
+
+/* Stars */
+.star-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #444;
+  transition: color 0.15s;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.star-btn.filled {
+  color: #ffd700;
+}
+
+.star-btn:hover {
+  color: #ffd700;
+}
+
+/* Notes */
+.notes-input {
+  flex: 1;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #e0e0e0;
+  font-family: 'Raleway', sans-serif;
+  font-size: 13px;
+  padding: 8px 10px;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.notes-input::placeholder {
+  color: #555;
+}
+
+.notes-input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.1);
+}
+
+/* Delete */
+.delete-btn {
+  align-self: flex-start;
+  height: 32px;
+  padding: 0 16px;
+  background-color: transparent;
+  color: #9ca3af;
+  border: 1px solid #444;
+  border-radius: 6px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+  margin-top: 4px;
+}
+
+.delete-btn:hover {
+  border-color: #e24b4a;
+  color: #e24b4a;
+}
+
+/* ── ADD MOVIE MODE ── */
 .new-movie-input-container {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   width: 100%;
+  margin-bottom: 16px;
 }
 
 .new-movie-input-container input {
   flex: 1;
-  background-color: #2a2a2a;
+  background-color: #1a1a1a;
   border: 1px solid #444;
   color: #fff;
   border-radius: 6px;
@@ -182,7 +285,7 @@
   outline: none;
   border-color: #ffd700;
   box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.15);
-  background-color: #2a2a2a;
+  background-color: #1a1a1a;
   color: #fff;
 }
 
@@ -190,7 +293,7 @@
   height: 38px;
   min-width: 80px;
   margin-left: 8px;
-  background-color: #2a2a2a;
+  background-color: #1a1a1a;
   color: #e0e0e0;
   border: 1px solid #444;
   border-radius: 6px;
@@ -207,36 +310,17 @@
   background-color: #333;
 }
 
-.seen-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  width: 40%;
-  margin: 15px;
-  color: white;
-}
-
-.seenButton {
-  width: 50px;
-}
-
 .add-movie-confirm-button {
   margin-top: 20px;
   padding: 8px 16px;
-
-  background-color: #2a2a2a;
+  background-color: #1a1a1a;
   color: #e0e0e0;
-
   border: 1px solid #444;
   border-radius: 6px;
-
   font-family: 'Raleway', sans-serif;
   font-size: 14px;
   font-weight: 500;
-
   cursor: pointer;
-
   transition:
     border-color 0.2s,
     background-color 0.2s,
@@ -249,48 +333,29 @@
   color: #fff;
 }
 
-.add-movie-confirm-button:active {
-  transform: scale(0.98);
-}
-
-/* smaller screens*/
+/* ── RESPONSIVE ── */
 @media (max-width: 1000px) {
   .pop-up-title {
-    font-size: 5vw;
-    margin: 0px;
-    margin-bottom: 10px;
-  }
-
-  .pop-up-title {
-    font-weight: bold;
-    font-size: 5vw;
-    margin: 20px;
-    margin-bottom: 50px;
-    max-height: fit-content;
+    font-size: 7vw;
   }
 
   .pop-up-info {
-    width: 100%;
     font-size: 3vw;
   }
 
   .pop-up-image {
-    visibility: none;
     display: none;
   }
 
   .pop-up-content {
-    max-height: 100%;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    /* overflow-y:hidden; */
-  }
-
-  .delete-button {
-    height: 30px;
+    border-radius: 20px;
   }
 
   .pop-up {
     padding: 30px;
+  }
+
+  .control-label {
+    min-width: 60px;
   }
 }

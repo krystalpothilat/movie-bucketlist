@@ -30,6 +30,7 @@ router.get('/get-movies', async (req, res) => {
       year: m.year,
       seen: ratingMap[m.title]?.seen ?? false,
       rating: ratingMap[m.title]?.rating ?? null,
+      notes: ratingMap[m.title]?.notes ?? null,
       description: null,
       imdbLink: null,
       rank: null,
@@ -112,6 +113,38 @@ router.post('/add-movie', async (req, res) => {
     res.status(201).json(movie);
   } catch (err) {
     res.status(500).send('Error adding movie: ' + err.message);
+  }
+});
+
+// UPDATE RATING FOR MOVIE
+router.post('/update-rating', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
+  const { title, rating } = req.body;
+  try {
+    await prisma.userMovieRating.upsert({
+      where: { userId_title: { userId: req.user.id, title } },
+      update: { rating },
+      create: { userId: req.user.id, title, rating },
+    });
+    res.status(200).send('Rating updated');
+  } catch (err) {
+    res.status(500).send('Error updating rating');
+  }
+});
+
+// UPDATE NOTES FOR MOVIE
+router.post('/update-notes', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
+  const { title, notes } = req.body;
+  try {
+    await prisma.userMovieRating.upsert({
+      where: { userId_title: { userId: req.user.id, title } },
+      update: { notes },
+      create: { userId: req.user.id, title, notes },
+    });
+    res.status(200).send('Notes updated');
+  } catch (err) {
+    res.status(500).send('Error updating notes');
   }
 });
 

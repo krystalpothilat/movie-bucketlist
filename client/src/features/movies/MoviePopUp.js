@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import '../../styles/MoviePopUp.css';
-import Button from 'react-bootstrap/Button';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import GRAY_TEMP_IMG from '../../assets/imgs/gray-temp-img.jpg';
 
 const MoviePopUp = ({
@@ -9,13 +7,16 @@ const MoviePopUp = ({
   image,
   description,
   genre,
-  rating,
   imdbLink,
   seen,
+  rating,
+  notes,
   onClose,
   addMovieBool,
 }) => {
   const [addMovieTitle, setAddMovieTitle] = useState('');
+  const [currentRating, setCurrentRating] = useState(rating ?? null);
+  const [currentNotes, setCurrentNotes] = useState(notes ?? '');
   const [newMovieData, setNewMovieData] = useState({
     title: '',
     description: '',
@@ -28,28 +29,32 @@ const MoviePopUp = ({
     seen: false,
   });
 
-  const handleInputChange = (e) => {
-    setAddMovieTitle(e.target.value);
+  const handleInputChange = (e) => setAddMovieTitle(e.target.value);
+
+  const updateRating = async (val) => {
+    const newRating = currentRating === val ? null : val;
+    setCurrentRating(newRating);
+    await fetch(
+      `${process.env.REACT_APP_BACKEND_API}/api/movies/update-rating`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title, rating: newRating }),
+      }
+    );
   };
 
-  const deleteMovie = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/movies/delete-movie`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title }),
-        }
-      );
-      if (response.ok) {
-        onClose();
-      } else {
-        console.error('Error deleting movie:', await response.text());
+  const updateNotes = async () => {
+    await fetch(
+      `${process.env.REACT_APP_BACKEND_API}/api/movies/update-notes`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title, notes: currentNotes }),
       }
-    } catch (error) {
-      console.error('Error deleting movie:', error);
-    }
+    );
   };
 
   const updateSeen = async () => {
@@ -59,17 +64,32 @@ const MoviePopUp = ({
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ title }),
         }
       );
-      if (response.ok) {
-        seen = !seen;
-        onClose();
-      } else {
-        console.error('Error updating seen for movie:', await response.text());
-      }
+      if (response.ok) onClose();
+      else console.error('Error updating seen:', await response.text());
     } catch (error) {
-      console.error('Error updating seen for movie:', error);
+      console.error('Error updating seen:', error);
+    }
+  };
+
+  const deleteMovie = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/movies/delete-movie`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ title }),
+        }
+      );
+      if (response.ok) onClose();
+      else console.error('Error deleting movie:', await response.text());
+    } catch (error) {
+      console.error('Error deleting movie:', error);
     }
   };
 
@@ -80,14 +100,12 @@ const MoviePopUp = ({
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify(newMovieData),
         }
       );
-      if (response.ok) {
-        onClose();
-      } else {
-        console.error('Error adding movie:', await response.text());
-      }
+      if (response.ok) onClose();
+      else console.error('Error adding movie:', await response.text());
     } catch (error) {
       console.error('Error adding movie:', error);
     }
@@ -131,14 +149,12 @@ const MoviePopUp = ({
     }
   };
 
-  // Decide which data to display
   const displayImage = addMovieBool ? newMovieData.image : image;
   const displayTitle = addMovieBool ? newMovieData.title : title;
   const displayDescription = addMovieBool
     ? newMovieData.description
     : description;
   const displayGenre = addMovieBool ? newMovieData.genre : genre;
-  const displayRating = addMovieBool ? newMovieData.rating : rating;
   const displayImdbLink = addMovieBool ? newMovieData.imdb_link : imdbLink;
 
   const resolvedImage =
@@ -151,107 +167,124 @@ const MoviePopUp = ({
       className={`pop-up ${seen && !addMovieBool ? 'seen' : ''}`}
       id="reg-pop-up"
     >
-      <>
-        <img
-          src={resolvedImage}
-          alt={displayTitle}
-          className="pop-up-image"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = GRAY_TEMP_IMG;
-          }}
-        />
-        <button className="close-button" onClick={onClose}>
-          ×
-        </button>
-        <div className="pop-up-content">
-          {/* Search bar only in add-movie mode */}
-          {addMovieBool && (
-            <div className="new-movie-input-container">
-              <input
-                type="text"
-                placeholder="Enter movie name"
-                value={addMovieTitle}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-              />
-              <button
-                onClick={() => searchMovie(addMovieTitle)}
-                id="submit-button"
-              >
-                Submit
-              </button>
-            </div>
-          )}
+      <img
+        src={resolvedImage}
+        alt={displayTitle}
+        className="pop-up-image"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = GRAY_TEMP_IMG;
+        }}
+      />
+      <button className="close-button" onClick={onClose}>
+        ×
+      </button>
 
-          <div className="pop-up-info-container">
-            <h2 className="pop-up-title">{displayTitle}</h2>
+      <div className="pop-up-content">
+        {addMovieBool && (
+          <div className="new-movie-input-container">
+            <input
+              type="text"
+              placeholder="Enter movie name"
+              value={addMovieTitle}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+            />
+            <button
+              onClick={() => searchMovie(addMovieTitle)}
+              id="submit-button"
+            >
+              Submit
+            </button>
+          </div>
+        )}
+
+        <div className="pop-up-info-container">
+          <h2 className="pop-up-title">{displayTitle}</h2>
+
+          {displayDescription && (
             <p className="pop-up-info" id="pop-up-desc">
               {displayDescription}
             </p>
+          )}
+
+          {displayGenre?.length > 0 && (
             <p className="pop-up-info" id="pop-up-genre">
               <span className="label">Genre:</span> {displayGenre.join(', ')}
             </p>
-            <p className="pop-up-info" id="pop-up-rating">
-              <span className="label">Rating:</span> {displayRating}
-            </p>
+          )}
+
+          {displayImdbLink && (
             <a
               href={displayImdbLink}
               target="_blank"
               rel="noopener noreferrer"
               id="imdb-link"
             >
-              IMDb Link
+              IMDb
             </a>
+          )}
 
-            {/* Add-movie confirm button */}
-            {addMovieBool && (
-              <button className="add-movie-confirm-button" onClick={addMovie}>
-                Add Movie
-              </button>
-            )}
+          {addMovieBool && (
+            <button className="add-movie-confirm-button" onClick={addMovie}>
+              Add Movie
+            </button>
+          )}
 
-            {/* Admin-only controls */}
-            {!addMovieBool && (
-              <>
-                <div className="seen-container">
-                  <label>Seen</label>
-                  <div className="seen-buttons-container">
-                    <Button
-                      variant={seen ? 'success' : 'outline-secondary'}
-                      className="seenButton"
-                      onClick={updateSeen}
-                    >
-                      Yes
-                    </Button>{' '}
-                    <Button
-                      variant={seen ? 'outline-secondary' : 'success'}
-                      className="seenButton"
-                      onClick={updateSeen}
-                    >
-                      No
-                    </Button>
-                  </div>
+          {!addMovieBool && (
+            <div className="user-controls">
+              <div className="control-row">
+                <span className="control-label">Seen</span>
+                <div className="toggle-group">
+                  <button
+                    className={`toggle-btn ${seen ? 'active' : ''}`}
+                    onClick={updateSeen}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    className={`toggle-btn ${!seen ? 'active' : ''}`}
+                    onClick={updateSeen}
+                  >
+                    No
+                  </button>
                 </div>
-                <Button
-                  variant="danger"
-                  className="delete-button"
-                  onClick={deleteMovie}
-                >
-                  Delete
-                </Button>
-              </>
-            )}
+              </div>
 
-            {/* Regular user seen display */}
-            {!addMovieBool && (
-              <p className="pop-up-info" id="pop-up-seen">
-                <span className="label">Seen:</span> {seen ? 'Yes' : 'No'}
-              </p>
-            )}
-          </div>
+              <div className="control-row">
+                <span className="control-label">Your Rating</span>
+                <div className="star-buttons">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      className={`star-btn ${currentRating >= star ? 'filled' : ''}`}
+                      onClick={() => updateRating(star)}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="control-row control-row--notes">
+                <span className="control-label">Notes</span>
+                <textarea
+                  className="notes-input"
+                  value={currentNotes}
+                  onChange={(e) => setCurrentNotes(e.target.value)}
+                  onBlur={updateNotes}
+                  placeholder="Add notes..."
+                  rows={3}
+                />
+              </div>
+
+              <button className="delete-btn" onClick={deleteMovie}>
+                Delete
+              </button>
+            </div>
+          )}
         </div>
-      </>
+      </div>
     </div>
   );
 };

@@ -78,7 +78,6 @@ model UserMovieRating {
   rating    Int?
   seen      Boolean  @default(false)
   notes     String?
-  tags      String[]
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
