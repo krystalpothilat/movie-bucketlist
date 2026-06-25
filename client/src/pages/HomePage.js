@@ -54,6 +54,7 @@ const HomePage = () => {
     fetch(`${process.env.REACT_APP_BACKEND_API}/api/movies/get-movies`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
     })
       .then((res) => res.json())
       .then((data) => setAllMovies(data))

@@ -4,11 +4,19 @@ const prisma = require('../lib/prisma');
 
 // SAVE WHEEL
 router.post('/save-wheel', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
   try {
     const { name, movies } = req.body;
+    let list = await prisma.list.findFirst({ where: { ownerId: req.user.id } });
+    if (!list) {
+      list = await prisma.list.create({
+        data: { name: 'My Movie List', ownerId: req.user.id },
+      });
+    }
     const wheel = await prisma.wheel.create({
       data: {
         name,
+        listId: list.id,
         movies: {
           create: movies.map((m) => ({ title: m.title, color: m.color })),
         },
@@ -53,8 +61,12 @@ router.post('/update-wheel/:id', async (req, res) => {
 
 // GET ALL WHEELS
 router.get('/get-saved-wheels', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
   try {
-    const wheels = await prisma.wheel.findMany({ include: { movies: true } });
+    const wheels = await prisma.wheel.findMany({
+      where: { list: { ownerId: req.user.id } },
+      include: { movies: true },
+    });
     res.status(200).json(wheels);
   } catch (err) {
     res.status(500).send('Server error fetching wheels');

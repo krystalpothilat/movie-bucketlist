@@ -51,6 +51,7 @@ const MovieDisplay = ({
     fetch(`${process.env.REACT_APP_BACKEND_API}/api/movies/get-movies`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
     })
       .then((response) => {
         if (!response.ok) throw new Error('Network response was not ok');

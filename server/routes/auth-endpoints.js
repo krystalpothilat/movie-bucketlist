@@ -31,12 +31,10 @@ router.post('/login', (req, res, next) => {
     if (err)
       return res.status(500).json({ success: false, message: 'Server error.' });
     if (!user)
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: info?.message || 'Invalid credentials.',
-        });
+      return res.status(401).json({
+        success: false,
+        message: info?.message || 'Invalid credentials.',
+      });
 
     req.login(user, (err) => {
       if (err)

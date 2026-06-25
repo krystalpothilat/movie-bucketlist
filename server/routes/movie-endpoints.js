@@ -4,41 +4,36 @@ const prisma = require('../lib/prisma');
 
 // GET ALL MOVIES
 router.get('/get-movies', async (req, res) => {
-  const { genres, sortBy, seenToggle, searchTitle } = req.query;
-  const genresArray = genres ? genres.split(',') : [];
-
+  if (!req.user) return res.status(401).send('Unauthorized');
   try {
-    let where = {};
+    const listMovies = await prisma.listMovie.findMany({
+      where: {
+        list: {
+          OR: [
+            { ownerId: req.user.id },
+            { members: { some: { userId: req.user.id } } },
+          ],
+        },
+      },
+    });
 
-    if (genresArray.length > 0) {
-      where.genre = { hasSome: genresArray };
-    }
+    const ratings = await prisma.userMovieRating.findMany({
+      where: { userId: req.user.id },
+    });
+    const ratingMap = Object.fromEntries(ratings.map((r) => [r.title, r]));
 
-    if (seenToggle === 'yes') where.seen = true;
-    else if (seenToggle === 'no') where.seen = false;
-
-    if (searchTitle && searchTitle.trim()) {
-      where.title = { contains: searchTitle.trim(), mode: 'insensitive' };
-    }
-
-    let orderBy = [];
-    if (searchTitle) {
-      orderBy = [{ title: 'asc' }];
-    } else if (sortBy === 'rank') {
-      orderBy = [{ rank: 'asc' }, { title: 'asc' }];
-    } else {
-      orderBy = [{ title: 'asc' }];
-    }
-
-    let movies = await prisma.movie.findMany({ where, orderBy });
-
-    if (sortBy === 'rank') {
-      const ranked = movies.filter((m) => m.rank != null);
-      const unranked = movies
-        .filter((m) => m.rank == null)
-        .sort((a, b) => a.title.localeCompare(b.title));
-      movies = [...ranked, ...unranked];
-    }
+    const movies = listMovies.map((m) => ({
+      id: m.id,
+      title: m.title,
+      image: m.poster || null,
+      genre: m.genre || [],
+      year: m.year,
+      seen: ratingMap[m.title]?.seen ?? false,
+      rating: ratingMap[m.title]?.rating ?? null,
+      description: null,
+      imdbLink: null,
+      rank: null,
+    }));
 
     res.json(movies);
   } catch (err) {
@@ -49,9 +44,20 @@ router.get('/get-movies', async (req, res) => {
 
 // DELETE MOVIE
 router.post('/delete-movie', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
   const { title } = req.body;
   try {
-    await prisma.movie.deleteMany({ where: { title } });
+    await prisma.listMovie.deleteMany({
+      where: {
+        title,
+        list: {
+          OR: [
+            { ownerId: req.user.id },
+            { members: { some: { userId: req.user.id } } },
+          ],
+        },
+      },
+    });
     res.status(200).send('Movie deleted successfully');
   } catch (err) {
     res.status(500).send('Error deleting movie');
@@ -60,16 +66,22 @@ router.post('/delete-movie', async (req, res) => {
 
 // TOGGLE SEEN
 router.post('/update-seen', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
   const { title } = req.body;
   try {
-    const movie = await prisma.movie.findFirst({ where: { title } });
-    if (!movie) return res.status(404).send('Movie not found');
-
-    await prisma.movie.update({
-      where: { id: movie.id },
-      data: { seen: !movie.seen },
+    const existing = await prisma.userMovieRating.findUnique({
+      where: { userId_title: { userId: req.user.id, title } },
     });
-
+    if (existing) {
+      await prisma.userMovieRating.update({
+        where: { userId_title: { userId: req.user.id, title } },
+        data: { seen: !existing.seen },
+      });
+    } else {
+      await prisma.userMovieRating.create({
+        data: { userId: req.user.id, title, seen: true },
+      });
+    }
     res.status(200).send('Movie updated successfully');
   } catch (err) {
     res.status(500).send('Error updating movie');
@@ -78,29 +90,23 @@ router.post('/update-seen', async (req, res) => {
 
 // ADD MOVIE
 router.post('/add-movie', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
+  const { title, genre, image, year } = req.body;
   try {
-    const {
-      title,
-      genre,
-      description,
-      imdbId,
-      imdbLink,
-      rank,
-      image,
-      rating,
-      year,
-    } = req.body;
-    const movie = await prisma.movie.create({
+    let list = await prisma.list.findFirst({ where: { ownerId: req.user.id } });
+    if (!list) {
+      list = await prisma.list.create({
+        data: { name: 'My Movie List', ownerId: req.user.id },
+      });
+    }
+    const movie = await prisma.listMovie.create({
       data: {
+        listId: list.id,
         title,
-        genre,
-        description,
-        imdbId,
-        imdbLink,
-        rank,
-        image,
-        rating,
-        year,
+        genre: genre || [],
+        year: year || null,
+        poster: image || null,
+        addedById: req.user.id,
       },
     });
     res.status(201).json(movie);
