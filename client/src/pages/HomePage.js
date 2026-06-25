@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import MovieDisplay from '../features/movies/MovieDisplay';
 import MoviePopUp from '../features/movies/MoviePopUp';
 import WheelDisplay from '../features/wheels/WheelDisplay';
-import { AuthContext } from '../app/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/HomePage.css';
 import grid from '../assets/imgs/grid.png';

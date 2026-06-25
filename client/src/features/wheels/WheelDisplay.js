@@ -2,8 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import '../../styles/WheelDisplay.css';
 import WheelSlice from './WheelSlice';
 import ToastMessage from '../../app/components/ToastMessage';
-import { useContext } from 'react';
-import { AuthContext } from '../../app/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const COLORS = [
