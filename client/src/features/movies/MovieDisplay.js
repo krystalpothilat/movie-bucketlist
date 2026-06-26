@@ -89,14 +89,15 @@ const MovieDisplay = ({
 
     if (searchTitle && searchTitle.trim()) {
       filtered.sort((a, b) => a.title.localeCompare(b.title));
-    } else if (sortBy === 'rank') {
-      const ranked = filtered
-        .filter((m) => m.rank != null)
-        .sort((a, b) => a.rank - b.rank);
-      const unranked = filtered
-        .filter((m) => m.rank == null)
-        .sort((a, b) => a.title.localeCompare(b.title));
-      filtered = [...ranked, ...unranked];
+    } else if (sortBy === 'date') {
+      filtered.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+    } else if (sortBy === 'rating') {
+      filtered.sort((a, b) => {
+        if (b.rating == null && a.rating == null) return 0;
+        if (a.rating == null) return 1;
+        if (b.rating == null) return -1;
+        return b.rating - a.rating;
+      });
     } else {
       filtered.sort((a, b) => a.title.localeCompare(b.title));
     }

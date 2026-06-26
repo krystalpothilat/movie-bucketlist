@@ -151,7 +151,6 @@ const HomePage = () => {
         setCarouselView={setCarouselView}
         setWheelDisplayView={setWheelDisplayView}
         gridIcon={grid}
-        carouselIcon={carousel}
         wheelIcon={wheel}
         sortBy={sortBy}
         setSortBy={setSortType}

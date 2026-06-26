@@ -11,7 +11,6 @@ export default function FiltersBar({
   setWheelDisplayView,
 
   gridIcon,
-  carouselIcon,
   wheelIcon,
 
   // SORT
@@ -71,18 +70,6 @@ export default function FiltersBar({
 
           <div className="iconWrapper">
             <img
-              className={`filter-img ${viewType === 'carousel' ? 'selected' : ''}`}
-              src={carouselIcon}
-              alt="carousel view"
-              onClick={() => {
-                setViewType('carousel');
-                setCarouselView?.();
-              }}
-            />
-          </div>
-
-          <div className="iconWrapper">
-            <img
               className={`filter-img ${viewType === 'wheel' ? 'selected' : ''}`}
               src={wheelIcon}
               alt="wheel selector"
@@ -105,8 +92,9 @@ export default function FiltersBar({
               onChange={handleSortTypeChange}
             >
               <optgroup label="Sort By">
-                <option value="rank">Rank</option>
                 <option value="alphabetical">Alphabetical</option>
+                <option value="date">Date Added</option>
+                <option value="rating">Your Rating</option>
               </optgroup>
             </select>
 

@@ -25,6 +25,7 @@ router.get('/get-movies', async (req, res) => {
     const movies = listMovies.map((m) => ({
       id: m.id,
       title: m.title,
+      addedAt: m.addedAt,
       image: m.poster || null,
       genre: m.genre || [],
       year: m.year,
