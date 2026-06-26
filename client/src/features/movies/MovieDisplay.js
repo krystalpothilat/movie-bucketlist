@@ -107,6 +107,13 @@ const MovieDisplay = ({
   const handleCardClick = (movie) => setSelectedMovie(movie);
   const handleClosePopUp = () => setSelectedMovie(null);
 
+  const handleMovieUpdate = (title, updates) => {
+    setAllMovies((prev) =>
+      prev.map((m) => (m.title === title ? { ...m, ...updates } : m))
+    );
+    setSelectedMovie(null);
+  };
+
   return (
     <div className="movie-display">
       {viewType === 'grid' ? (
@@ -183,6 +190,7 @@ const MovieDisplay = ({
             imdbLink={selectedMovie.imdbLink}
             seen={selectedMovie.seen}
             onClose={handleClosePopUp}
+            onUpdate={handleMovieUpdate}
           />
         )}
       </div>

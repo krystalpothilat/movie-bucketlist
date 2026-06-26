@@ -65,30 +65,6 @@ router.post('/delete-movie', async (req, res) => {
   }
 });
 
-// TOGGLE SEEN
-router.post('/update-seen', async (req, res) => {
-  if (!req.user) return res.status(401).send('Unauthorized');
-  const { title } = req.body;
-  try {
-    const existing = await prisma.userMovieRating.findUnique({
-      where: { userId_title: { userId: req.user.id, title } },
-    });
-    if (existing) {
-      await prisma.userMovieRating.update({
-        where: { userId_title: { userId: req.user.id, title } },
-        data: { seen: !existing.seen },
-      });
-    } else {
-      await prisma.userMovieRating.create({
-        data: { userId: req.user.id, title, seen: true },
-      });
-    }
-    res.status(200).send('Movie updated successfully');
-  } catch (err) {
-    res.status(500).send('Error updating movie');
-  }
-});
-
 // ADD MOVIE
 router.post('/add-movie', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
@@ -116,35 +92,19 @@ router.post('/add-movie', async (req, res) => {
   }
 });
 
-// UPDATE RATING FOR MOVIE
-router.post('/update-rating', async (req, res) => {
+// UPDATE USER DATA
+router.post('/update-user-data', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
-  const { title, rating } = req.body;
+  const { title, rating, seen, notes } = req.body;
   try {
     await prisma.userMovieRating.upsert({
       where: { userId_title: { userId: req.user.id, title } },
-      update: { rating },
-      create: { userId: req.user.id, title, rating },
+      update: { rating, seen, notes },
+      create: { userId: req.user.id, title, rating, seen, notes },
     });
-    res.status(200).send('Rating updated');
+    res.status(200).send('Updated');
   } catch (err) {
-    res.status(500).send('Error updating rating');
-  }
-});
-
-// UPDATE NOTES FOR MOVIE
-router.post('/update-notes', async (req, res) => {
-  if (!req.user) return res.status(401).send('Unauthorized');
-  const { title, notes } = req.body;
-  try {
-    await prisma.userMovieRating.upsert({
-      where: { userId_title: { userId: req.user.id, title } },
-      update: { notes },
-      create: { userId: req.user.id, title, notes },
-    });
-    res.status(200).send('Notes updated');
-  } catch (err) {
-    res.status(500).send('Error updating notes');
+    res.status(500).send('Error updating: ' + err.message);
   }
 });
 

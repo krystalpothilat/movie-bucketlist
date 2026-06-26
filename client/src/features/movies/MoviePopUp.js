@@ -1,6 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import '../../styles/MoviePopUp.css';
 import GRAY_TEMP_IMG from '../../assets/imgs/gray-temp-img.jpg';
+
+const Star = ({ star, currentRating, onClick, onDoubleClick }) => {
+  // full, half, or empty
+  const isFull = currentRating >= star;
+  const isHalf = !isFull && currentRating === star - 0.5;
+
+  return (
+    <button
+      className="star-btn"
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+    >
+      {/* base: empty gray star */}
+      <span className="star-base">★</span>
+      {/* overlay: gold, clipped to left 100% (full) or 50% (half) */}
+      {(isFull || isHalf) && (
+        <span className="star-fill" style={{ width: isFull ? '100%' : '50%' }}>
+          ★
+        </span>
+      )}
+    </button>
+  );
+};
 
 const MoviePopUp = ({
   title,
@@ -12,11 +35,15 @@ const MoviePopUp = ({
   rating,
   notes,
   onClose,
+  onUpdate,
   addMovieBool,
 }) => {
   const [addMovieTitle, setAddMovieTitle] = useState('');
   const [currentRating, setCurrentRating] = useState(rating ?? null);
+  const [currentSeen, setCurrentSeen] = useState(seen ?? false);
   const [currentNotes, setCurrentNotes] = useState(notes ?? '');
+  const [saving, setSaving] = useState(false);
+  const clickTimerRef = useRef(null);
   const [newMovieData, setNewMovieData] = useState({
     title: '',
     description: '',
@@ -31,47 +58,56 @@ const MoviePopUp = ({
 
   const handleInputChange = (e) => setAddMovieTitle(e.target.value);
 
-  const updateRating = async (val) => {
-    const newRating = currentRating === val ? null : val;
-    setCurrentRating(newRating);
-    await fetch(
-      `${process.env.REACT_APP_BACKEND_API}/api/movies/update-rating`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ title, rating: newRating }),
-      }
-    );
+  // single click: full → half → clear cycle
+  const handleStarClick = (star) => {
+    if (clickTimerRef.current) return;
+    clickTimerRef.current = setTimeout(() => {
+      clickTimerRef.current = null;
+      setCurrentRating((prev) => {
+        if (prev === star) return star - 0.5; // full → half
+        if (prev === star - 0.5) return null; // half → clear
+        return star; // else → full
+      });
+    }, 200);
   };
 
-  const updateNotes = async () => {
-    await fetch(
-      `${process.env.REACT_APP_BACKEND_API}/api/movies/update-notes`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ title, notes: currentNotes }),
-      }
-    );
+  // double click: jump straight to half
+  const handleStarDoubleClick = (star) => {
+    clearTimeout(clickTimerRef.current);
+    clickTimerRef.current = null;
+    setCurrentRating((prev) => (prev === star - 0.5 ? null : star - 0.5));
   };
 
-  const updateSeen = async () => {
+  const saveAll = async () => {
+    setSaving(true);
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/movies/update-seen`,
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/movies/update-user-data`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ title }),
+          body: JSON.stringify({
+            title,
+            rating: currentRating,
+            seen: currentSeen,
+            notes: currentNotes,
+          }),
         }
       );
-      if (response.ok) onClose();
-      else console.error('Error updating seen:', await response.text());
-    } catch (error) {
-      console.error('Error updating seen:', error);
+      if (res.ok) {
+        onUpdate?.(title, {
+          rating: currentRating,
+          seen: currentSeen,
+          notes: currentNotes,
+        });
+      } else {
+        console.error('Error saving:', await res.text());
+      }
+    } catch (err) {
+      console.error('Error saving:', err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -164,7 +200,7 @@ const MoviePopUp = ({
 
   return (
     <div
-      className={`pop-up ${seen && !addMovieBool ? 'seen' : ''}`}
+      className={`pop-up ${currentSeen && !addMovieBool ? 'seen' : ''}`}
       id="reg-pop-up"
     >
       <img
@@ -237,14 +273,14 @@ const MoviePopUp = ({
                 <span className="control-label">Seen</span>
                 <div className="toggle-group">
                   <button
-                    className={`toggle-btn ${seen ? 'active' : ''}`}
-                    onClick={updateSeen}
+                    className={`toggle-btn ${currentSeen ? 'active' : ''}`}
+                    onClick={() => setCurrentSeen(true)}
                   >
                     Yes
                   </button>
                   <button
-                    className={`toggle-btn ${!seen ? 'active' : ''}`}
-                    onClick={updateSeen}
+                    className={`toggle-btn ${!currentSeen ? 'active' : ''}`}
+                    onClick={() => setCurrentSeen(false)}
                   >
                     No
                   </button>
@@ -255,13 +291,13 @@ const MoviePopUp = ({
                 <span className="control-label">Your Rating</span>
                 <div className="star-buttons">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <button
+                    <Star
                       key={star}
-                      className={`star-btn ${currentRating >= star ? 'filled' : ''}`}
-                      onClick={() => updateRating(star)}
-                    >
-                      ★
-                    </button>
+                      star={star}
+                      currentRating={currentRating}
+                      onClick={() => handleStarClick(star)}
+                      onDoubleClick={() => handleStarDoubleClick(star)}
+                    />
                   ))}
                 </div>
               </div>
@@ -272,15 +308,22 @@ const MoviePopUp = ({
                   className="notes-input"
                   value={currentNotes}
                   onChange={(e) => setCurrentNotes(e.target.value)}
-                  onBlur={updateNotes}
                   placeholder="Add notes..."
-                  rows={3}
                 />
               </div>
 
-              <button className="delete-btn" onClick={deleteMovie}>
-                Delete
-              </button>
+              <div className="controls-footer">
+                <button
+                  className="save-btn"
+                  onClick={saveAll}
+                  disabled={saving}
+                >
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button className="delete-btn" onClick={deleteMovie}>
+                  Delete
+                </button>
+              </div>
             </div>
           )}
         </div>

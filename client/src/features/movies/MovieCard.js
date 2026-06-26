@@ -3,17 +3,10 @@ import '../../styles/MovieCard.css';
 import GRAY_TEMP_IMG from '../../assets/imgs/gray-temp-img.jpg';
 
 const MovieCard = ({ title, image, seen, onClick }) => {
-  const [isClicked, setIsClicked] = useState(false);
-
-  const handleCardClick = () => {
-    setIsClicked(!isClicked);
-    onClick();
-  };
-
   return (
     <div
-      className={`movie-card ${isClicked ? 'clicked' : ''} ${seen === true ? 'seen' : ''}`}
-      onClick={handleCardClick}
+      className={`movie-card ${seen === true ? 'seen' : ''}`}
+      onClick={onClick}
     >
       <div className="image-wrapper">
         <img
