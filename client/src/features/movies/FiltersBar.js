@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import '../../styles/FiltersBar.css';
-import filterImg from '../../assets/imgs/filter.png';
+import { icons } from '../../assets/icons';
 
 export default function FiltersBar({
   // VIEW
   viewType,
   setViewType,
   setGridView,
-  setCarouselView,
   setWheelDisplayView,
-
-  gridIcon,
-  wheelIcon,
 
   // SORT
   sortBy,
@@ -43,6 +39,9 @@ export default function FiltersBar({
   // LOGIN CONTROLS
   handleLogOut,
   addMovieButtonClicked,
+
+  listPanelOpen,
+  toggleListPanel,
 }) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -56,10 +55,21 @@ export default function FiltersBar({
       <div className="filters-left">
         {/* VIEW ICONS (always visible) */}
         <div id="imgs-buttons-filters">
+          <button
+            className={`list-panel-toggle ${listPanelOpen ? 'active' : ''}`}
+            onClick={toggleListPanel}
+            title="My Lists"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+              <rect y="3" width="18" height="2" rx="1" />
+              <rect y="8" width="18" height="2" rx="1" />
+              <rect y="13" width="18" height="2" rx="1" />
+            </svg>
+          </button>
           <div className="iconWrapper">
             <img
               className={`filter-img ${viewType === 'grid' ? 'selected' : ''}`}
-              src={gridIcon}
+              src={icons.gridIcon}
               alt="grid view"
               onClick={() => {
                 setViewType('grid');
@@ -71,7 +81,7 @@ export default function FiltersBar({
           <div className="iconWrapper">
             <img
               className={`filter-img ${viewType === 'wheel' ? 'selected' : ''}`}
-              src={wheelIcon}
+              src={icons.wheelIcon}
               alt="wheel selector"
               onClick={() => {
                 setViewType('wheel');
@@ -178,7 +188,7 @@ export default function FiltersBar({
         {!isWheelDisplayView && (
           <div className="filters-mobile">
             <img
-              src={filterImg}
+              src={icons.filterIcon}
               alt="filter panel"
               className="filter-toggle-btn"
               onClick={() => setMobileFiltersOpen((p) => !p)}

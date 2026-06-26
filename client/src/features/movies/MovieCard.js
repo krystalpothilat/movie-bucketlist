@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
 import '../../styles/MovieCard.css';
-import GRAY_TEMP_IMG from '../../assets/imgs/gray-temp-img.jpg';
+import { imgs } from '../../assets/imgs';
 
 const MovieCard = ({ title, image, seen, onClick }) => {
   return (
@@ -10,12 +9,12 @@ const MovieCard = ({ title, image, seen, onClick }) => {
     >
       <div className="image-wrapper">
         <img
-          src={image && image.trim() !== '' ? image : GRAY_TEMP_IMG}
+          src={image && image.trim() !== '' ? image : imgs.gray_temp_img}
           alt={title}
           className="card-img-top"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = GRAY_TEMP_IMG;
+            e.target.src = imgs.gray_temp_img;
           }}
         />
       </div>

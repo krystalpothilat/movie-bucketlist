@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Carousel } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/MovieDisplay.css';
+import { imgs } from '../../assets/imgs';
 
 const MovieDisplay = ({
   viewType,
@@ -17,20 +17,6 @@ const MovieDisplay = ({
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   const popupRef = useRef(null);
-  const carouselRef = useRef(null);
-
-  const handlePrevClick = () => {
-    if (carouselRef.current) {
-      carouselRef.current.prev();
-    }
-  };
-
-  const handleNextClick = () => {
-    if (carouselRef.current) {
-      carouselRef.current.next();
-    }
-  };
-
   useEffect(() => {
     fetchAllMovies();
   }, [refreshTrigger]);
@@ -117,67 +103,21 @@ const MovieDisplay = ({
 
   return (
     <div className="movie-display">
-      {viewType === 'grid' ? (
-        <div className="movie-display-grid row justify-content-center">
-          {currentMovies.map((movie, index) => (
-            <div
-              key={index}
-              className="col-12 col-sm-6 col-md-4 d-flex justify-content-center mb-4"
-            >
-              <MovieCard
-                title={movie.title}
-                image={movie.image || '/imgs/gray-temp-img.jpg'}
-                seen={movie.seen}
-                onClick={() => handleCardClick(movie)}
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <Carousel
-          slide={false}
-          interval={null}
-          controls={true}
-          wrap={false}
-          ref={carouselRef}
-          indicators={false}
-        >
-          {currentMovies.map((movie, index) => (
-            <Carousel.Item key={index}>
-              <div className="carousel-item-container">
-                {index > 0 && (
-                  <div className="carousel-item-prev" onClick={handlePrevClick}>
-                    <MovieCard
-                      title={currentMovies[index - 1].title}
-                      image={currentMovies[index - 1].image}
-                      seen={currentMovies[index - 1].seen}
-                      onClick={handlePrevClick}
-                    />
-                  </div>
-                )}
-                <div className="carousel-item-current">
-                  <MovieCard
-                    title={movie.title}
-                    image={movie.image}
-                    seen={movie.seen}
-                    onClick={() => handleCardClick(movie)}
-                  />
-                </div>
-                {index < currentMovies.length - 1 && (
-                  <div className="carousel-item-next" onClick={handleNextClick}>
-                    <MovieCard
-                      title={currentMovies[index + 1].title}
-                      image={currentMovies[index + 1].image}
-                      seen={currentMovies[index + 1].seen}
-                      onClick={handleNextClick}
-                    />
-                  </div>
-                )}
-              </div>
-            </Carousel.Item>
-          ))}
-        </Carousel>
-      )}
+      <div className="movie-display-grid row justify-content-center">
+        {currentMovies.map((movie, index) => (
+          <div
+            key={index}
+            className="col-12 col-sm-6 col-md-4 d-flex justify-content-center mb-4"
+          >
+            <MovieCard
+              title={movie.title}
+              image={movie.image || imgs.gray_temp_img}
+              seen={movie.seen}
+              onClick={() => handleCardClick(movie)}
+            />
+          </div>
+        ))}
+      </div>
 
       <div id="pop-up-container" ref={popupRef}>
         {selectedMovie && (

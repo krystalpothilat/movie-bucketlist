@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import '../../styles/MoviePopUp.css';
-import GRAY_TEMP_IMG from '../../assets/imgs/gray-temp-img.jpg';
+import { imgs } from '../../assets/imgs';
 
 const Star = ({ star, currentRating, onClick, onDoubleClick }) => {
   // full, half, or empty
@@ -196,7 +196,7 @@ const MoviePopUp = ({
   const resolvedImage =
     displayImage && displayImage.trim() !== '' && displayImage !== 'N/A'
       ? displayImage
-      : GRAY_TEMP_IMG;
+      : imgs.gray_temp_img;
 
   return (
     <div
@@ -209,7 +209,7 @@ const MoviePopUp = ({
         className="pop-up-image"
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = GRAY_TEMP_IMG;
+          e.target.src = imgs.gray_temp_img;
         }}
       />
       <button className="close-button" onClick={onClose}>

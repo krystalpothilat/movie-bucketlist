@@ -4,9 +4,6 @@ import MoviePopUp from '../features/movies/MoviePopUp';
 import WheelDisplay from '../features/wheels/WheelDisplay';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/HomePage.css';
-import grid from '../assets/imgs/grid.png';
-import carousel from '../assets/imgs/carousel.png';
-import wheel from '../assets/imgs/wheel.png';
 import Header from '../app/components/Header';
 import FiltersBar from '../features/movies/FiltersBar';
 import { useAuth } from '../app/AuthContext';
@@ -34,7 +31,7 @@ const genres = [
 ];
 
 const HomePage = () => {
-  const [viewType, setViewType] = useState('grid'); // 'grid' | 'carousel' | 'wheel'
+  const [viewType, setViewType] = useState('grid'); // 'grid' | 'wheel'
   const [sortBy, setSortType] = useState('rank');
   const [genreTypes, setGenreTypes] = useState([]);
   const [genreDropdownOpen, setGenreDropdownOpen] = useState(false);
@@ -63,7 +60,6 @@ const HomePage = () => {
   const isWheelDisplayView = viewType === 'wheel';
 
   const setGridView = () => setViewType('grid');
-  const setCarouselView = () => setViewType('carousel');
   const setWheelDisplayView = () => setViewType('wheel');
 
   const handleSortTypeChange = (e) => setSortType(e.target.value);
@@ -148,10 +144,7 @@ const HomePage = () => {
         viewType={viewType}
         setViewType={setViewType}
         setGridView={setGridView}
-        setCarouselView={setCarouselView}
         setWheelDisplayView={setWheelDisplayView}
-        gridIcon={grid}
-        wheelIcon={wheel}
         sortBy={sortBy}
         setSortBy={setSortType}
         handleSortTypeChange={handleSortTypeChange}
