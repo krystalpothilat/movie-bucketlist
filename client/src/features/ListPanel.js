@@ -1,28 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../styles/ListPanel.css';
 
-export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
-  const [lists, setLists] = useState([]);
+export default function ListPanel({
+  isOpen,
+  lists,
+  selectedListId,
+  onSelectList,
+  refreshLists,
+}) {
   const [creating, setCreating] = useState(false);
   const [newListName, setNewListName] = useState('');
-
-  useEffect(() => {
-    if (isOpen) fetchLists();
-  }, [isOpen]);
-
-  const fetchLists = async () => {
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/lists/get-lists`,
-        {
-          credentials: 'include',
-        }
-      );
-      if (res.ok) setLists(await res.json());
-    } catch (err) {
-      console.error('Error fetching lists:', err);
-    }
-  };
 
   const createList = async () => {
     if (!newListName.trim()) return;
@@ -39,7 +26,7 @@ export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
       if (res.ok) {
         setNewListName('');
         setCreating(false);
-        fetchLists();
+        refreshLists();
       }
     } catch (err) {
       console.error('Error creating list:', err);

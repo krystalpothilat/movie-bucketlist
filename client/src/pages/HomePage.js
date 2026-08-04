@@ -47,6 +47,7 @@ const HomePage = () => {
   const [popupClosed, setPopupClosed] = useState(false);
   const [allMovies, setAllMovies] = useState([]);
   const [allWheels, setAllWheels] = useState([]);
+  const [lists, setLists] = useState([]);
   const [selectedListId, setSelectedListId] = useState(null);
   const [moviesByList, setMoviesByList] = useState({ all: [] });
 
@@ -57,6 +58,7 @@ const HomePage = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
       }).then((r) => r.json()),
+
       fetch(
         `${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`,
         {
@@ -65,11 +67,22 @@ const HomePage = () => {
           credentials: 'include',
         }
       ).then((r) => r.json()),
+
+      fetch(`${process.env.REACT_APP_BACKEND_API}/api/lists/get-lists`, {
+        credentials: 'include',
+      }).then((r) => r.json()),
     ])
-      .then(([movies, wheels]) => {
+      .then(([movies, wheels, lists]) => {
         setAllMovies(movies);
         setMoviesByList((prev) => ({ ...prev, all: movies }));
         setAllWheels(wheels);
+
+        setLists(lists);
+
+        // select first list only on initial load
+        if (lists.length > 0) {
+          setSelectedListId((prev) => prev || lists[0]?.id);
+        }
       })
       .catch((err) => console.error('Error fetching data:', err));
   }, [popupClosed]);
@@ -101,6 +114,45 @@ const HomePage = () => {
       setMoviesByList((prev) => ({ ...prev, [listId]: movies }));
     } catch (err) {
       console.error(`Error fetching movies for list ${listId}:`, err);
+    }
+  };
+
+  useEffect(() => {
+    if (!selectedListId) return;
+
+    setMoviesByList((prev) => {
+      if (prev[selectedListId]) return prev;
+
+      fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/lists/${selectedListId}/movies`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        }
+      )
+        .then((res) => res.json())
+        .then((movies) => {
+          setMoviesByList((current) => ({
+            ...current,
+            [selectedListId]: movies,
+          }));
+        });
+
+      return prev;
+    });
+  }, [selectedListId]);
+
+  const fetchLists = async () => {
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_API}/api/lists/get-lists`,
+      {
+        credentials: 'include',
+      }
+    );
+
+    if (res.ok) {
+      setLists(await res.json());
     }
   };
 
@@ -225,8 +277,10 @@ const HomePage = () => {
       <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
         <ListPanel
           isOpen={listPanelOpen}
+          lists={lists}
           selectedListId={selectedListId}
           onSelectList={handleSelectList}
+          refreshLists={fetchLists}
         />
 
         <div className="page-content">
