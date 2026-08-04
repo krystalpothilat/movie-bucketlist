@@ -2,7 +2,9 @@
   width: 0;
   min-width: 0;
   overflow: hidden;
-  transition: width 0.25s ease, min-width 0.25s ease;
+  transition:
+    width 0.25s ease,
+    min-width 0.25s ease;
   background-color: #222;
   border-right: 1px solid #333;
   display: flex;
@@ -44,12 +46,27 @@
   border: 0.5px solid #333;
   margin-bottom: 6px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 
 .list-panel-item:hover {
   background: #2a2a2a;
   border-color: #ffd700;
+}
+
+.list-panel-item.active {
+  background: #2a2a2a;
+  border-color: #ffd700;
+  border-width: 1.5px;
+}
+
+.list-panel-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .list-panel-item-name {
@@ -59,12 +76,29 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
 }
 
 .list-panel-item-count {
   font-size: 11px;
   color: #666;
   margin-top: 2px;
+  display: block;
+}
+
+.list-panel-item-edit {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.list-panel-item-edit:hover {
+  color: #ffd700;
 }
 
 .list-panel-empty {
@@ -75,14 +109,15 @@
 }
 
 .list-panel-footer {
-  padding: 10px 8px;
-  border-top: 1px solid #333;
+  padding: 0;
+  border-top: none;
   flex-shrink: 0;
+  height: 0;
 }
 
 .list-panel-new-btn {
   width: 100%;
-  padding: 7px;
+  padding: 8px;
   font-size: 12px;
   border-radius: 8px;
   border: 0.5px dashed #444;
@@ -90,7 +125,10 @@
   color: #9ca3af;
   cursor: pointer;
   font-family: 'Raleway', sans-serif;
-  transition: border-color 0.15s, color 0.15s;
+  font-weight: 500;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .list-panel-new-btn:hover {
@@ -137,6 +175,7 @@
   font-family: 'Raleway', sans-serif;
   font-weight: 700;
   cursor: pointer;
+  transition: background 0.15s;
 }
 
 .list-panel-btn-primary:hover {
@@ -153,6 +192,9 @@
   color: #9ca3af;
   font-family: 'Raleway', sans-serif;
   cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .list-panel-btn-ghost:hover {

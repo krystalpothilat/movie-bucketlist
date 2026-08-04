@@ -396,9 +396,7 @@ const WheelDisplay = ({ allMovies = [], allWheels = [], setAllWheels }) => {
       if (response.ok) {
         console.log('Wheel deleted successfully');
         // update parent cache
-        setAllWheels((prev) =>
-          prev.filter((w) => w._id !== wheel._id)
-        );
+        setAllWheels((prev) => prev.filter((w) => w._id !== wheel._id));
         if (activeWheelDisplayId === wheel._id) {
           setActiveWheelDisplayId(null);
           setWheelDisplayName('');

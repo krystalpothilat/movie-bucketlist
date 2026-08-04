@@ -11,8 +11,9 @@ const MovieDisplay = ({
   genres,
   searchTitle,
   seenToggle,
-  allMovies,
-  setAllMovies,
+  selectedListId,
+  moviesByList,
+  setMoviesByList,
 }) => {
   const [selectedMovie, setSelectedMovie] = useState(null);
 
@@ -29,6 +30,11 @@ const MovieDisplay = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Get current movies based on selected list or all
+  const allMovies = selectedListId
+    ? moviesByList[selectedListId] || []
+    : moviesByList.all || [];
 
   const currentMovies = useMemo(() => {
     if (!allMovies) return [];
@@ -73,9 +79,13 @@ const MovieDisplay = ({
   const handleClosePopUp = () => setSelectedMovie(null);
 
   const handleMovieUpdate = (title, updates) => {
-    setAllMovies((prev) =>
-      prev.map((m) => (m.title === title ? { ...m, ...updates } : m))
-    );
+    const key = selectedListId || 'all';
+    setMoviesByList((prev) => ({
+      ...prev,
+      [key]: prev[key].map((m) =>
+        m.title === title ? { ...m, ...updates } : m
+      ),
+    }));
     setSelectedMovie(null);
   };
 

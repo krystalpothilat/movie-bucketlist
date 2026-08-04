@@ -47,6 +47,8 @@ const HomePage = () => {
   const [popupClosed, setPopupClosed] = useState(false);
   const [allMovies, setAllMovies] = useState([]);
   const [allWheels, setAllWheels] = useState([]);
+  const [selectedListId, setSelectedListId] = useState(null);
+  const [moviesByList, setMoviesByList] = useState({ all: [] });
 
   useEffect(() => {
     Promise.all([
@@ -55,18 +57,52 @@ const HomePage = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
       }).then((r) => r.json()),
-      fetch(`${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      }).then((r) => r.json()),
+      fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        }
+      ).then((r) => r.json()),
     ])
       .then(([movies, wheels]) => {
         setAllMovies(movies);
+        setMoviesByList((prev) => ({ ...prev, all: movies }));
         setAllWheels(wheels);
       })
       .catch((err) => console.error('Error fetching data:', err));
   }, [popupClosed]);
+
+  const handleSelectList = async (listId) => {
+    setSelectedListId(listId);
+
+    // If already cached, skip fetch
+    if (moviesByList[listId]) return;
+
+    // Fetch and cache this list's movies
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/lists/${listId}/movies`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        }
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error(`Error: ${res.status} - ${text}`);
+        return;
+      }
+
+      const movies = await res.json();
+      setMoviesByList((prev) => ({ ...prev, [listId]: movies }));
+    } catch (err) {
+      console.error(`Error fetching movies for list ${listId}:`, err);
+    }
+  };
 
   const isWheelDisplayView = viewType === 'wheel';
 
@@ -113,10 +149,16 @@ const HomePage = () => {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (genreDropdownRef.current && !genreDropdownRef.current.contains(event.target)) {
+      if (
+        genreDropdownRef.current &&
+        !genreDropdownRef.current.contains(event.target)
+      ) {
         setGenreDropdownOpen(false);
       }
-      if (seenDropdownRef.current && !seenDropdownRef.current.contains(event.target)) {
+      if (
+        seenDropdownRef.current &&
+        !seenDropdownRef.current.contains(event.target)
+      ) {
         setSeenDropdownOpen(false);
       }
     }
@@ -181,11 +223,19 @@ const HomePage = () => {
       </div>
 
       <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-        <ListPanel isOpen={listPanelOpen} />
+        <ListPanel
+          isOpen={listPanelOpen}
+          selectedListId={selectedListId}
+          onSelectList={handleSelectList}
+        />
 
         <div className="page-content">
           {isWheelDisplayView ? (
-            <WheelDisplay allMovies={allMovies} allWheels={allWheels} setAllWheels={setAllWheels} />
+            <WheelDisplay
+              allMovies={allMovies}
+              allWheels={allWheels}
+              setAllWheels={setAllWheels}
+            />
           ) : (
             <MovieDisplay
               viewType={viewType}
@@ -193,8 +243,9 @@ const HomePage = () => {
               genres={genreTypes}
               searchTitle={searchTitle}
               seenToggle={seenToggle}
-              allMovies={allMovies}
-              setAllMovies={setAllMovies}
+              selectedListId={selectedListId}
+              moviesByList={moviesByList}
+              setMoviesByList={setMoviesByList}
             />
           )}
         </div>
