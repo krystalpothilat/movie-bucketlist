@@ -14,6 +14,7 @@ const MovieDisplay = ({
   selectedListId,
   moviesByList,
   setMoviesByList,
+  refreshMovies,
 }) => {
   const [selectedMovie, setSelectedMovie] = useState(null);
 
@@ -33,9 +34,7 @@ const MovieDisplay = ({
 
   // Get current movies based on selected list or all
   const currentMovies = useMemo(() => {
-    const allMovies = selectedListId
-      ? moviesByList[selectedListId] || []
-      : moviesByList.all || [];
+    const allMovies = selectedListId ? moviesByList[selectedListId] || [] : [];
 
     if (!allMovies) return [];
 
@@ -119,6 +118,8 @@ const MovieDisplay = ({
             notes={selectedMovie.notes}
             imdbLink={selectedMovie.imdbLink}
             seen={selectedMovie.seen}
+            listId={selectedListId}
+            refreshMovies={refreshMovies}
             onClose={handleClosePopUp}
             onUpdate={handleMovieUpdate}
           />

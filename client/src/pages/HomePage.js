@@ -44,21 +44,12 @@ const HomePage = () => {
   const [addMovieToggle, setAddMovieToggle] = useState(false);
   const [searchTitle, setSearchTitle] = useState('');
   const [seenToggle, setSeenToggle] = useState(null);
-  const [popupClosed, setPopupClosed] = useState(false);
-  const [allMovies, setAllMovies] = useState([]);
   const [allWheels, setAllWheels] = useState([]);
   const [lists, setLists] = useState([]);
   const [selectedListId, setSelectedListId] = useState(null);
-  const [moviesByList, setMoviesByList] = useState({ all: [] });
-
+  const [moviesByList, setMoviesByList] = useState({});
   useEffect(() => {
     Promise.all([
-      fetch(`${process.env.REACT_APP_BACKEND_API}/api/movies/get-movies`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      }).then((r) => r.json()),
-
       fetch(
         `${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`,
         {
@@ -72,28 +63,42 @@ const HomePage = () => {
         credentials: 'include',
       }).then((r) => r.json()),
     ])
-      .then(([movies, wheels, lists]) => {
-        setAllMovies(movies);
-        setMoviesByList((prev) => ({ ...prev, all: movies }));
+      .then(([wheels, lists]) => {
         setAllWheels(wheels);
-
         setLists(lists);
 
-        // select first list only on initial load
         if (lists.length > 0) {
-          setSelectedListId((prev) => prev || lists[0]?.id);
+          const firstListId = lists[0].id;
+          setSelectedListId(firstListId);
+
+          fetch(
+            `${process.env.REACT_APP_BACKEND_API}/api/lists/${firstListId}/movies`,
+            {
+              method: 'GET',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+            }
+          )
+            .then((res) => res.json())
+            .then((movies) => {
+              setMoviesByList((prev) => ({
+                ...prev,
+                [firstListId]: movies,
+              }));
+            })
+            .catch((err) =>
+              console.error('Error fetching initial list movies:', err)
+            );
         }
       })
       .catch((err) => console.error('Error fetching data:', err));
-  }, [popupClosed]);
+  }, []);
 
-  const handleSelectList = async (listId) => {
+  const handleSelectList = async (listId, forceRefresh = false) => {
     setSelectedListId(listId);
 
-    // If already cached, skip fetch
-    if (moviesByList[listId]) return;
+    if (moviesByList[listId] && !forceRefresh) return;
 
-    // Fetch and cache this list's movies
     try {
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_API}/api/lists/${listId}/movies`,
@@ -105,43 +110,22 @@ const HomePage = () => {
       );
 
       if (!res.ok) {
-        const text = await res.text();
-        console.error(`Error: ${res.status} - ${text}`);
+        console.error('Failed fetching movies');
         return;
       }
 
       const movies = await res.json();
-      setMoviesByList((prev) => ({ ...prev, [listId]: movies }));
+
+      console.log('Refreshing list:', listId, movies);
+
+      setMoviesByList((prev) => ({
+        ...prev,
+        [listId]: movies,
+      }));
     } catch (err) {
-      console.error(`Error fetching movies for list ${listId}:`, err);
+      console.error(err);
     }
   };
-
-  useEffect(() => {
-    if (!selectedListId) return;
-
-    setMoviesByList((prev) => {
-      if (prev[selectedListId]) return prev;
-
-      fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/lists/${selectedListId}/movies`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-        }
-      )
-        .then((res) => res.json())
-        .then((movies) => {
-          setMoviesByList((current) => ({
-            ...current,
-            [selectedListId]: movies,
-          }));
-        });
-
-      return prev;
-    });
-  }, [selectedListId]);
 
   const fetchLists = async () => {
     const res = await fetch(
@@ -174,11 +158,12 @@ const HomePage = () => {
     setGenreTypes((prev) => prev.filter((g) => g !== genre));
   };
 
-  const addMovieButtonClicked = () => setAddMovieToggle((prev) => !prev);
-
+  const addMovieButtonClicked = () => {
+    console.log('Selected list ID:', selectedListId);
+    setAddMovieToggle((prev) => !prev);
+  };
   const handleClosePopUp = () => {
     setAddMovieToggle(false);
-    setPopupClosed((prev) => !prev);
   };
 
   const handleSeenToggleChange = (event) => {
@@ -270,7 +255,12 @@ const HomePage = () => {
 
       <div ref={popupRef}>
         {addMovieToggle && (
-          <MoviePopUp onClose={handleClosePopUp} addMovieBool={true} />
+          <MoviePopUp
+            onClose={handleClosePopUp}
+            addMovieBool={true}
+            listId={selectedListId}
+            refreshMovies={handleSelectList}
+          />
         )}
       </div>
 
@@ -285,11 +275,7 @@ const HomePage = () => {
 
         <div className="page-content">
           {isWheelDisplayView ? (
-            <WheelDisplay
-              allMovies={allMovies}
-              allWheels={allWheels}
-              setAllWheels={setAllWheels}
-            />
+            <WheelDisplay allWheels={allWheels} setAllWheels={setAllWheels} />
           ) : (
             <MovieDisplay
               viewType={viewType}
@@ -300,6 +286,7 @@ const HomePage = () => {
               selectedListId={selectedListId}
               moviesByList={moviesByList}
               setMoviesByList={setMoviesByList}
+              refreshMovies={handleSelectList}
             />
           )}
         </div>

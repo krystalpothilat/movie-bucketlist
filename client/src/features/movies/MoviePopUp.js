@@ -28,6 +28,8 @@ const Star = ({ star, currentRating, onClick, onDoubleClick }) => {
 const MoviePopUp = ({
   title,
   image,
+  listId,
+  refreshMovies,
   description,
   genre,
   imdbLink,
@@ -119,11 +121,19 @@ const MoviePopUp = ({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ title }),
+          body: JSON.stringify({
+            title,
+            listId,
+          }),
         }
       );
-      if (response.ok) onClose();
-      else console.error('Error deleting movie:', await response.text());
+
+      if (response.ok) {
+        await refreshMovies(listId, true);
+        onClose();
+      } else {
+        console.error('Error deleting movie:', await response.text());
+      }
     } catch (error) {
       console.error('Error deleting movie:', error);
     }
@@ -137,11 +147,19 @@ const MoviePopUp = ({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify(newMovieData),
+          body: JSON.stringify({
+            ...newMovieData,
+            listId,
+          }),
         }
       );
-      if (response.ok) onClose();
-      else console.error('Error adding movie:', await response.text());
+
+      if (response.ok) {
+        await refreshMovies(listId, true);
+        onClose();
+      } else {
+        console.error('Error adding movie:', await response.text());
+      }
     } catch (error) {
       console.error('Error adding movie:', error);
     }
