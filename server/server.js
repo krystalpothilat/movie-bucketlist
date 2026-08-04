@@ -13,6 +13,7 @@ const movieRoutes = require('./routes/movie-endpoints');
 const wheelRoutes = require('./routes/wheel-endpoints.js');
 const authRoutes = require('./routes/auth-endpoints.js');
 const listRoutes = require('./routes/list-endpoints');
+const maintenanceRoutes = require('./routes/maintenance-endpoints');
 
 app.use(
   cors({
@@ -60,6 +61,7 @@ app.use('/api/movies', movieRoutes);
 app.use('/api/wheels', wheelRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/lists', listRoutes);
+app.use('/maintenance', maintenanceRoutes);
 
 app.use('/', (req, res) => {
   res.send('Server is running');

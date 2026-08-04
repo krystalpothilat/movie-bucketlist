@@ -1,0 +1,19 @@
+name: Keep Supabase Awake
+
+on:
+  schedule:
+    # Every 3 days at 8:00 UTC
+    - cron: '0 8 */3 * *'
+
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping backend
+        run: |
+          curl \
+            -H "x-api-key: ${{ secrets.KEEP_ALIVE_SECRET }}" \
+            https://movie-bucketlist-server.vercel.app/maintenance/keepalive
