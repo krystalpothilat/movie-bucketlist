@@ -47,10 +47,13 @@ router.get('/get-movies', async (req, res) => {
 // DELETE MOVIE
 router.post('/delete-movie', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
-  const { title } = req.body;
+
+  const { listId, title } = req.body;
+
   try {
-    await prisma.listMovie.deleteMany({
+    const listMovie = await prisma.listMovie.findFirst({
       where: {
+        listId,
         title,
         list: {
           OR: [
@@ -60,36 +63,61 @@ router.post('/delete-movie', async (req, res) => {
         },
       },
     });
-    res.status(200).send('Movie deleted successfully');
+
+    if (!listMovie) {
+      return res.status(404).send('Movie not found');
+    }
+
+    await prisma.listMovie.delete({
+      where: {
+        id: listMovie.id,
+      },
+    });
+
+    res.status(200).send('Deleted');
   } catch (err) {
-    res.status(500).send('Error deleting movie');
+    console.error(err);
+    res.status(500).send('Delete failed');
   }
 });
 
 // ADD MOVIE
 router.post('/add-movie', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
-  const { title, genre, image, year } = req.body;
+
+  const { listId, title, genre, image, year, tmdbId } = req.body;
+
   try {
-    let list = await prisma.list.findFirst({ where: { ownerId: req.user.id } });
+    const list = await prisma.list.findFirst({
+      where: {
+        id: listId,
+        OR: [
+          { ownerId: req.user.id },
+          { members: { some: { userId: req.user.id } } },
+        ],
+      },
+    });
+
     if (!list) {
-      list = await prisma.list.create({
-        data: { name: 'My Movie List', ownerId: req.user.id },
-      });
+      return res.status(403).send('No access to this list');
     }
+
     const movie = await prisma.listMovie.create({
       data: {
-        listId: list.id,
+        listId,
         title,
         genre: genre || [],
         year: year || null,
         poster: image || null,
+        tmdbId,
         addedById: req.user.id,
       },
     });
+
     res.status(201).json(movie);
   } catch (err) {
-    res.status(500).send('Error adding movie: ' + err.message);
+    console.error(err);
+    res.status(500).send('Error adding movie');
   }
 });
 
