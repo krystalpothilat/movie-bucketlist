@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import MovieCard from './MovieCard';
 import MoviePopUp from './MoviePopUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,15 +11,12 @@ const MovieDisplay = ({
   genres,
   searchTitle,
   seenToggle,
-  refreshTrigger,
+  allMovies,
+  setAllMovies,
 }) => {
-  const [allMovies, setAllMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   const popupRef = useRef(null);
-  useEffect(() => {
-    fetchAllMovies();
-  }, [refreshTrigger]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -32,25 +29,6 @@ const MovieDisplay = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  const fetchAllMovies = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_API}/api/movies/get-movies`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
-      })
-      .then((data) => {
-        setAllMovies(data);
-        console.log('fetched all movies from DB:', data.length);
-      })
-      .catch((error) => {
-        console.error('Error fetching movies:', error);
-      });
-  };
 
   const currentMovies = useMemo(() => {
     if (!allMovies) return [];

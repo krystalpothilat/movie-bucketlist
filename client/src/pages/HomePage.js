@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import MovieDisplay from '../features/movies/MovieDisplay';
 import MoviePopUp from '../features/movies/MoviePopUp';
 import WheelDisplay from '../features/wheels/WheelDisplay';
+import ListPanel from '../features/ListPanel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/HomePage.css';
 import Header from '../app/components/Header';
@@ -31,11 +32,12 @@ const genres = [
 ];
 
 const HomePage = () => {
-  const [viewType, setViewType] = useState('grid'); // 'grid' | 'wheel'
-  const [sortBy, setSortType] = useState('rank');
+  const [viewType, setViewType] = useState('grid');
+  const [sortBy, setSortType] = useState('alphabetical');
   const [genreTypes, setGenreTypes] = useState([]);
   const [genreDropdownOpen, setGenreDropdownOpen] = useState(false);
   const [seenDropdownOpen, setSeenDropdownOpen] = useState(false);
+  const [listPanelOpen, setListPanelOpen] = useState(false);
   const genreDropdownRef = useRef(null);
   const seenDropdownRef = useRef(null);
   const popupRef = useRef(null);
@@ -44,17 +46,26 @@ const HomePage = () => {
   const [seenToggle, setSeenToggle] = useState(null);
   const [popupClosed, setPopupClosed] = useState(false);
   const [allMovies, setAllMovies] = useState([]);
+  const [allWheels, setAllWheels] = useState([]);
 
-  // Fetch all movies once so WheelDisplay can use them without its own fetch
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_API}/api/movies/get-movies`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    })
-      .then((res) => res.json())
-      .then((data) => setAllMovies(data))
-      .catch((err) => console.error('Error fetching movies:', err));
+    Promise.all([
+      fetch(`${process.env.REACT_APP_BACKEND_API}/api/movies/get-movies`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      }).then((r) => r.json()),
+      fetch(`${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      }).then((r) => r.json()),
+    ])
+      .then(([movies, wheels]) => {
+        setAllMovies(movies);
+        setAllWheels(wheels);
+      })
+      .catch((err) => console.error('Error fetching data:', err));
   }, [popupClosed]);
 
   const isWheelDisplayView = viewType === 'wheel';
@@ -102,16 +113,10 @@ const HomePage = () => {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        genreDropdownRef.current &&
-        !genreDropdownRef.current.contains(event.target)
-      ) {
+      if (genreDropdownRef.current && !genreDropdownRef.current.contains(event.target)) {
         setGenreDropdownOpen(false);
       }
-      if (
-        seenDropdownRef.current &&
-        !seenDropdownRef.current.contains(event.target)
-      ) {
+      if (seenDropdownRef.current && !seenDropdownRef.current.contains(event.target)) {
         setSeenDropdownOpen(false);
       }
     }
@@ -165,6 +170,8 @@ const HomePage = () => {
         isWheelDisplayView={isWheelDisplayView}
         handleLogOut={handleLogOut}
         addMovieButtonClicked={addMovieButtonClicked}
+        listPanelOpen={listPanelOpen}
+        toggleListPanel={() => setListPanelOpen((p) => !p)}
       />
 
       <div ref={popupRef}>
@@ -173,19 +180,24 @@ const HomePage = () => {
         )}
       </div>
 
-      <div className="page-content">
-        {isWheelDisplayView ? (
-          <WheelDisplay allMovies={allMovies} />
-        ) : (
-          <MovieDisplay
-            viewType={viewType}
-            sortBy={sortBy}
-            genres={genreTypes}
-            searchTitle={searchTitle}
-            seenToggle={seenToggle}
-            refreshTrigger={popupClosed}
-          />
-        )}
+      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+        <ListPanel isOpen={listPanelOpen} />
+
+        <div className="page-content">
+          {isWheelDisplayView ? (
+            <WheelDisplay allMovies={allMovies} allWheels={allWheels} setAllWheels={setAllWheels} />
+          ) : (
+            <MovieDisplay
+              viewType={viewType}
+              sortBy={sortBy}
+              genres={genreTypes}
+              searchTitle={searchTitle}
+              seenToggle={seenToggle}
+              allMovies={allMovies}
+              setAllMovies={setAllMovies}
+            />
+          )}
+        </div>
       </div>
 
       <footer className="footer">

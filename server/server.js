@@ -12,6 +12,7 @@ require('dotenv').config();
 const movieRoutes = require('./routes/movie-endpoints');
 const wheelRoutes = require('./routes/wheel-endpoints.js');
 const authRoutes = require('./routes/auth-endpoints.js');
+const listRoutes = require('./routes/list-endpoints');
 
 app.use(
   cors({
@@ -58,6 +59,8 @@ prisma
 app.use('/api/movies', movieRoutes);
 app.use('/api/wheels', wheelRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/lists', listRoutes);
+
 
 app.use('/', (req, res) => {
   res.send('Server is running');

@@ -15,8 +15,8 @@ const COLORS = [
   { bg: '#5DCAA5', text: '#04342C' },
 ];
 
-const WheelDisplay = ({ allMovies = [] }) => {
-  const [savedWheelDisplays, setSavedWheelDisplays] = useState([]);
+const WheelDisplay = ({ allMovies = [], allWheels = [], setAllWheels }) => {
+  const [savedWheelDisplays, setSavedWheelDisplays] = useState(allWheels);
   const [draftWheels, setDraftWheels] = useState([]);
   const [activeWheelDisplayId, setActiveWheelDisplayId] = useState(null);
   const [activeDraftId, setActiveDraftId] = useState(null);
@@ -37,6 +37,11 @@ const WheelDisplay = ({ allMovies = [] }) => {
   const PADDING = 20;
   const SIZE = (RADIUS + PADDING) * 2;
   const CENTER = SIZE / 2;
+
+  // Sync saved wheels with prop
+  useEffect(() => {
+    setSavedWheelDisplays(allWheels);
+  }, [allWheels]);
 
   // Filter movies based on search
   const filteredMovies = useMemo(() => {
@@ -248,8 +253,8 @@ const WheelDisplay = ({ allMovies = [] }) => {
       if (response.ok) {
         const savedWheel = await response.json();
 
-        // move to saved state
-        setSavedWheelDisplays((prev) => [...prev, savedWheel]);
+        // update parent cache
+        setAllWheels((prev) => [...prev, savedWheel]);
 
         // remove from drafts
         setDraftWheels((prev) =>
@@ -270,8 +275,6 @@ const WheelDisplay = ({ allMovies = [] }) => {
 
         setResult(null);
         setRotation(0);
-
-        getSavedWheels();
 
         setToastAction({
           type: 'saved',
@@ -311,7 +314,8 @@ const WheelDisplay = ({ allMovies = [] }) => {
       );
 
       if (response.ok) {
-        setSavedWheelDisplays((prev) =>
+        // update parent cache
+        setAllWheels((prev) =>
           prev.map((w) => (w._id === wheelId ? { ...w, ...wheelData } : w))
         );
 
@@ -391,8 +395,8 @@ const WheelDisplay = ({ allMovies = [] }) => {
 
       if (response.ok) {
         console.log('Wheel deleted successfully');
-        // update UI immediately
-        setSavedWheelDisplays((prev) =>
+        // update parent cache
+        setAllWheels((prev) =>
           prev.filter((w) => w._id !== wheel._id)
         );
         if (activeWheelDisplayId === wheel._id) {
@@ -413,32 +417,6 @@ const WheelDisplay = ({ allMovies = [] }) => {
       console.error('Error deleting wheel:', error);
     }
   };
-
-  // GET SAVED WHEELS
-  const getSavedWheels = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`,
-        {
-          method: 'GET',
-          credentials: 'include',
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setSavedWheelDisplays(data);
-      } else {
-        const errorText = await response.text();
-        console.error('Error fetching wheels:', errorText);
-      }
-    } catch (error) {
-      console.error('Error fetching wheels:', error);
-    }
-  };
-
-  useEffect(() => {
-    getSavedWheels();
-  }, []);
 
   useEffect(() => {
     if (!activeDraftId) return;
