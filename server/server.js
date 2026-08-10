@@ -18,7 +18,7 @@ const maintenanceRoutes = require('./routes/maintenance-endpoints');
 app.use(
   cors({
     origin: process.env.CLIENT_URL || 'https://movie-bucketlist.vercel.app',
-    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
     optionsSuccessStatus: 204,

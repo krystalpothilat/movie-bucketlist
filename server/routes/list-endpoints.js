@@ -95,4 +95,61 @@ router.get('/:listId/movies', async (req, res) => {
   }
 });
 
+// UPDATE LIST NAME
+router.patch('/:listId', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
+  const { listId } = req.params;
+  const { name } = req.body;
+
+  if (!name?.trim()) return res.status(400).send('Name required');
+
+  try {
+    // Check if user is owner
+    const list = await prisma.list.findFirst({
+      where: { id: listId, ownerId: req.user.id },
+    });
+
+    if (!list) return res.status(403).send('Only owner can edit');
+
+    const updated = await prisma.list.update({
+      where: { id: listId },
+      data: { name: name.trim() },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).send('Error updating list: ' + err.message);
+  }
+});
+
+// DELETE LIST
+router.delete('/:listId', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
+  const { listId } = req.params;
+
+  try {
+    // Check if user is owner
+    const list = await prisma.list.findFirst({
+      where: { id: listId, ownerId: req.user.id },
+    });
+
+    if (!list) {
+      console.error(
+        `Delete failed: user ${req.user.id} not owner of list ${listId}`
+      );
+      return res.status(403).send('Only owner can delete');
+    }
+
+    await prisma.list.delete({
+      where: { id: listId },
+    });
+
+    console.log(`List ${listId} deleted by user ${req.user.id}`);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error deleting list:', err.message);
+    res.status(500).send('Error deleting list: ' + err.message);
+  }
+});
+
 module.exports = router;

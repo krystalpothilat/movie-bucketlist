@@ -14,7 +14,6 @@ const MovieDisplay = ({
   selectedListId,
   moviesByList,
   setMoviesByList,
-  refreshMovies,
 }) => {
   const [selectedMovie, setSelectedMovie] = useState(null);
 
@@ -33,11 +32,12 @@ const MovieDisplay = ({
   }, []);
 
   // Get current movies based on selected list or all
+  const allMovies = selectedListId
+    ? moviesByList[selectedListId] || []
+    : moviesByList.all || [];
+
   const currentMovies = useMemo(() => {
-    const allMovies = selectedListId ? moviesByList[selectedListId] || [] : [];
-
     if (!allMovies) return [];
-
     let filtered = [...allMovies];
 
     if (genres && genres.length > 0) {
@@ -73,19 +73,43 @@ const MovieDisplay = ({
     }
 
     return filtered;
-  }, [selectedListId, moviesByList, genres, seenToggle, searchTitle, sortBy]);
+  }, [allMovies, genres, seenToggle, searchTitle, sortBy]);
 
   const handleCardClick = (movie) => setSelectedMovie(movie);
   const handleClosePopUp = () => setSelectedMovie(null);
 
   const handleMovieUpdate = (title, updates) => {
     const key = selectedListId || 'all';
-    setMoviesByList((prev) => ({
-      ...prev,
-      [key]: prev[key].map((m) =>
-        m.title === title ? { ...m, ...updates } : m
-      ),
-    }));
+
+    setMoviesByList((prev) => {
+      const newState = { ...prev };
+
+      // Update current view (list or all)
+      if (newState[key]) {
+        newState[key] = newState[key].map((m) =>
+          m.title === title ? { ...m, ...updates } : m
+        );
+      }
+
+      // Also update global "all" if not current view
+      if (key !== 'all' && newState.all) {
+        newState.all = newState.all.map((m) =>
+          m.title === title ? { ...m, ...updates } : m
+        );
+      }
+
+      // Update any other lists that have this movie
+      Object.keys(newState).forEach((cacheKey) => {
+        if (cacheKey !== 'all' && cacheKey !== key && newState[cacheKey]) {
+          newState[cacheKey] = newState[cacheKey].map((m) =>
+            m.title === title ? { ...m, ...updates } : m
+          );
+        }
+      });
+
+      return newState;
+    });
+
     setSelectedMovie(null);
   };
 
@@ -118,8 +142,6 @@ const MovieDisplay = ({
             notes={selectedMovie.notes}
             imdbLink={selectedMovie.imdbLink}
             seen={selectedMovie.seen}
-            listId={selectedListId}
-            refreshMovies={refreshMovies}
             onClose={handleClosePopUp}
             onUpdate={handleMovieUpdate}
           />
