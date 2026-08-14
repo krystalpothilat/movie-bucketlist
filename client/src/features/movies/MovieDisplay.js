@@ -31,12 +31,12 @@ const MovieDisplay = ({
     };
   }, []);
 
-  // Get current movies based on selected list or all
-  const allMovies = selectedListId
-    ? moviesByList[selectedListId] || []
-    : moviesByList.all || [];
-
   const currentMovies = useMemo(() => {
+    // Get current movies based on selected list or all
+    const allMovies = selectedListId
+      ? moviesByList[selectedListId] || []
+      : moviesByList.all || [];
+
     if (!allMovies) return [];
     let filtered = [...allMovies];
 
@@ -73,26 +73,27 @@ const MovieDisplay = ({
     }
 
     return filtered;
-  }, [allMovies, genres, seenToggle, searchTitle, sortBy]);
+  }, [moviesByList, selectedListId, genres, seenToggle, searchTitle, sortBy]);
 
   const handleCardClick = (movie) => setSelectedMovie(movie);
   const handleClosePopUp = () => setSelectedMovie(null);
 
   const handleMovieUpdate = (title, updates) => {
-    const key = selectedListId || 'all';
+    // Pass listId for permission verification
+    const listId = selectedListId || 'all';
 
     setMoviesByList((prev) => {
       const newState = { ...prev };
 
       // Update current view (list or all)
-      if (newState[key]) {
-        newState[key] = newState[key].map((m) =>
+      if (newState[listId]) {
+        newState[listId] = newState[listId].map((m) =>
           m.title === title ? { ...m, ...updates } : m
         );
       }
 
       // Also update global "all" if not current view
-      if (key !== 'all' && newState.all) {
+      if (listId !== 'all' && newState.all) {
         newState.all = newState.all.map((m) =>
           m.title === title ? { ...m, ...updates } : m
         );
@@ -100,7 +101,7 @@ const MovieDisplay = ({
 
       // Update any other lists that have this movie
       Object.keys(newState).forEach((cacheKey) => {
-        if (cacheKey !== 'all' && cacheKey !== key && newState[cacheKey]) {
+        if (cacheKey !== 'all' && cacheKey !== listId && newState[cacheKey]) {
           newState[cacheKey] = newState[cacheKey].map((m) =>
             m.title === title ? { ...m, ...updates } : m
           );
@@ -144,6 +145,7 @@ const MovieDisplay = ({
             seen={selectedMovie.seen}
             onClose={handleClosePopUp}
             onUpdate={handleMovieUpdate}
+            listId={selectedListId}
           />
         )}
       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import MovieDisplay from '../features/movies/MovieDisplay';
 import MoviePopUp from '../features/movies/MoviePopUp';
 import WheelDisplay from '../features/wheels/WheelDisplay';
@@ -127,7 +127,7 @@ const HomePage = () => {
     }
   };
 
-  const fetchLists = async () => {
+  const fetchLists = useCallback(async () => {
     const res = await fetch(
       `${process.env.REACT_APP_BACKEND_API}/api/lists/get-lists`,
       {
@@ -138,7 +138,7 @@ const HomePage = () => {
     if (res.ok) {
       setLists(await res.json());
     }
-  };
+  }, []);
 
   const isWheelDisplayView = viewType === 'wheel';
 

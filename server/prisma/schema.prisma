@@ -23,27 +23,31 @@ model User {
 }
 
 model List {
-  id        String       @id @default(cuid())
-  name      String
-  ownerId   String
-  joinCode  String?      @unique
-  isShared  Boolean      @default(false)
-  createdAt DateTime     @default(now())
-  owner     User         @relation(fields: [ownerId], references: [id])
-  members   ListMember[]
-  movies    ListMovie[]
-  wheels    Wheel[]
+  id              String       @id @default(cuid())
+  name            String
+  ownerId         String
+  joinCodeHash    String?      @unique  // hash of the code
+  isShared        Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  owner           User         @relation(fields: [ownerId], references: [id])
+  members         ListMember[]
+  movies          ListMovie[]
+  wheels          Wheel[]
+
+  @@index([ownerId])
 }
 
 model ListMember {
   id       String   @id @default(cuid())
   listId   String
   userId   String
+  role     String   @default("admin") // admin, editor, viewer
   joinedAt DateTime @default(now())
   list     List     @relation(fields: [listId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([listId, userId])
+  @@index([userId])
 }
 
 model ListMovie {

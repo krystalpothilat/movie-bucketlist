@@ -6,6 +6,7 @@ const passport = require('./lib/passport');
 const app = express();
 const PORT = process.env.PORT || 5001;
 const prisma = require('./lib/prisma');
+const pgSession = require('connect-pg-simple')(session);
 
 require('dotenv').config();
 
@@ -25,13 +26,16 @@ app.use(
   })
 );
 
-// app.options('*', cors());
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/public')));
 
 app.use(
   session({
+    store: new pgSession({
+      conString: process.env.DIRECT_URL, // direct connection, not the pooler
+      tableName: 'session',
+      createTableIfMissing: true,
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,

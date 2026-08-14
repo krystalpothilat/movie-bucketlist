@@ -47,93 +47,124 @@ router.get('/get-movies', async (req, res) => {
 // DELETE MOVIE
 router.post('/delete-movie', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
-
-  const { listId, title } = req.body;
+  const { title, listId } = req.body;
 
   try {
-    const listMovie = await prisma.listMovie.findFirst({
-      where: {
-        listId,
-        title,
-        list: {
-          OR: [
-            { ownerId: req.user.id },
-            { members: { some: { userId: req.user.id } } },
-          ],
-        },
-      },
+    // Check user's role in the list
+    const member = await prisma.listMember.findUnique({
+      where: { listId_userId: { listId, userId: req.user.id } },
     });
 
-    if (!listMovie) {
-      return res.status(404).send('Movie not found');
+    if (!member) return res.status(403).send('Not a member of this list');
+
+    // Only admin can delete movies
+    if (member.role !== 'admin') {
+      return res.status(403).send('Only admins can delete movies');
     }
 
-    await prisma.listMovie.delete({
-      where: {
-        id: listMovie.id,
+    await prisma.listMovie.deleteMany({
+      where: { title, listId },
+    });
+
+    console.log(
+      `User ${req.user.id} deleted movie "${title}" from list ${listId}`
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error deleting movie');
+  }
+});
+
+// UPDATE MOVIE DATA (ratings, notes, seen status)
+// Requires 'editor' or 'admin' role
+router.post('/update-user-data', async (req, res) => {
+  if (!req.user) return res.status(401).send('Unauthorized');
+  const { title, rating, seen, notes, listId } = req.body;
+
+  try {
+    // Check user's role in the list (if listId provided)
+    if (listId) {
+      const member = await prisma.listMember.findUnique({
+        where: { listId_userId: { listId, userId: req.user.id } },
+      });
+
+      if (!member) return res.status(403).send('Not a member of this list');
+
+      // Viewer role cannot edit
+      if (member.role === 'viewer') {
+        return res
+          .status(403)
+          .send('You do not have permission to edit movies');
+      }
+    }
+
+    // Update user rating
+    const result = await prisma.userMovieRating.upsert({
+      where: { userId_title: { userId: req.user.id, title } },
+      update: {
+        rating: rating ?? undefined,
+        seen: seen ?? undefined,
+        notes: notes ?? undefined,
+      },
+      create: {
+        userId: req.user.id,
+        title,
+        rating: rating ?? null,
+        seen: seen ?? false,
+        notes: notes ?? null,
       },
     });
 
-    res.status(200).send('Deleted');
+    console.log(`User ${req.user.id} updated movie "${title}"`);
+    res.json(result);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Delete failed');
+    console.error('Error updating movie:', err.message);
+    res.status(500).send('Server error updating movie');
   }
 });
 
 // ADD MOVIE
 router.post('/add-movie', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
+  const { title, poster, genre, year, listId, tmdbId } = req.body;
 
-  const { listId, title, genre, image, year, tmdbId } = req.body;
+  if (!title?.trim() || !listId?.trim()) {
+    return res.status(400).send('Title and listId required');
+  }
 
   try {
-    const list = await prisma.list.findFirst({
-      where: {
-        id: listId,
-        OR: [
-          { ownerId: req.user.id },
-          { members: { some: { userId: req.user.id } } },
-        ],
-      },
+    // Check user's role in the list
+    const member = await prisma.listMember.findUnique({
+      where: { listId_userId: { listId, userId: req.user.id } },
     });
 
-    if (!list) {
-      return res.status(403).send('No access to this list');
+    if (!member) return res.status(403).send('Not a member of this list');
+
+    // Only admin can add movies
+    if (member.role !== 'admin') {
+      return res.status(403).send('Only admins can add movies');
     }
 
     const movie = await prisma.listMovie.create({
       data: {
+        title: title.trim(),
         listId,
-        title,
+        poster: poster || null,
         genre: genre || [],
         year: year || null,
-        poster: image || null,
-        tmdbId,
+        tmdbId: tmdbId || null,
         addedById: req.user.id,
       },
     });
 
+    console.log(
+      `Movie "${title}" added to list ${listId} by user ${req.user.id}`
+    );
     res.status(201).json(movie);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error adding movie');
-  }
-});
-
-// UPDATE USER DATA
-router.post('/update-user-data', async (req, res) => {
-  if (!req.user) return res.status(401).send('Unauthorized');
-  const { title, rating, seen, notes } = req.body;
-  try {
-    await prisma.userMovieRating.upsert({
-      where: { userId_title: { userId: req.user.id, title } },
-      update: { rating, seen, notes },
-      create: { userId: req.user.id, title, rating, seen, notes },
-    });
-    res.status(200).send('Updated');
-  } catch (err) {
-    res.status(500).send('Error updating: ' + err.message);
+    res.status(500).send('Server error adding movie');
   }
 });
 

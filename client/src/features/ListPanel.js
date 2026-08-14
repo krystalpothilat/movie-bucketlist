@@ -1,31 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/ListPanel.css';
 
-export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
-  const [lists, setLists] = useState([]);
+export default function ListPanel({
+  isOpen,
+  lists,
+  selectedListId,
+  onSelectList,
+  refreshLists,
+}) {
   const [creating, setCreating] = useState(false);
   const [newListName, setNewListName] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [shareListId, setShareListId] = useState(null);
+  const [shareCode, setShareCode] = useState('');
+  const [listMembers, setListMembers] = useState([]);
+  const [showMembers, setShowMembers] = useState(false);
+  const [joinCode, setJoinCode] = useState('');
+  const [joiningList, setJoiningList] = useState(false);
 
+  // Panel is opened -> make sure the sidebar list is fresh
   useEffect(() => {
-    if (isOpen) fetchLists();
-  }, [isOpen]);
-
-  const fetchLists = async () => {
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/lists/get-lists`,
-        {
-          credentials: 'include',
-        }
-      );
-      if (res.ok) setLists(await res.json());
-    } catch (err) {
-      console.error('Error fetching lists:', err);
-    }
-  };
+    if (isOpen) refreshLists?.();
+  }, [isOpen, refreshLists]);
 
   const createList = async () => {
     if (!newListName.trim()) return;
@@ -42,7 +40,7 @@ export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
       if (res.ok) {
         setNewListName('');
         setCreating(false);
-        fetchLists();
+        refreshLists?.();
       }
     } catch (err) {
       console.error('Error creating list:', err);
@@ -73,7 +71,7 @@ export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
       }
       setEditingId(null);
       setEditingName('');
-      fetchLists();
+      refreshLists?.();
     } catch (err) {
       console.error('Error updating list:', err);
     }
@@ -104,7 +102,7 @@ export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
       setEditingId(null);
       setEditingName('');
       setDeleteConfirmId(null);
-      fetchLists();
+      refreshLists?.();
     } catch (err) {
       console.error('Error deleting list:', err);
     }
@@ -114,10 +112,118 @@ export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
     setDeleteConfirmId(null);
   };
 
+  const openShare = async (list) => {
+    setShareListId(list.id);
+    setShowMembers(false);
+    setShareCode('');
+
+    // joinCode is stored hashed, so we can't redisplay an old one —
+    // always generate a fresh code when Share is opened
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/lists/${list.id}/generate-code`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setShareCode(data.joinCode);
+      } else {
+        console.error('Error generating code:', await res.text());
+      }
+    } catch (err) {
+      console.error('Error generating code:', err);
+    }
+
+    await fetchMembers(list.id);
+  };
+
+  const fetchMembers = async (listId) => {
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_API}/api/lists/${listId}/members`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setListMembers(data);
+      }
+    } catch (err) {
+      console.error('Error fetching members:', err);
+    }
+  };
+
+  // Shared join logic used by BOTH the top bar and the popup —
+  // joins by code, refreshes the sidebar, selects the new list, and
+  // pulls its movies into moviesByList via onSelectList(id, true).
+  const performJoin = async (code) => {
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_API}/api/lists/join-by-code`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ joinCode: code.trim() }),
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error(`Error ${res.status}: ${text}`);
+      return false;
+    }
+
+    const data = await res.json();
+    console.log('Joined list:', data.listName);
+
+    await refreshLists?.();
+    await onSelectList?.(data.listId, true);
+
+    return true;
+  };
+
+  const joinListByCode = async () => {
+    if (!joinCode.trim()) return;
+    setJoiningList(true);
+    try {
+      const success = await performJoin(joinCode);
+      if (success) setJoinCode('');
+    } catch (err) {
+      console.error('Error joining list:', err);
+    } finally {
+      setJoiningList(false);
+    }
+  };
+
   return (
     <div className={`list-panel ${isOpen ? 'open' : ''}`}>
       <div className="list-panel-header">
         <span className="list-panel-title">My Lists</span>
+      </div>
+
+      <div className="list-panel-join-section">
+        <input
+          className="list-panel-join-input"
+          type="text"
+          placeholder="Join by code..."
+          value={joinCode}
+          onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+          onKeyDown={(e) => e.key === 'Enter' && joinListByCode()}
+        />
+        <button
+          className="list-panel-join-btn"
+          onClick={joinListByCode}
+          disabled={joiningList || !joinCode.trim()}
+        >
+          {joiningList ? 'Joining...' : 'Join'}
+        </button>
       </div>
 
       <div className="list-panel-body">
@@ -143,7 +249,6 @@ export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
                     className="list-panel-item-done-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log('Finishing edit:', editingId, editingName);
                       finishEdit();
                     }}
                   >
@@ -153,7 +258,6 @@ export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
                     className="list-panel-item-delete-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log('Opening delete confirm:', editingId);
                       openDeleteConfirm(editingId);
                     }}
                   >
@@ -170,15 +274,28 @@ export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
                       {list._count?.movies ?? 0} movies
                     </span>
                   </div>
-                  <button
-                    className="list-panel-item-edit"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      startEdit(list);
-                    }}
-                  >
-                    ✎
-                  </button>
+                  <div className="list-panel-item-icon-actions">
+                    <button
+                      className="list-panel-item-share"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openShare(list);
+                      }}
+                      title="Share"
+                    >
+                      ⇪
+                    </button>
+                    <button
+                      className="list-panel-item-edit"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startEdit(list);
+                      }}
+                      title="Edit"
+                    >
+                      ✎
+                    </button>
+                  </div>
                 </div>
               </>
             )}
@@ -240,22 +357,89 @@ export default function ListPanel({ isOpen, selectedListId, onSelectList }) {
             <div className="list-panel-confirm-actions">
               <button
                 className="list-panel-confirm-delete-btn"
-                onClick={() => {
-                  console.log('Confirming delete:', deleteConfirmId);
-                  confirmDelete();
-                }}
+                onClick={confirmDelete}
               >
                 Confirm
               </button>
               <button
                 className="list-panel-confirm-cancel-btn"
-                onClick={() => {
-                  console.log('Canceling delete');
-                  cancelDelete();
-                }}
+                onClick={cancelDelete}
               >
                 Cancel
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {shareListId && (
+        <div className="list-panel-share-overlay">
+          <div className="list-panel-share-modal">
+            <div className="list-panel-share-header">
+              Share List
+              <button
+                className="list-panel-share-close"
+                onClick={() => {
+                  setShareListId(null);
+                  setShareCode('');
+                  setListMembers([]);
+                  setShowMembers(false);
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="list-panel-share-body">
+              <div className="list-panel-share-code-section">
+                <span className="list-panel-share-label">Invite Code:</span>
+                <div className="list-panel-code-display">
+                  <span className="list-panel-code-value">{shareCode}</span>
+                  <button
+                    className="list-panel-code-copy"
+                    onClick={() => {
+                      navigator.clipboard.writeText(shareCode);
+                      console.log('Code copied:', shareCode);
+                    }}
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              <div className="list-panel-members-section">
+                <button
+                  className="list-panel-members-toggle"
+                  onClick={() => setShowMembers(!showMembers)}
+                >
+                  <span>{showMembers ? '▼' : '▶'}</span>
+                  <span>Members ({listMembers.length})</span>
+                </button>
+
+                {showMembers && (
+                  <div className="list-panel-members-list">
+                    {listMembers.map((member) => (
+                      <div key={member.id} className="list-panel-member-item">
+                        <div className="list-panel-member-info">
+                          <span className="list-panel-member-name">
+                            {member.user.name || member.user.email}
+                          </span>
+                          <span className="list-panel-member-email">
+                            {member.user.email}
+                          </span>
+                        </div>
+                        <div className="list-panel-member-role">
+                          <span
+                            className={`list-panel-role-badge role-${member.role}`}
+                          >
+                            {member.role}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

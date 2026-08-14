@@ -94,6 +94,7 @@ const MoviePopUp = ({
             rating: currentRating,
             seen: currentSeen,
             notes: currentNotes,
+            listId,
           }),
         }
       );

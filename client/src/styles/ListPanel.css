@@ -30,6 +30,57 @@
   color: #9ca3af;
 }
 
+.list-panel-join-section {
+  display: flex;
+  gap: 6px;
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.list-panel-join-input {
+  flex: 1;
+  padding: 7px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  font-family: 'Raleway', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.list-panel-join-input:focus {
+  outline: none;
+  border-color: #ffd700;
+}
+
+.list-panel-join-btn {
+  padding: 7px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  border: none;
+  background-color: #ffd700;
+  color: #1a1a1a;
+  font-family: 'Raleway', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.list-panel-join-btn:hover:not(:disabled) {
+  background-color: #e6c200;
+}
+
+.list-panel-join-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .list-panel-body {
   flex: 1;
   overflow-y: auto;
@@ -176,6 +227,26 @@
 
 .list-panel-item-done-btn:hover {
   background-color: #3d8a5c;
+}
+
+.list-panel-item-share-btn {
+  flex: 1;
+  padding: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  font-family: 'Raleway', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: #4a7caf;
+  color: #fff;
+}
+
+.list-panel-item-share-btn:hover {
+  background-color: #3a6a9f;
 }
 
 .list-panel-item-delete-btn {
@@ -403,4 +474,229 @@
 .list-panel-confirm-cancel-btn:hover {
   background-color: #3a3a3a;
   border-color: #555;
+}
+
+.list-panel-share-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.list-panel-share-modal {
+  background-color: #222;
+  border: 1px solid #333;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  animation: slideUp 0.25s ease;
+}
+
+.list-panel-share-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #333;
+  font-size: 14px;
+  font-weight: 700;
+  color: #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.list-panel-share-close {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.list-panel-share-close:hover {
+  color: #ffd700;
+}
+
+.list-panel-share-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.list-panel-share-code-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.list-panel-share-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.list-panel-code-display {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.list-panel-code-value {
+  flex: 1;
+  padding: 10px 12px;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffd700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.list-panel-code-copy {
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  border: none;
+  background-color: #4a9d6f;
+  color: #fff;
+  font-family: 'Raleway', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.list-panel-code-copy:hover {
+  background-color: #3d8a5c;
+}
+
+.list-panel-members-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.list-panel-members-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px;
+  transition: color 0.2s ease;
+  font-family: 'Raleway', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.list-panel-members-toggle:hover {
+  color: #ffd700;
+}
+
+.list-panel-members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 16px;
+}
+
+.list-panel-member-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  background-color: #1a1a1a;
+  border-radius: 6px;
+  border: 1px solid #333;
+}
+
+.list-panel-member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.list-panel-member-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e0e0e0;
+}
+
+.list-panel-member-email {
+  font-size: 11px;
+  color: #666;
+  font-weight: 400;
+}
+
+.list-panel-member-role {
+  flex-shrink: 0;
+}
+
+.list-panel-role-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.list-panel-role-badge.role-admin {
+  background-color: #d32f2f;
+  color: #fff;
+}
+
+.list-panel-role-badge.role-editor {
+  background-color: #4a9d6f;
+  color: #fff;
+}
+
+.list-panel-role-badge.role-viewer {
+  background-color: #666;
+  color: #fff;
+}
+
+.list-panel-item-icon-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.list-panel-item-share {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 6px;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.list-panel-item-share:hover {
+  color: #4a7caf;
 }
