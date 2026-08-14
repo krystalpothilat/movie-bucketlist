@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -8,7 +10,7 @@ const PORT = process.env.PORT || 5001;
 const prisma = require('./lib/prisma');
 const pgSession = require('connect-pg-simple')(session);
 
-require('dotenv').config();
+app.set('trust proxy', 1);
 
 const movieRoutes = require('./routes/movie-endpoints');
 const wheelRoutes = require('./routes/wheel-endpoints.js');
