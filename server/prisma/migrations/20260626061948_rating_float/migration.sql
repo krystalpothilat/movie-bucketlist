@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "UserMovieRating" ALTER COLUMN "rating" SET DATA TYPE DOUBLE PRECISION;

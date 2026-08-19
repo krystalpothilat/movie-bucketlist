@@ -5,6 +5,7 @@ const prisma = require('../lib/prisma');
 // GET ALL MOVIES
 router.get('/get-movies', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
+
   try {
     const listMovies = await prisma.listMovie.findMany({
       where: {
@@ -15,31 +16,54 @@ router.get('/get-movies', async (req, res) => {
           ],
         },
       },
+      include: {
+        movie: true,
+        list: true,
+      },
+      orderBy: {
+        addedAt: 'desc',
+      },
     });
 
     const ratings = await prisma.userMovieRating.findMany({
-      where: { userId: req.user.id },
+      where: {
+        userId: req.user.id,
+      },
     });
-    const ratingMap = Object.fromEntries(ratings.map((r) => [r.title, r]));
 
-    const movies = listMovies.map((m) => ({
-      id: m.id,
-      title: m.title,
-      addedAt: m.addedAt,
-      image: m.poster || null,
-      genre: m.genre || [],
-      year: m.year,
-      seen: ratingMap[m.title]?.seen ?? false,
-      rating: ratingMap[m.title]?.rating ?? null,
-      notes: ratingMap[m.title]?.notes ?? null,
-      description: null,
-      imdbLink: null,
-      rank: null,
-    }));
+    const ratingMap = new Map(ratings.map((r) => [r.movieId, r]));
+
+    const movies = listMovies.map((listMovie) => {
+      const movie = listMovie.movie;
+      const rating = ratingMap.get(movie.id);
+
+      return {
+        id: listMovie.id,
+        movieId: movie.id,
+        listId: listMovie.listId,
+
+        title: movie.title,
+        image: movie.poster || null,
+        poster: movie.poster || null,
+        genre: movie.genre || [],
+        year: movie.year || null,
+
+        seen: rating?.seen ?? false,
+        rating: rating?.rating ?? null,
+        notes: rating?.notes ?? null,
+
+        description: null,
+        imdbLink: null,
+        rank: null,
+
+        addedAt: listMovie.addedAt,
+        tmdbId: movie.tmdbId || null,
+      };
+    });
 
     res.json(movies);
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching movies:', err);
     res.status(500).send('Server error fetching movies');
   }
 });
@@ -47,51 +71,72 @@ router.get('/get-movies', async (req, res) => {
 // DELETE MOVIE
 router.post('/delete-movie', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
-  const { title, listId } = req.body;
+
+  const { movieId, listId } = req.body;
 
   try {
-    // Check user's role in the list
     const member = await prisma.listMember.findUnique({
-      where: { listId_userId: { listId, userId: req.user.id } },
+      where: {
+        listId_userId: {
+          listId,
+          userId: req.user.id,
+        },
+      },
     });
 
-    if (!member) return res.status(403).send('Not a member of this list');
+    if (!member) {
+      return res.status(403).send('Not a member of this list');
+    }
 
-    // Only admin can delete movies
     if (member.role !== 'admin') {
       return res.status(403).send('Only admins can delete movies');
     }
 
-    await prisma.listMovie.deleteMany({
-      where: { title, listId },
+    await prisma.listMovie.delete({
+      where: {
+        listId_movieId: {
+          listId,
+          movieId,
+        },
+      },
     });
 
     console.log(
-      `User ${req.user.id} deleted movie "${title}" from list ${listId}`
+      `User ${req.user.id} deleted movie ${movieId} from list ${listId}`
     );
+
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error('Error deleting movie:', err);
     res.status(500).send('Server error deleting movie');
   }
 });
 
-// UPDATE MOVIE DATA (ratings, notes, seen status)
-// Requires 'editor' or 'admin' role
+// UPDATE USER MOVIE DATA
 router.post('/update-user-data', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
-  const { title, rating, seen, notes, listId } = req.body;
+
+  const { movieId, rating, seen, notes, listId } = req.body;
+
+  if (!movieId) {
+    return res.status(400).send('movieId required');
+  }
 
   try {
-    // Check user's role in the list (if listId provided)
     if (listId) {
       const member = await prisma.listMember.findUnique({
-        where: { listId_userId: { listId, userId: req.user.id } },
+        where: {
+          listId_userId: {
+            listId,
+            userId: req.user.id,
+          },
+        },
       });
 
-      if (!member) return res.status(403).send('Not a member of this list');
+      if (!member) {
+        return res.status(403).send('Not a member of this list');
+      }
 
-      // Viewer role cannot edit
       if (member.role === 'viewer') {
         return res
           .status(403)
@@ -99,27 +144,32 @@ router.post('/update-user-data', async (req, res) => {
       }
     }
 
-    // Update user rating
     const result = await prisma.userMovieRating.upsert({
-      where: { userId_title: { userId: req.user.id, title } },
+      where: {
+        userId_movieId: {
+          userId: req.user.id,
+          movieId,
+        },
+      },
       update: {
-        rating: rating ?? undefined,
-        seen: seen ?? undefined,
-        notes: notes ?? undefined,
+        ...(rating !== undefined && { rating }),
+        ...(seen !== undefined && { seen }),
+        ...(notes !== undefined && { notes }),
       },
       create: {
         userId: req.user.id,
-        title,
+        movieId,
         rating: rating ?? null,
         seen: seen ?? false,
         notes: notes ?? null,
       },
     });
 
-    console.log(`User ${req.user.id} updated movie "${title}"`);
+    console.log(`User ${req.user.id} updated movie ${movieId}`);
+
     res.json(result);
   } catch (err) {
-    console.error('Error updating movie:', err.message);
+    console.error('Error updating movie:', err);
     res.status(500).send('Server error updating movie');
   }
 });
@@ -127,6 +177,7 @@ router.post('/update-user-data', async (req, res) => {
 // ADD MOVIE
 router.post('/add-movie', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
+
   const { title, poster, genre, year, listId, tmdbId } = req.body;
 
   if (!title?.trim() || !listId?.trim()) {
@@ -134,36 +185,84 @@ router.post('/add-movie', async (req, res) => {
   }
 
   try {
-    // Check user's role in the list
     const member = await prisma.listMember.findUnique({
-      where: { listId_userId: { listId, userId: req.user.id } },
+      where: {
+        listId_userId: {
+          listId,
+          userId: req.user.id,
+        },
+      },
     });
 
-    if (!member) return res.status(403).send('Not a member of this list');
+    if (!member) {
+      return res.status(403).send('Not a member of this list');
+    }
 
-    // Only admin can add movies
     if (member.role !== 'admin') {
       return res.status(403).send('Only admins can add movies');
     }
 
-    const movie = await prisma.listMovie.create({
+    // Find an existing canonical movie or create one
+    let movie = await prisma.movie.findFirst({
+      where: {
+        title: {
+          equals: title.trim(),
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    if (!movie) {
+      movie = await prisma.movie.create({
+        data: {
+          title: title.trim(),
+          poster: poster || null,
+          genre: genre || [],
+          year: year || null,
+          tmdbId: tmdbId || null,
+        },
+      });
+    } else if (tmdbId && !movie.tmdbId) {
+      movie = await prisma.movie.update({
+        where: { id: movie.id },
+        data: {
+          tmdbId,
+          poster: poster || movie.poster,
+          genre: genre || movie.genre,
+          year: year || movie.year,
+        },
+      });
+    }
+
+    const listMovie = await prisma.listMovie.create({
       data: {
-        title: title.trim(),
         listId,
-        poster: poster || null,
-        genre: genre || [],
-        year: year || null,
-        tmdbId: tmdbId || null,
+        movieId: movie.id,
         addedById: req.user.id,
+      },
+      include: {
+        movie: true,
       },
     });
 
     console.log(
-      `Movie "${title}" added to list ${listId} by user ${req.user.id}`
+      `Movie "${movie.title}" added to list ${listId} by user ${req.user.id}`
     );
-    res.status(201).json(movie);
+
+    res.status(201).json({
+      id: listMovie.id,
+      movieId: movie.id,
+      listId,
+      title: movie.title,
+      image: movie.poster,
+      poster: movie.poster,
+      genre: movie.genre,
+      year: movie.year,
+      tmdbId: movie.tmdbId,
+      addedAt: listMovie.addedAt,
+    });
   } catch (err) {
-    console.error(err);
+    console.error('Error adding movie:', err);
     res.status(500).send('Server error adding movie');
   }
 });

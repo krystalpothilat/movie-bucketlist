@@ -36,7 +36,7 @@ app.use(
     store: new pgSession({
       conString: process.env.DIRECT_URL, // direct connection, not the pooler
       tableName: 'session',
-      createTableIfMissing: true,
+      createTableIfMissing: false, // table is now owned by Prisma migrations
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,

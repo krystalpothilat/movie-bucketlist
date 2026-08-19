@@ -22,17 +22,34 @@ model User {
   ratings      UserMovieRating[]
 }
 
+model Movie {
+  id          String   @id @default(cuid())
+  tmdbId      String?  @unique
+  title       String
+  poster      String?
+  year        String?
+  genre       String[]
+  voteAverage Float?
+  voteCount   Int?
+  popularity  Float?
+  createdAt   DateTime @default(now())
+
+  listMovies  ListMovie[]
+  ratings     UserMovieRating[]
+  wheelMovies WheelMovie[]
+}
+
 model List {
-  id              String       @id @default(cuid())
-  name            String
-  ownerId         String
-  joinCodeHash    String?      @unique  // hash of the code
-  isShared        Boolean      @default(false)
-  createdAt       DateTime     @default(now())
-  owner           User         @relation(fields: [ownerId], references: [id])
-  members         ListMember[]
-  movies          ListMovie[]
-  wheels          Wheel[]
+  id           String       @id @default(cuid())
+  name         String
+  ownerId      String
+  joinCodeHash String?      @unique // hash of the code
+  isShared     Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  owner        User         @relation(fields: [ownerId], references: [id])
+  members      ListMember[]
+  movies       ListMovie[]
+  wheels       Wheel[]
 
   @@index([ownerId])
 }
@@ -53,32 +70,31 @@ model ListMember {
 model ListMovie {
   id        String   @id @default(cuid())
   listId    String
-  tmdbId    String?
-  title     String
-  poster    String?
-  year      String?
-  genre     String[]
+  movieId   String
   addedById String
   addedAt   DateTime @default(now())
   addedBy   User     @relation(fields: [addedById], references: [id])
   list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
+  movie     Movie    @relation(fields: [movieId], references: [id])
 
-  @@unique([listId, title])
+  @@unique([listId, movieId])
+  @@index([movieId])
 }
 
 model UserMovieRating {
   id        String   @id @default(cuid())
   userId    String
-  tmdbId    String?
-  title     String
+  movieId   String
   rating    Float?
   seen      Boolean  @default(false)
   notes     String?
   tags      String[]
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movie     Movie    @relation(fields: [movieId], references: [id])
 
-  @@unique([userId, title])
+  @@unique([userId, movieId])
+  @@index([movieId])
 }
 
 model Wheel {
@@ -92,8 +108,23 @@ model Wheel {
 
 model WheelMovie {
   id      String @id @default(cuid())
-  title   String
+  movieId String
   color   Int
   wheelId String
   wheel   Wheel  @relation(fields: [wheelId], references: [id], onDelete: Cascade)
+  movie   Movie  @relation(fields: [movieId], references: [id])
+
+  @@index([movieId])
+}
+
+// Matches connect-pg-simple's expected shape exactly — this table is now
+// created/tracked by Prisma migrations instead of the library's runtime
+// createTableIfMissing, which is what caused the earlier drift-reset incident.
+model Session {
+  sid    String   @id @db.VarChar
+  sess   Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
+  @@map("session")
 }

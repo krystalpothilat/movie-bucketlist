@@ -67,11 +67,10 @@ router.post('/create', async (req, res) => {
 // GET MOVIES IN A LIST
 router.get('/:listId/movies', async (req, res) => {
   if (!req.user) return res.status(401).send('Unauthorized');
+
   const { listId } = req.params;
 
   try {
-    // Run access check + movie fetch + rating fetch in parallel — none of
-    // these need to wait on each other, this was 3 serial round trips before
     const [list, listMovies, userRatings] = await Promise.all([
       prisma.list.findFirst({
         where: {
@@ -82,12 +81,21 @@ router.get('/:listId/movies', async (req, res) => {
           ],
         },
       }),
+
       prisma.listMovie.findMany({
         where: { listId },
-        orderBy: { addedAt: 'desc' },
+        include: {
+          movie: true,
+        },
+        orderBy: {
+          addedAt: 'desc',
+        },
       }),
+
       prisma.userMovieRating.findMany({
-        where: { userId: req.user.id },
+        where: {
+          userId: req.user.id,
+        },
       }),
     ]);
 
@@ -95,32 +103,46 @@ router.get('/:listId/movies', async (req, res) => {
       console.error(
         `Access denied: user ${req.user.id} not member of list ${listId}`
       );
+
       return res.status(403).send('Access denied');
     }
 
-    // Merge ListMovie with UserMovieRating
-    const movies = listMovies.map((movie) => {
-      const rating = userRatings.find((r) => r.title === movie.title);
+    const ratingMap = new Map(
+      userRatings.map((rating) => [rating.movieId, rating])
+    );
+
+    const movies = listMovies.map((listMovie) => {
+      const movie = listMovie.movie;
+      const rating = ratingMap.get(movie.id);
+
       return {
-        title: movie.title,
-        image: movie.poster,
+        id: listMovie.id,
+        movieId: movie.id,
+        listId: listMovie.listId,
+
+        title: movie.title || '',
+        image: movie.poster || null,
+        poster: movie.poster || null,
         description: '',
-        genre: movie.genre,
+        genre: movie.genre || [],
         imdbLink: '',
         seen: rating?.seen ?? false,
         rating: rating?.rating ?? null,
         notes: rating?.notes ?? '',
-        addedAt: movie.addedAt,
-        tmdbId: movie.tmdbId,
+        year: movie.year || null,
+        addedAt: listMovie.addedAt,
+        tmdbId: movie.tmdbId || null,
       };
     });
 
     console.log(
       `Retrieved ${movies.length} movies from list ${listId} for user ${req.user.id}`
     );
+
     res.json(movies);
   } catch (err) {
-    console.error('Error fetching list movies:', err.message);
+    console.error('Error fetching list movies:', err);
+
     res.status(500).send('Error fetching list movies: ' + err.message);
   }
 });

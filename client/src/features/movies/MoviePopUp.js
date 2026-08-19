@@ -27,6 +27,7 @@ const Star = ({ star, currentRating, onClick, onDoubleClick }) => {
 
 const MoviePopUp = ({
   title,
+  movieId,
   image,
   listId,
   refreshMovies,
@@ -90,7 +91,7 @@ const MoviePopUp = ({
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({
-            title,
+            movieId,
             rating: currentRating,
             seen: currentSeen,
             notes: currentNotes,
@@ -99,7 +100,7 @@ const MoviePopUp = ({
         }
       );
       if (res.ok) {
-        onUpdate?.(title, {
+        onUpdate?.(movieId, {
           rating: currentRating,
           seen: currentSeen,
           notes: currentNotes,
@@ -123,7 +124,7 @@ const MoviePopUp = ({
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({
-            title,
+            movieId,
             listId,
           }),
         }

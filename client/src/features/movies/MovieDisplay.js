@@ -53,12 +53,14 @@ const MovieDisplay = ({
     if (searchTitle && searchTitle.trim()) {
       const query = searchTitle.trim().toLowerCase();
       filtered = filtered.filter(
-        (movie) => movie.title && movie.title.toLowerCase().includes(query)
+        (movie) =>
+          typeof movie.title === 'string' &&
+          movie.title.toLowerCase().includes(query)
       );
     }
 
     if (searchTitle && searchTitle.trim()) {
-      filtered.sort((a, b) => a.title.localeCompare(b.title));
+      filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
     } else if (sortBy === 'date') {
       filtered.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
     } else if (sortBy === 'rating') {
@@ -69,7 +71,7 @@ const MovieDisplay = ({
         return b.rating - a.rating;
       });
     } else {
-      filtered.sort((a, b) => a.title.localeCompare(b.title));
+      filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
     }
 
     return filtered;
@@ -78,32 +80,28 @@ const MovieDisplay = ({
   const handleCardClick = (movie) => setSelectedMovie(movie);
   const handleClosePopUp = () => setSelectedMovie(null);
 
-  const handleMovieUpdate = (title, updates) => {
-    // Pass listId for permission verification
+  const handleMovieUpdate = (movieId, updates) => {
     const listId = selectedListId || 'all';
 
     setMoviesByList((prev) => {
       const newState = { ...prev };
 
-      // Update current view (list or all)
       if (newState[listId]) {
         newState[listId] = newState[listId].map((m) =>
-          m.title === title ? { ...m, ...updates } : m
+          m.movieId === movieId ? { ...m, ...updates } : m
         );
       }
 
-      // Also update global "all" if not current view
       if (listId !== 'all' && newState.all) {
         newState.all = newState.all.map((m) =>
-          m.title === title ? { ...m, ...updates } : m
+          m.movieId === movieId ? { ...m, ...updates } : m
         );
       }
 
-      // Update any other lists that have this movie
       Object.keys(newState).forEach((cacheKey) => {
         if (cacheKey !== 'all' && cacheKey !== listId && newState[cacheKey]) {
           newState[cacheKey] = newState[cacheKey].map((m) =>
-            m.title === title ? { ...m, ...updates } : m
+            m.movieId === movieId ? { ...m, ...updates } : m
           );
         }
       });
@@ -119,7 +117,7 @@ const MovieDisplay = ({
       <div className="movie-display-grid row justify-content-center">
         {currentMovies.map((movie, index) => (
           <div
-            key={index}
+            key={movie.movieId || movie.id}
             className="col-12 col-sm-6 col-md-4 d-flex justify-content-center mb-4"
           >
             <MovieCard
@@ -136,6 +134,7 @@ const MovieDisplay = ({
         {selectedMovie && (
           <MoviePopUp
             title={selectedMovie.title}
+            movieId={selectedMovie.movieId}
             description={selectedMovie.description}
             image={selectedMovie.image}
             genre={selectedMovie.genre}
