@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import '../../styles/MoviePopUp.css';
 import { imgs } from '../../assets/imgs';
+import { ApiFetch } from '../../app/utils/ApiFetch';
 
 const Star = ({ star, currentRating, onClick, onDoubleClick }) => {
   // full, half, or empty
@@ -84,21 +85,16 @@ const MoviePopUp = ({
   const saveAll = async () => {
     setSaving(true);
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/movies/update-user-data`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            movieId,
-            rating: currentRating,
-            seen: currentSeen,
-            notes: currentNotes,
-            listId,
-          }),
-        }
-      );
+      const res = await ApiFetch('/api/movies/update-user-data', {
+        method: 'POST',
+        body: JSON.stringify({
+          movieId,
+          rating: currentRating,
+          seen: currentSeen,
+          notes: currentNotes,
+          listId,
+        }),
+      });
       if (res.ok) {
         onUpdate?.(movieId, {
           rating: currentRating,
@@ -117,18 +113,13 @@ const MoviePopUp = ({
 
   const deleteMovie = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/movies/delete-movie`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            movieId,
-            listId,
-          }),
-        }
-      );
+      const response = await ApiFetch('/api/movies/delete-movie', {
+        method: 'POST',
+        body: JSON.stringify({
+          movieId,
+          listId,
+        }),
+      });
 
       if (response.ok) {
         await refreshMovies(listId, true);
@@ -143,18 +134,13 @@ const MoviePopUp = ({
 
   const addMovie = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/movies/add-movie`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            ...newMovieData,
-            listId,
-          }),
-        }
-      );
+      const response = await ApiFetch('/api/movies/add-movie', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...newMovieData,
+          listId,
+        }),
+      });
 
       if (response.ok) {
         await refreshMovies(listId, true);

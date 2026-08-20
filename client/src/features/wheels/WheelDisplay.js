@@ -3,6 +3,7 @@ import '../../styles/WheelDisplay.css';
 import WheelSlice from './WheelSlice';
 import ToastMessage from '../../app/components/ToastMessage';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { ApiFetch } from '../../app/utils/ApiFetch';
 
 const COLORS = [
   { bg: '#B5D4F4', text: '#0C447C' },
@@ -238,17 +239,10 @@ const WheelDisplay = ({ allMovies = [], allWheels = [], setAllWheels }) => {
     };
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/wheels/save-wheel`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(wheelData),
-          credentials: 'include',
-        }
-      );
+      const response = await ApiFetch('/api/wheels/save-wheel', {
+        method: 'POST',
+        body: JSON.stringify(wheelData),
+      });
 
       if (response.ok) {
         const savedWheel = await response.json();
@@ -301,17 +295,10 @@ const WheelDisplay = ({ allMovies = [], allWheels = [], setAllWheels }) => {
     };
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/wheels/update-wheel/${wheelId}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(wheelData),
-          credentials: 'include',
-        }
-      );
+      const response = await ApiFetch(`/api/wheels/update-wheel/${wheelId}`, {
+        method: 'POST',
+        body: JSON.stringify(wheelData),
+      });
 
       if (response.ok) {
         // update parent cache
@@ -381,22 +368,16 @@ const WheelDisplay = ({ allMovies = [], allWheels = [], setAllWheels }) => {
     });
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/wheels/delete-wheel/${wheel._id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(),
-          credentials: 'include',
-        }
-      );
+      const response = await ApiFetch(`/api/wheels/delete-wheel/${wheel._id}`, {
+        method: 'DELETE',
+      });
 
       if (response.ok) {
         console.log('Wheel deleted successfully');
+
         // update parent cache
         setAllWheels((prev) => prev.filter((w) => w._id !== wheel._id));
+
         if (activeWheelDisplayId === wheel._id) {
           setActiveWheelDisplayId(null);
           setWheelDisplayName('');

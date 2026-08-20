@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../app/AuthContext';
 import '../styles/LoginPage.css';
+import { ApiFetch } from '../app/utils/ApiFetch';
 
 const LoginPage = () => {
   const { setUser } = useAuth();
@@ -22,19 +23,15 @@ const LoginPage = () => {
     const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}${endpoint}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ email, name, password }),
-        }
-      );
+      const res = await ApiFetch(endpoint, {
+        method: 'POST',
+        body: JSON.stringify({ email, name, password }),
+      });
 
       const data = await res.json();
 
       if (data.success) {
+        localStorage.setItem('token', data.token);
         setUser(data.user);
         navigate('/');
       } else {

@@ -8,6 +8,7 @@ import '../styles/HomePage.css';
 import Header from '../app/components/Header';
 import FiltersBar from '../features/movies/FiltersBar';
 import { useAuth } from '../app/AuthContext';
+import { ApiFetch } from '../app/utils/ApiFetch';
 
 const genres = [
   { value: 'Action', label: 'Action' },
@@ -50,18 +51,9 @@ const HomePage = () => {
   const [moviesByList, setMoviesByList] = useState({});
   useEffect(() => {
     Promise.all([
-      fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/wheels/get-saved-wheels`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-        }
-      ).then((r) => r.json()),
+      ApiFetch('/api/wheels/get-saved-wheels').then((r) => r.json()),
 
-      fetch(`${process.env.REACT_APP_BACKEND_API}/api/lists/get-lists`, {
-        credentials: 'include',
-      }).then((r) => r.json()),
+      ApiFetch('/api/lists/get-lists').then((r) => r.json()),
     ])
       .then(([wheels, lists]) => {
         setAllWheels(wheels);
@@ -71,14 +63,7 @@ const HomePage = () => {
           const firstListId = lists[0].id;
           setSelectedListId(firstListId);
 
-          fetch(
-            `${process.env.REACT_APP_BACKEND_API}/api/lists/${firstListId}/movies`,
-            {
-              method: 'GET',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-            }
-          )
+          ApiFetch(`/api/lists/${firstListId}/movies`)
             .then((res) => res.json())
             .then((movies) => {
               setMoviesByList((prev) => ({
@@ -100,14 +85,7 @@ const HomePage = () => {
     if (moviesByList[listId] && !forceRefresh) return;
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/lists/${listId}/movies`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-        }
-      );
+      const res = await ApiFetch(`/api/lists/${listId}/movies`);
 
       if (!res.ok) {
         console.error('Failed fetching movies');
@@ -128,12 +106,7 @@ const HomePage = () => {
   };
 
   const fetchLists = useCallback(async () => {
-    const res = await fetch(
-      `${process.env.REACT_APP_BACKEND_API}/api/lists/get-lists`,
-      {
-        credentials: 'include',
-      }
-    );
+    const res = await ApiFetch('/api/lists/get-lists');
 
     if (res.ok) {
       setLists(await res.json());

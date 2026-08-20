@@ -3,14 +3,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const session = require('express-session');
 const passport = require('./lib/passport');
+const attachUser = require('./lib/authMiddleware');
+
 const app = express();
 const PORT = process.env.PORT || 5001;
 const prisma = require('./lib/prisma');
-const pgSession = require('connect-pg-simple')(session);
-
-app.set('trust proxy', 1);
 
 const movieRoutes = require('./routes/movie-endpoints');
 const wheelRoutes = require('./routes/wheel-endpoints.js');
@@ -18,12 +16,13 @@ const authRoutes = require('./routes/auth-endpoints.js');
 const listRoutes = require('./routes/list-endpoints');
 const maintenanceRoutes = require('./routes/maintenance-endpoints');
 
+app.set('trust proxy', 1);
+
 app.use(
   cors({
     origin: process.env.CLIENT_URL || 'https://movie-bucketlist.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type'],
-    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 204,
   })
 );
@@ -31,27 +30,8 @@ app.use(
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/public')));
 
-app.use(
-  session({
-    store: new pgSession({
-      conString: process.env.DIRECT_URL, // direct connection, not the pooler
-      tableName: 'session',
-      createTableIfMissing: false, // table is now owned by Prisma migrations
-    }),
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    },
-  })
-);
-
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(attachUser);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

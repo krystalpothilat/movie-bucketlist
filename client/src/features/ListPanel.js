@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/ListPanel.css';
+import { ApiFetch } from '../app/utils/ApiFetch';
 
 export default function ListPanel({
   isOpen,
@@ -28,15 +29,10 @@ export default function ListPanel({
   const createList = async () => {
     if (!newListName.trim()) return;
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/lists/create`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ name: newListName.trim() }),
-        }
-      );
+      const res = await ApiFetch('/api/lists/create', {
+        method: 'POST',
+        body: JSON.stringify({ name: newListName.trim() }),
+      });
       if (res.ok) {
         setNewListName('');
         setCreating(false);
@@ -55,15 +51,10 @@ export default function ListPanel({
   const finishEdit = async () => {
     if (!editingName.trim()) return;
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/lists/${editingId}`,
-        {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ name: editingName.trim() }),
-        }
-      );
+      const res = await ApiFetch(`/api/lists/${editingId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ name: editingName.trim() }),
+      });
       if (!res.ok) {
         const text = await res.text();
         console.error(`Error ${res.status}: ${text}`);
@@ -83,15 +74,9 @@ export default function ListPanel({
 
   const confirmDelete = async () => {
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/lists/${deleteConfirmId}`,
-        {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-        }
-      );
-
+      const res = await ApiFetch(`/api/lists/${deleteConfirmId}`, {
+        method: 'DELETE',
+      });
       if (!res.ok) {
         const text = await res.text();
         console.error(`Error ${res.status}: ${text}`);
@@ -120,14 +105,9 @@ export default function ListPanel({
     // joinCode is stored hashed, so we can't redisplay an old one —
     // always generate a fresh code when Share is opened
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/lists/${list.id}/generate-code`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-        }
-      );
+      const res = await ApiFetch(`/api/lists/${list.id}/generate-code`, {
+        method: 'POST',
+      });
       if (res.ok) {
         const data = await res.json();
         setShareCode(data.joinCode);
@@ -143,14 +123,7 @@ export default function ListPanel({
 
   const fetchMembers = async (listId) => {
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_API}/api/lists/${listId}/members`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-        }
-      );
+      const res = await ApiFetch(`/api/lists/${listId}/members`);
       if (res.ok) {
         const data = await res.json();
         setListMembers(data);
@@ -164,15 +137,10 @@ export default function ListPanel({
   // joins by code, refreshes the sidebar, selects the new list, and
   // pulls its movies into moviesByList via onSelectList(id, true).
   const performJoin = async (code) => {
-    const res = await fetch(
-      `${process.env.REACT_APP_BACKEND_API}/api/lists/join-by-code`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ joinCode: code.trim() }),
-      }
-    );
+    const res = await ApiFetch('/api/lists/join-by-code', {
+      method: 'POST',
+      body: JSON.stringify({ joinCode: code.trim() }),
+    });
 
     if (!res.ok) {
       const text = await res.text();
