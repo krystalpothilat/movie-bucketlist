@@ -46,7 +46,7 @@ const LoginPage = () => {
   };
 
   const handleGoogle = () => {
-    window.location.href = `${process.env.REACT_APP_BACKEND_API}/api/auth/google`;
+    window.location.href = '/api/auth/google';
   };
 
   const handleKeyDown = (e) => {
