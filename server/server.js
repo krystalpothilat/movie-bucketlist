@@ -21,6 +21,7 @@ app.set('trust proxy', 1);
 app.use(
   cors({
     origin: process.env.CLIENT_URL || 'https://movie-bucketlist.vercel.app',
+    credentials: 'include',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 204,
